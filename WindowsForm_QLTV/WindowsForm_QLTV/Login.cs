@@ -1,27 +1,26 @@
 ﻿using System;
+using System.Data.Entity;  // Dùng cho Entity Framework
 using System.Drawing;
+using System.Linq;         // Dùng cho LINQ
 using System.Windows.Forms;
-using System.Data.SqlClient; // Cần thiết cho ADO.NET
 
 namespace WindowsForm_QLTV
 {
     public partial class Login : Form
     {
-        // 🚨 CHUỖI KẾT NỐI: Cần thay đổi 'YourServerName' thành tên server của bạn
-        private const string ConnectionString = "Data Source=DESKTOP-D213BRB; Initial Catalog=ThuVienDB; Integrated Security=True;";
-
         // Constructor mặc định
         public Login()
         {
             InitializeComponent();
 
             // Gán sự kiện cho nút Đăng Ký
+            this.btnDangnhap.Click += new System.EventHandler(this.btnDangnhap_Click);
             this.btnDangky.Click += new System.EventHandler(this.btnDangky_Click);
         }
 
         private void btnDangnhap_Click(object sender, EventArgs e)
         {
-            string username = txtTentaikhoan.Text;
+            string username = txtTentaikhoan.Text.Trim();
             string password = txtMatkhau.Text;
 
             // 1. Kiểm tra trống
@@ -47,22 +46,20 @@ namespace WindowsForm_QLTV
             }
             else
             {
-                MessageBox.Show("Tên tài khoản hoặc mật khẩu không đúng.", "Lỗi Đăng Nhập", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Tên tài khoản, mật khẩu không đúng hoặc tài khoản đang bị khóa.", "Lỗi Đăng Nhập", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         // ******************************************************
-        // 🆕 HÀM XỬ LÝ SỰ KIỆN NÚT ĐĂNG KÝ
+        // HÀM XỬ LÝ SỰ KIỆN NÚT ĐĂNG KÝ
         // ******************************************************
         private void btnDangky_Click(object sender, EventArgs e)
         {
             try
             {
+                // Giả định có Form Register
                 Register registerForm = new Register();
-                // Hiển thị form đăng ký dưới dạng Dialog (blocking)
                 registerForm.ShowDialog();
-
-                // Khi FormDangKy đóng, Login Form vẫn hiển thị
             }
             catch (Exception ex)
             {
@@ -72,48 +69,37 @@ namespace WindowsForm_QLTV
 
 
         /// <summary>
-        /// Xác thực người dùng và lấy Vai trò (TENQUYEN) từ CSDL.
+        /// Xác thực người dùng và lấy Vai trò (TENQUYEN) từ CSDL bằng Entity Framework.
         /// </summary>
         private string ValidateUserAndGetRole(string username, string password)
         {
             string role = null;
 
-            // Truy vấn lấy TENQUYEN từ bảng PHANQUYEN qua bảng TAIKHOAN
-            string query = @"
-                SELECT pq.TENQUYEN 
-                FROM TAIKHOAN tk
-                JOIN PHANQUYEN pq ON tk.MAQUYEN = pq.MAQUYEN
-                WHERE tk.TENDANGNHAP = @Username 
-                  AND tk.MATKHAU = @Password 
-                  AND tk.TRANGTHAI = N'Hoạt động'";
-
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString))
+                using (var db = new Model1()) // SỬ DỤNG ENTITY FRAMEWORK CONTEXT
                 {
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    // Sử dụng LINQ để truy vấn (tương đương JOIN trong SQL)
+                    var account = db.TAIKHOANs
+                                    .AsNoTracking() // Tăng hiệu suất
+                                                    // Include PHANQUYEN để truy cập TENQUYEN
+                                    .Include(tk => tk.PHANQUYEN)
+                                    .SingleOrDefault(tk =>
+                                        tk.TENDANGNHAP == username &&
+                                        tk.MATKHAU == password &&
+                                        tk.TRANGTHAI == "Hoạt động");
+
+                    if (account != null)
                     {
-                        // SỬ DỤNG THAM SỐ (@) ĐỂ TRÁNH SQL INJECTION
-                        command.Parameters.AddWithValue("@Username", username);
-                        command.Parameters.AddWithValue("@Password", password);
-
-                        connection.Open();
-                        object result = command.ExecuteScalar();
-
-                        if (result != null)
-                        {
-                            role = result.ToString();
-                        }
+                        // Lấy TENQUYEN từ Navigation Property
+                        role = account.PHANQUYEN.TENQUYEN;
                     }
                 }
             }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("LỖI CSDL: " + ex.Message, "Lỗi Hệ Thống", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
             catch (Exception ex)
             {
-                MessageBox.Show("Đã xảy ra lỗi không xác định: " + ex.Message, "Lỗi Chung", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Báo lỗi kết nối CSDL chung (bao gồm lỗi EF)
+                MessageBox.Show("LỖI KẾT NỐI CSDL: " + ex.Message, "Lỗi Hệ Thống", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return role;

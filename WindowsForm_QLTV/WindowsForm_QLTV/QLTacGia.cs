@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Data;
+using System.Linq;
+using System.Data.Entity;
+using System.Collections.Generic;
 
 namespace WindowsForm_QLTV
 {
     public partial class FormQLTacGia : Form
     {
-        // Biến trạng thái để xác định thao tác là Thêm mới hay Sửa
-        private string currentMaTacGia = string.Empty;
+        // Biến trạng thái để xác định Mã Tác Giả đang được chọn/sửa (0 nếu là Thêm mới)
+        private int currentMaTacGia = 0;
 
         public FormQLTacGia()
         {
@@ -38,18 +40,21 @@ namespace WindowsForm_QLTV
             dgvTacGia.AutoGenerateColumns = false;
             dgvTacGia.Columns.Clear();
 
-            // BỎ CỘT MaTacGia
-            // Thêm lại cột MaTacGia ẩn để sử dụng trong logic
-            dgvTacGia.Columns.Add(CreateColumn("MaTacGia", "Mã TG (Ẩn)", 0));
-            dgvTacGia.Columns["MaTacGia"].Visible = false;
+            // Cột Mã Tác Giả (Dùng ẩn để lưu ID)
+            // LƯU Ý: MinimumWidth phải >= 2
+            dgvTacGia.Columns.Add(CreateColumn("MATG", "Mã TG (Ẩn)", 2));
+            dgvTacGia.Columns["MATG"].Visible = false;
+            dgvTacGia.Columns["MATG"].DataPropertyName = "MATG";
 
-            dgvTacGia.Columns.Add(CreateColumn("TenTacGia", "Tên Tác Giả", 200));
-            dgvTacGia.Columns.Add(CreateColumn("QuocTich", "Quốc Tịch", 150));
-            dgvTacGia.Columns.Add(CreateColumn("MoTa", "Mô Tả", 400));
+            // Cột hiển thị
+            dgvTacGia.Columns.Add(CreateColumn("TENTG", "Tên Tác Giả", 200));
+            dgvTacGia.Columns.Add(CreateColumn("QUOCTICH", "Quốc Tịch", 150));
+            dgvTacGia.Columns.Add(CreateColumn("MOTA", "Mô Tả", 400));
 
             dgvTacGia.AllowUserToAddRows = false;
             dgvTacGia.ReadOnly = true;
             dgvTacGia.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvTacGia.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         private DataGridViewTextBoxColumn CreateColumn(string name, string header, int width)
@@ -59,34 +64,38 @@ namespace WindowsForm_QLTV
                 Name = name,
                 HeaderText = header,
                 DataPropertyName = name,
-                Width = width
+                MinimumWidth = width
             };
         }
 
         private void LoadDataTacGia()
         {
-            // Thay thế bằng logic truy vấn CSDL thực tế
-            DataTable dt = new DataTable();
-            dt.Columns.Add("MaTacGia", typeof(string));
-            dt.Columns.Add("TenTacGia", typeof(string));
-            dt.Columns.Add("QuocTich", typeof(string));
-            dt.Columns.Add("MoTa", typeof(string));
+            try
+            {
+                using (var db = new Model1())
+                {
+                    var tacGiaList = db.TACGIAs
+                                       .AsNoTracking()
+                                       .OrderBy(tg => tg.MATG)
+                                       .ToList();
 
-            // Dữ liệu giả lập
-            dt.Rows.Add("TG001", "Nguyễn Nhật Ánh", "Việt Nam", "Nhà văn chuyên viết truyện thiếu nhi.");
-            dt.Rows.Add("TG002", "J.K. Rowling", "Anh", "Tác giả bộ truyện Harry Potter.");
-            dt.Rows.Add("TG003", "Haruki Murakami", "Nhật Bản", "Tiểu thuyết gia nổi tiếng thế giới.");
-
-            dgvTacGia.DataSource = dt;
+                    dgvTacGia.DataSource = tacGiaList;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi tải dữ liệu Tác Giả: " + ex.Message + "\nKiểm tra ConnectionString và dữ liệu trong bảng TACGIA.", "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                dgvTacGia.DataSource = null;
+            }
         }
 
         private void ClearInputFields()
         {
-            currentMaTacGia = string.Empty; // Reset trạng thái
+            currentMaTacGia = 0; // Reset trạng thái về Thêm mới
             txtTenTacGia.Clear();
             txtQuocTich.Clear();
             txtMoTa.Clear();
-            btnLuu.Text = "Lưu (Thêm mới)"; // Đổi Text cho nút Lưu
+            btnLuu.Text = "LƯU (Thêm mới)"; // Đổi Text cho nút Lưu
         }
 
         // --- Event Handlers ---
@@ -95,15 +104,20 @@ namespace WindowsForm_QLTV
         {
             if (e.RowIndex >= 0)
             {
-                DataGridViewRow row = dgvTacGia.Rows[e.RowIndex];
+                var row = dgvTacGia.Rows[e.RowIndex];
+                var tacGia = row.DataBoundItem as TACGIA;
 
-                // Load dữ liệu lên Input Panel
-                currentMaTacGia = row.Cells["MaTacGia"].Value.ToString(); // Lấy Mã TG ẩn
-                txtTenTacGia.Text = row.Cells["TenTacGia"].Value.ToString();
-                txtQuocTich.Text = row.Cells["QuocTich"].Value.ToString();
-                txtMoTa.Text = row.Cells["MoTa"].Value.ToString();
+                if (tacGia != null)
+                {
+                    // Load dữ liệu lên Input Panel
+                    currentMaTacGia = tacGia.MATG; // Lấy Mã TG đang được chọn (int)
+                    txtMaTacGia.Text = tacGia.MATG.ToString(); // HIỂN THỊ MÃ TG
+                    txtTenTacGia.Text = tacGia.TENTG;
+                    txtQuocTich.Text = tacGia.QUOCTICH;
+                    txtMoTa.Text = tacGia.MOTA;
 
-                btnLuu.Text = "Lưu (Sửa)";
+                    btnLuu.Text = "LƯU (Sửa)";
+                }
             }
         }
 
@@ -120,13 +134,11 @@ namespace WindowsForm_QLTV
 
             string action = btn.Text.Trim();
 
-            if (action == "Thêm")
+            if (action == "THÊM")
             {
                 ClearInputFields();
-                currentMaTacGia = "[Đang tạo mới]";
-
             }
-            else if (action == "Lưu (Sửa)" || action == "Lưu (Thêm mới)")
+            else if (action.StartsWith("LƯU"))
             {
                 // Logic kiểm tra dữ liệu bắt buộc
                 if (string.IsNullOrWhiteSpace(txtTenTacGia.Text) || string.IsNullOrWhiteSpace(txtQuocTich.Text))
@@ -135,36 +147,77 @@ namespace WindowsForm_QLTV
                     return;
                 }
 
-                if (currentMaTacGia == "[Đang tạo mới]" || string.IsNullOrEmpty(currentMaTacGia))
+                try
                 {
-                    // THÊM MỚI
-                    MessageBox.Show($"Thêm mới Tác giả {txtTenTacGia.Text}...", "Thêm mới");
-                    // TODO: Thực hiện CSDL INSERT
-                }
-                else
-                {
-                    // CẬP NHẬT (Sửa)
-                    MessageBox.Show($"Cập nhật Tác giả ID {currentMaTacGia}...", "Cập nhật");
-                    // TODO: Thực hiện CSDL UPDATE
-                }
+                    using (var db = new Model1())
+                    {
+                        if (currentMaTacGia == 0) // THÊM MỚI
+                        {
+                            var newTacGia = new TACGIA
+                            {
+                                TENTG = txtTenTacGia.Text.Trim(),
+                                QUOCTICH = txtQuocTich.Text.Trim(),
+                                MOTA = txtMoTa.Text.Trim()
+                            };
+                            db.TACGIAs.Add(newTacGia);
+                            db.SaveChanges();
+                            MessageBox.Show($"Thêm mới Tác giả {newTacGia.TENTG} thành công!", "Thành công");
+                        }
+                        else // CẬP NHẬT
+                        {
+                            var tacGiaToUpdate = db.TACGIAs.Find(currentMaTacGia);
+                            if (tacGiaToUpdate != null)
+                            {
+                                tacGiaToUpdate.TENTG = txtTenTacGia.Text.Trim();
+                                tacGiaToUpdate.QUOCTICH = txtQuocTich.Text.Trim();
+                                tacGiaToUpdate.MOTA = txtMoTa.Text.Trim();
 
-                LoadDataTacGia();
-                ClearInputFields();
+                                db.Entry(tacGiaToUpdate).State = EntityState.Modified;
+                                db.SaveChanges();
+                                MessageBox.Show($"Cập nhật Tác giả ID {currentMaTacGia} thành công!", "Thành công");
+                            }
+                        }
+                    }
+
+                    LoadDataTacGia();
+                    ClearInputFields();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi Lưu dữ liệu: " + ex.Message, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
 
             }
-            else if (action == "Xóa")
+            else if (action == "XÓA")
             {
-                if (string.IsNullOrWhiteSpace(currentMaTacGia) || currentMaTacGia == "[Đang tạo mới]")
+                if (currentMaTacGia == 0)
                 {
                     MessageBox.Show("Vui lòng chọn Tác giả cần xóa.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                if (MessageBox.Show($"Xác nhận xóa Tác giả {txtTenTacGia.Text}?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+
+                if (MessageBox.Show($"Xác nhận xóa Tác giả {txtTenTacGia.Text}? Thao tác này sẽ xóa tất cả sách liên quan!", "Xác nhận Xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                 {
-                    // TODO: Thực hiện CSDL DELETE
-                    MessageBox.Show("Đã xóa (giả lập).");
-                    LoadDataTacGia();
-                    ClearInputFields();
+                    try
+                    {
+                        using (var db = new Model1())
+                        {
+                            var tacGiaToDelete = db.TACGIAs.Find(currentMaTacGia);
+                            if (tacGiaToDelete != null)
+                            {
+                                // Xóa vật lý
+                                db.TACGIAs.Remove(tacGiaToDelete);
+                                db.SaveChanges();
+                                MessageBox.Show("Đã xóa Tác giả thành công.");
+                            }
+                        }
+                        LoadDataTacGia();
+                        ClearInputFields();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Lỗi khi Xóa dữ liệu: " + ex.Message, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }

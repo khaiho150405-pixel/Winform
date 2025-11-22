@@ -26,13 +26,14 @@
             this.btnXoa = new System.Windows.Forms.Button();
             this.btnThem = new System.Windows.Forms.Button();
             this.pnlInput = new System.Windows.Forms.Panel();
+            this.txtMaNXB = new System.Windows.Forms.TextBox(); // KHAI BÁO TXT MỚI
             this.txtDiaChi = new System.Windows.Forms.TextBox();
             this.lblDiaChi = new System.Windows.Forms.Label();
             this.txtSDT = new System.Windows.Forms.TextBox();
             this.lblSDT = new System.Windows.Forms.Label();
             this.txtTenNXB = new System.Windows.Forms.TextBox();
             this.lblTenNXB = new System.Windows.Forms.Label();
-            this.lblMaNXB = new System.Windows.Forms.Label();
+            this.lblMaNXB = new System.Windows.Forms.Label(); // Label Mã NXB
             this.lblHeader = new System.Windows.Forms.Label();
             this.pnlBackground.SuspendLayout();
             this.pnlDataGrid.SuspendLayout();
@@ -56,8 +57,8 @@
             // 
             // pnlDataGrid
             // 
-            this.pnlDataGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.pnlDataGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlDataGrid.BackColor = System.Drawing.Color.White;
             this.pnlDataGrid.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -78,6 +79,9 @@
             this.dgvNXB.RowTemplate.Height = 24;
             this.dgvNXB.Size = new System.Drawing.Size(928, 288);
             this.dgvNXB.TabIndex = 0;
+            this.dgvNXB.ReadOnly = true;
+            this.dgvNXB.RowHeadersVisible = false;
+            this.dgvNXB.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             // 
             // pnlControl
             // 
@@ -150,10 +154,11 @@
             // 
             this.pnlInput.BackColor = System.Drawing.Color.White;
             this.pnlInput.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlInput.Controls.Add(this.txtDiaChi);
-            this.pnlInput.Controls.Add(this.lblDiaChi);
+            this.pnlInput.Controls.Add(this.txtMaNXB); // THÊM TXT MỚI
             this.pnlInput.Controls.Add(this.txtSDT);
             this.pnlInput.Controls.Add(this.lblSDT);
+            this.pnlInput.Controls.Add(this.txtDiaChi);
+            this.pnlInput.Controls.Add(this.lblDiaChi);
             this.pnlInput.Controls.Add(this.txtTenNXB);
             this.pnlInput.Controls.Add(this.lblTenNXB);
             this.pnlInput.Controls.Add(this.lblMaNXB);
@@ -162,6 +167,25 @@
             this.pnlInput.Padding = new System.Windows.Forms.Padding(10);
             this.pnlInput.Size = new System.Drawing.Size(550, 170);
             this.pnlInput.TabIndex = 1;
+            // 
+            // txtMaNXB (Mã NXB - KHÔNG SỬA)
+            // 
+            this.txtMaNXB.Enabled = false;
+            this.txtMaNXB.Location = new System.Drawing.Point(120, 25);
+            this.txtMaNXB.Name = "txtMaNXB";
+            this.txtMaNXB.Size = new System.Drawing.Size(140, 22);
+            this.txtMaNXB.TabIndex = 0;
+            // 
+            // lblMaNXB (Label Mã NXB - Đã điều chỉnh)
+            // 
+            this.lblMaNXB.AutoSize = true;
+            this.lblMaNXB.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMaNXB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
+            this.lblMaNXB.Location = new System.Drawing.Point(20, 28);
+            this.lblMaNXB.Name = "lblMaNXB";
+            this.lblMaNXB.Size = new System.Drawing.Size(73, 20);
+            this.lblMaNXB.TabIndex = 9;
+            this.lblMaNXB.Text = "Mã NXB:";
             // 
             // txtDiaChi
             // 
@@ -218,13 +242,6 @@
             this.lblTenNXB.TabIndex = 2;
             this.lblTenNXB.Text = "Tên NXB:";
             // 
-            // lblMaNXB
-            // 
-            this.lblMaNXB.Location = new System.Drawing.Point(0, 0);
-            this.lblMaNXB.Name = "lblMaNXB";
-            this.lblMaNXB.Size = new System.Drawing.Size(100, 23);
-            this.lblMaNXB.TabIndex = 8;
-            // 
             // lblHeader
             // 
             this.lblHeader.AutoSize = true;
@@ -276,5 +293,6 @@
         private System.Windows.Forms.Panel pnlDataGrid;
         private System.Windows.Forms.DataGridView dgvNXB;
         private System.Windows.Forms.Label lblMaNXB;
+        private System.Windows.Forms.TextBox txtMaNXB;
     }
 }

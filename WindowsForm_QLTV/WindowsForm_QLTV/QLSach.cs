@@ -2,6 +2,9 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Linq;
+using System.Data.Entity;
+using System.IO;
 
 namespace WindowsForm_QLTV
 {
@@ -15,35 +18,31 @@ namespace WindowsForm_QLTV
             // Gán sự kiện cho các nút Dashboard
             btnQLSach.Click += DashboardButton_Click;
             btnTacGia.Click += DashboardButton_Click;
-            btnTheLoai.Click += DashboardButton_Click;
             btnNhaXuatBan.Click += DashboardButton_Click;
+
+            // Đã bỏ btnQuayLai
         }
 
         private void FormQLSach_Load(object sender, EventArgs e)
         {
-            // Load các thẻ sách (Card) mẫu
             LoadBookCards();
         }
 
-        // Hàm chung để load Form con vào Panel cha (MainForm's pnlContent)
+        // Hàm LoadSubForm và DashboardButton_Click (Giữ nguyên)
+
         private void LoadSubForm(Type formType)
         {
-            // Lấy Panel cha (thường là pnlContent của MainForm)
             Panel pnlContent = this.Parent as Panel;
 
             if (pnlContent != null)
             {
                 try
                 {
-                    // Khởi tạo Form mới bằng reflection
                     Form form = (Form)Activator.CreateInstance(formType);
-
                     pnlContent.Controls.Clear();
-
                     form.TopLevel = false;
                     form.FormBorderStyle = FormBorderStyle.None;
                     form.Dock = DockStyle.Fill;
-
                     pnlContent.Controls.Add(form);
                     form.Show();
                 }
@@ -69,19 +68,12 @@ namespace WindowsForm_QLTV
                 switch (buttonText)
                 {
                     case "Quản Lý Sách":
-                        // Chuyển sang form chi tiết (Load FormQLTatCaSach)
-                        LoadSubForm(typeof(FormQLTatCaSach));
+                        LoadSubForm(typeof(EditSach));
                         break;
                     case "Tác Giả":
-                        // Chuyển sang form Quản Lý Tác Giả
                         LoadSubForm(typeof(FormQLTacGia));
                         break;
-                    case "Thể Loại":
-                        // TODO: Chuyển sang form Quản Lý Thể Loại (Giả sử có FormQLTheLoai)
-                        MessageBox.Show("Chuyển sang form Quản Lý Thể Loại (Chưa tạo code form).", "Thông báo");
-                        break;
                     case "Nhà Xuất Bản":
-                        // Chuyển sang form Quản Lý NXB
                         LoadSubForm(typeof(FormQLNXB));
                         break;
                     default:
@@ -90,21 +82,40 @@ namespace WindowsForm_QLTV
             }
         }
 
+        // LOGIC TẢI CARD SÁCH (Đã bỏ ImageColor)
         private void LoadBookCards()
         {
             pnlCardContainer.Controls.Clear();
 
-            // Dữ liệu giả lập
-            List<BookItem> books = new List<BookItem>
-            {
-                new BookItem { Title = "Đồng Lúa Chọn", Subtitle = "Khi còn trẻ", ImageColor = Color.Teal },
-                new BookItem { Title = "J. K. Rowling", Subtitle = "Đừng quay đầu chiều", ImageColor = Color.LightGreen },
-                new BookItem { Title = "Khí Chất", Subtitle = "Hạnh phúc", ImageColor = Color.Orange },
-                new BookItem { Title = "Tuổi trẻ", Subtitle = "Như một bầu trời", ImageColor = Color.MediumPurple },
-                new BookItem { Title = "Kiếm Tìm", Subtitle = "Đen Đáp", ImageColor = Color.Gray },
-                new BookItem { Title = "Sách 6", Subtitle = "Mô tả 6", ImageColor = Color.DarkCyan }
-            };
+            List<BookItem> books = new List<BookItem>();
 
+            try
+            {
+                using (var db = new Model1())
+                {
+                    var queriedBooks = db.SACHes.AsNoTracking()
+                                                 .Where(s => s.TRANGTHAI == "Có sẵn")
+                                                 .OrderByDescending(s => s.MASACH)
+                                                 .ToList();
+
+                    foreach (var book in queriedBooks)
+                    {
+                        books.Add(new BookItem
+                        {
+                            Title = book.TENSACH,
+                            Subtitle = book.THELOAI,
+                            HinhAnh = book.HINHANH, // LẤY ĐƯỜNG DẪN ẢNH TỪ DB
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi tải dữ liệu sách từ CSDL: " + ex.Message, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // PHẦN HIỂN THỊ THẺ SÁCH (Giữ nguyên bố cục)
             int x = 10;
             int y = 10;
             int cardWidth = 200;
@@ -122,7 +133,6 @@ namespace WindowsForm_QLTV
                 x += cardWidth + padding;
                 cardIndex++;
 
-                // Nếu đã đủ số lượng thẻ trên 1 hàng, xuống hàng mới
                 if (cardIndex % cardsPerRow == 0)
                 {
                     x = 10;
@@ -131,6 +141,7 @@ namespace WindowsForm_QLTV
             }
         }
 
+        // HÀM TẠO CARD SÁCH (Đã bỏ ImageColor)
         private Panel CreateBookCard(BookItem book, int width, int height)
         {
             Panel pnl = new Panel();
@@ -138,14 +149,21 @@ namespace WindowsForm_QLTV
             pnl.BackColor = Color.White;
             pnl.BorderStyle = BorderStyle.FixedSingle;
 
-            // 1. Panel chứa ảnh (mô phỏng bìa sách)
-            Panel pnlImage = new Panel();
-            pnlImage.Size = new Size(width - 20, 200);
-            pnlImage.Location = new Point(10, 10);
-            pnlImage.BackColor = book.ImageColor; // Màu nền mô phỏng ảnh bìa
-            pnl.Controls.Add(pnlImage);
+            // 1. PictureBox chứa ảnh
+            PictureBox pbImage = new PictureBox();
+            pbImage.Size = new Size(width - 20, 200);
+            pbImage.Location = new Point(10, 10);
+            pbImage.BackColor = Color.WhiteSmoke; // Màu nền trung tính dự phòng
+            pbImage.SizeMode = PictureBoxSizeMode.StretchImage; // Lấp đầy khung
 
-            // 2. Tiêu đề sách
+            // Logic tải ảnh từ HinhAnh (tên file ảnh)
+            if (!string.IsNullOrEmpty(book.HinhAnh))
+            {
+                LoadImageFromLocalFolder(pbImage, book.HinhAnh);
+            }
+            pnl.Controls.Add(pbImage);
+
+            // 2. Tiêu đề sách (Giữ nguyên)
             Label lblTitle = new Label();
             lblTitle.Text = book.Title;
             lblTitle.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
@@ -154,30 +172,78 @@ namespace WindowsForm_QLTV
             lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             pnl.Controls.Add(lblTitle);
 
-            // 3. Mô tả/Tác giả
+            // 3. Mô tả/Thể loại (Giữ nguyên)
             Label lblSubtitle = new Label();
-            lblSubtitle.Text = book.Subtitle;
+            lblSubtitle.Text = "Thể loại: " + book.Subtitle;
             lblSubtitle.Font = new Font("Segoe UI", 9F);
             lblSubtitle.Location = new Point(10, 245);
             lblSubtitle.Size = new Size(width - 20, 20);
             lblSubtitle.TextAlign = ContentAlignment.MiddleCenter;
             pnl.Controls.Add(lblSubtitle);
 
-            // 4. Nút Chi tiết
+            // 4. Nút Chi tiết (Giữ nguyên)
             Button btnDetail = new Button();
             btnDetail.Text = "Xem chi tiết";
-            btnDetail.BackColor = Color.FromArgb(39, 174, 96); // Màu xanh lá cây
+            btnDetail.BackColor = Color.FromArgb(39, 174, 96);
             btnDetail.ForeColor = Color.White;
             btnDetail.FlatStyle = FlatStyle.Flat;
             btnDetail.FlatAppearance.BorderSize = 0;
             btnDetail.Location = new Point(10, height - 45);
             btnDetail.Size = new Size(width - 20, 35);
-            btnDetail.Tag = book.Title; // Lưu tên sách để xử lý sự kiện
+            btnDetail.Tag = book.Title;
             btnDetail.Click += BtnDetail_Click;
             pnl.Controls.Add(btnDetail);
 
             return pnl;
         }
+
+        // HÀM HỖ TRỢ TẢI ẢNH TỪ THƯ MỤC CỤC BỘ "images" (Giữ nguyên)
+        private void LoadImageFromLocalFolder(PictureBox pb, string imageFileName)
+        {
+            if (string.IsNullOrWhiteSpace(imageFileName)) return;
+
+            string fullPath = string.Empty;
+
+            try
+            {
+                // Tùy chọn 1: Thử đường dẫn Project Root (..\..\images)
+                string projectRoot = Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\"));
+                string path1 = Path.Combine(projectRoot, "images", imageFileName);
+
+                // Tùy chọn 2: Thử đường dẫn Executable Root (images)
+                string path2 = Path.Combine(Application.StartupPath, "images", imageFileName);
+
+                if (File.Exists(path1))
+                {
+                    fullPath = path1;
+                }
+                else if (File.Exists(path2))
+                {
+                    fullPath = path2;
+                }
+                else
+                {
+                    pb.Image = null;
+                    return;
+                }
+
+                // Load ảnh từ MemoryStream để không khóa file
+                using (var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        stream.CopyTo(ms);
+                        ms.Position = 0;
+                        pb.Image = Image.FromStream(ms);
+                    }
+                }
+            }
+            catch
+            {
+                pb.Image = null; // Đặt lại nếu lỗi
+            }
+        }
+
 
         private void BtnDetail_Click(object sender, EventArgs e)
         {
@@ -185,13 +251,7 @@ namespace WindowsForm_QLTV
             MessageBox.Show($"Xem chi tiết sách: {btn.Tag}", "Thông báo");
             // TODO: Thêm logic để mở Form chỉnh sửa sách
         }
-    }
 
-    // Class mô hình dữ liệu (Mẫu)
-    public class BookItem
-    {
-        public string Title { get; set; }
-        public string Subtitle { get; set; }
-        public Color ImageColor { get; set; }
+        // ĐÃ BỎ HÀM GetRandomColor
     }
 }

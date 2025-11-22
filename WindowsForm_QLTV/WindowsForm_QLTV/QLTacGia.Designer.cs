@@ -6,10 +6,7 @@
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
+            if (disposing && (components != null)) components.Dispose();
             base.Dispose(disposing);
         }
 
@@ -26,6 +23,8 @@
             this.btnXoa = new System.Windows.Forms.Button();
             this.btnThem = new System.Windows.Forms.Button();
             this.pnlInput = new System.Windows.Forms.Panel();
+            this.txtMaTacGia = new System.Windows.Forms.TextBox();
+            this.lblMaTacGia = new System.Windows.Forms.Label();
             this.txtMoTa = new System.Windows.Forms.TextBox();
             this.lblMoTa = new System.Windows.Forms.Label();
             this.txtQuocTich = new System.Windows.Forms.TextBox();
@@ -33,8 +32,6 @@
             this.txtTenTacGia = new System.Windows.Forms.TextBox();
             this.lblTenTacGia = new System.Windows.Forms.Label();
             this.lblHeader = new System.Windows.Forms.Label();
-            this.txtMaTacGia = new System.Windows.Forms.TextBox();
-            this.lblMaTacGia = new System.Windows.Forms.Label();
             this.pnlBackground.SuspendLayout();
             this.pnlDataGrid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTacGia)).BeginInit();
@@ -75,8 +72,11 @@
             this.dgvTacGia.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvTacGia.Location = new System.Drawing.Point(5, 5);
             this.dgvTacGia.Name = "dgvTacGia";
+            this.dgvTacGia.ReadOnly = true;
+            this.dgvTacGia.RowHeadersVisible = false;
             this.dgvTacGia.RowHeadersWidth = 51;
             this.dgvTacGia.RowTemplate.Height = 24;
+            this.dgvTacGia.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvTacGia.Size = new System.Drawing.Size(928, 288);
             this.dgvTacGia.TabIndex = 0;
             // 
@@ -96,11 +96,11 @@
             this.btnHuy.BackColor = System.Drawing.Color.Gray;
             this.btnHuy.FlatAppearance.BorderSize = 0;
             this.btnHuy.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnHuy.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnHuy.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnHuy.ForeColor = System.Drawing.Color.White;
             this.btnHuy.Location = new System.Drawing.Point(200, 90);
             this.btnHuy.Name = "btnHuy";
-            this.btnHuy.Size = new System.Drawing.Size(150, 40);
+            this.btnHuy.Size = new System.Drawing.Size(150, 50);
             this.btnHuy.TabIndex = 3;
             this.btnHuy.Text = "HỦY BỎ";
             this.btnHuy.UseVisualStyleBackColor = false;
@@ -110,11 +110,11 @@
             this.btnLuu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(204)))), ((int)(((byte)(113)))));
             this.btnLuu.FlatAppearance.BorderSize = 0;
             this.btnLuu.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLuu.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnLuu.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnLuu.ForeColor = System.Drawing.Color.White;
             this.btnLuu.Location = new System.Drawing.Point(20, 90);
             this.btnLuu.Name = "btnLuu";
-            this.btnLuu.Size = new System.Drawing.Size(150, 40);
+            this.btnLuu.Size = new System.Drawing.Size(150, 50);
             this.btnLuu.TabIndex = 2;
             this.btnLuu.Text = "LƯU";
             this.btnLuu.UseVisualStyleBackColor = false;
@@ -124,11 +124,11 @@
             this.btnXoa.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(76)))), ((int)(((byte)(60)))));
             this.btnXoa.FlatAppearance.BorderSize = 0;
             this.btnXoa.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnXoa.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnXoa.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnXoa.ForeColor = System.Drawing.Color.White;
             this.btnXoa.Location = new System.Drawing.Point(200, 30);
             this.btnXoa.Name = "btnXoa";
-            this.btnXoa.Size = new System.Drawing.Size(150, 40);
+            this.btnXoa.Size = new System.Drawing.Size(150, 50);
             this.btnXoa.TabIndex = 1;
             this.btnXoa.Text = "XÓA";
             this.btnXoa.UseVisualStyleBackColor = false;
@@ -138,11 +138,11 @@
             this.btnThem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
             this.btnThem.FlatAppearance.BorderSize = 0;
             this.btnThem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnThem.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnThem.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnThem.ForeColor = System.Drawing.Color.White;
             this.btnThem.Location = new System.Drawing.Point(20, 30);
             this.btnThem.Name = "btnThem";
-            this.btnThem.Size = new System.Drawing.Size(150, 40);
+            this.btnThem.Size = new System.Drawing.Size(150, 50);
             this.btnThem.TabIndex = 0;
             this.btnThem.Text = "THÊM";
             this.btnThem.UseVisualStyleBackColor = false;
@@ -151,6 +151,8 @@
             // 
             this.pnlInput.BackColor = System.Drawing.Color.White;
             this.pnlInput.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlInput.Controls.Add(this.txtMaTacGia);
+            this.pnlInput.Controls.Add(this.lblMaTacGia);
             this.pnlInput.Controls.Add(this.txtMoTa);
             this.pnlInput.Controls.Add(this.lblMoTa);
             this.pnlInput.Controls.Add(this.txtQuocTich);
@@ -162,6 +164,25 @@
             this.pnlInput.Padding = new System.Windows.Forms.Padding(10);
             this.pnlInput.Size = new System.Drawing.Size(550, 170);
             this.pnlInput.TabIndex = 1;
+            // 
+            // txtMaTacGia
+            // 
+            this.txtMaTacGia.Enabled = false;
+            this.txtMaTacGia.Location = new System.Drawing.Point(120, 25);
+            this.txtMaTacGia.Name = "txtMaTacGia";
+            this.txtMaTacGia.Size = new System.Drawing.Size(130, 22);
+            this.txtMaTacGia.TabIndex = 0;
+            // 
+            // lblMaTacGia
+            // 
+            this.lblMaTacGia.AutoSize = true;
+            this.lblMaTacGia.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMaTacGia.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
+            this.lblMaTacGia.Location = new System.Drawing.Point(20, 28);
+            this.lblMaTacGia.Name = "lblMaTacGia";
+            this.lblMaTacGia.Size = new System.Drawing.Size(58, 20);
+            this.lblMaTacGia.TabIndex = 8;
+            this.lblMaTacGia.Text = "Mã TG:";
             // 
             // txtMoTa
             // 
@@ -230,24 +251,6 @@
             this.lblHeader.TabIndex = 0;
             this.lblHeader.Text = "QUẢN LÝ TÁC GIẢ";
             // 
-            // txtMaTacGia
-            // 
-            this.txtMaTacGia.Enabled = false;
-            this.txtMaTacGia.Location = new System.Drawing.Point(0, 0);
-            this.txtMaTacGia.Name = "txtMaTacGia";
-            this.txtMaTacGia.Size = new System.Drawing.Size(100, 22);
-            this.txtMaTacGia.TabIndex = 0;
-            this.txtMaTacGia.Visible = false;
-            // 
-            // lblMaTacGia
-            // 
-            this.lblMaTacGia.Enabled = false;
-            this.lblMaTacGia.Location = new System.Drawing.Point(0, 0);
-            this.lblMaTacGia.Name = "lblMaTacGia";
-            this.lblMaTacGia.Size = new System.Drawing.Size(100, 23);
-            this.lblMaTacGia.TabIndex = 0;
-            this.lblMaTacGia.Visible = false;
-            // 
             // FormQLTacGia
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -274,9 +277,6 @@
         private System.Windows.Forms.Panel pnlBackground;
         private System.Windows.Forms.Label lblHeader;
         private System.Windows.Forms.Panel pnlInput;
-        private System.Windows.Forms.TextBox txtMaTacGia;
-        private System.Windows.Forms.Label lblMaTacGia;
-
         private System.Windows.Forms.TextBox txtTenTacGia;
         private System.Windows.Forms.Label lblTenTacGia;
         private System.Windows.Forms.TextBox txtMoTa;
@@ -290,5 +290,7 @@
         private System.Windows.Forms.Button btnThem;
         private System.Windows.Forms.Panel pnlDataGrid;
         private System.Windows.Forms.DataGridView dgvTacGia;
+        private System.Windows.Forms.TextBox txtMaTacGia;
+        private System.Windows.Forms.Label lblMaTacGia;
     }
 }

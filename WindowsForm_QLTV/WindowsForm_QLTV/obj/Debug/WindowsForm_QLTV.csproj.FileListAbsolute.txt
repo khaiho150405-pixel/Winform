@@ -11,8 +11,14 @@ C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\ob
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.MainForm.resources
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.UserInfoForm.resources
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.FormTraSach.resources
-C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.FormQLTatCaSach.resources
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.Register.resources
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.FormQLNXB.resources
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.FormQLTacGia.resources
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.MuonTra.resources
+C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\EntityFramework.dll
+C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\EntityFramework.xml
+C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsF.020193DB.Up2Date
+C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.TrangChu.resources
+C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.EditSach.resources

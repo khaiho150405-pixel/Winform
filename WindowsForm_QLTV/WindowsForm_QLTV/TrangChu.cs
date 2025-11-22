@@ -2,126 +2,297 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Linq;
+using System.Data.Entity;
+using System.IO; // Cần thiết cho xử lý file
 
 namespace WindowsForm_QLTV
 {
-    // ====================================================
-    // PHẦN MÔ HÌNH DỮ LIỆU (STRUCT ĐƠN GIẢN)
-    // ====================================================
-    public struct BookItem
+    public partial class TrangChu : Form
     {
-        public string Title { get; set; }
-        public string Subtitle { get; set; }
-        public Color ImageColor { get; set; }
-    }
-
-
-    // ====================================================
-    // PHẦN LOGIC (PARTIAL CLASS)
-    // ====================================================
-    public partial class UC_TrangChu : UserControl
-    {
-        public UC_TrangChu()
+        public TrangChu()
         {
             InitializeComponent();
-            this.Load += UC_TrangChu_Load;
+            this.Load += TrangChu_Load;
+
+            // Gán sự kiện cho các Controls lọc
+            cmbTheLoai.SelectedIndexChanged += cmbTheLoai_SelectedIndexChanged;
+            cmbNXB.SelectedIndexChanged += cmbNXB_SelectedIndexChanged;
+            btnSearch.Click += btnSearch_Click;
         }
 
-        private void UC_TrangChu_Load(object sender, EventArgs e)
+        private void TrangChu_Load(object sender, EventArgs e)
         {
-            // Thiết lập Banner
-            pnlBanner.Height = 200;
-
-            // Load các thẻ sách (Card) mẫu
+            LoadTheLoaiComboBox();
+            LoadNhaXuatBanComboBox();
             LoadBookCards();
         }
 
-        private void LoadBookCards()
+        // =========================================================
+        // LOGIC TẢI COMBOBOX (Giữ nguyên)
+        // =========================================================
+        private void LoadTheLoaiComboBox()
         {
-            pnlBookContainer.Controls.Clear();
+            cmbTheLoai.Items.Clear();
+            cmbTheLoai.Items.Add("Tất cả");
 
-            // Dữ liệu giả lập
-            List<BookItem> books = new List<BookItem>
+            try
             {
-                new BookItem { Title = "Lập trình C#", Subtitle = "Nguyễn Văn A", ImageColor = Color.Teal },
-                new BookItem { Title = "Cơ sở dữ liệu", Subtitle = "Phạm Văn B", ImageColor = Color.LightGreen },
-                new BookItem { Title = "Thiết kế UI/UX", Subtitle = "Trần Thị C", ImageColor = Color.Orange },
-                new BookItem { Title = "Kinh tế học", Subtitle = "Lê Văn D", ImageColor = Color.MediumPurple },
-                new BookItem { Title = "Marketing số", Subtitle = "Hoàng Thị E", ImageColor = Color.Gray },
-            };
-
-            int x = 0;
-            int y = 0;
-            int cardWidth = 200;
-            int cardHeight = 300;
-            int padding = 20;
-            int cardsPerRow = 4;
-            int cardIndex = 0;
-
-            foreach (var book in books)
-            {
-                Panel card = CreateBookCard(book, cardWidth, cardHeight);
-                card.Location = new Point(x, y);
-                pnlBookContainer.Controls.Add(card);
-
-                x += cardWidth + padding;
-                cardIndex++;
-
-                if (cardIndex % cardsPerRow == 0)
+                using (var db = new Model1())
                 {
-                    x = 0;
-                    y += cardHeight + padding;
+                    var theLoais = db.SACHes
+                                     .AsNoTracking()
+                                     .Where(s => s.THELOAI != null && s.THELOAI != "")
+                                     .Select(s => s.THELOAI)
+                                     .Distinct()
+                                     .OrderBy(tl => tl)
+                                     .ToList();
+
+                    foreach (var theLoai in theLoais)
+                    {
+                        cmbTheLoai.Items.Add(theLoai);
+                    }
                 }
+                cmbTheLoai.SelectedIndex = 0;
             }
-            // Điều chỉnh chiều cao của pnlBookContainer để tránh cuộn kép
-            this.pnlBookContainer.Height = y + cardHeight + 10;
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi tải danh sách Thể Loại: " + ex.Message, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private Panel CreateBookCard(BookItem book, int width, int height)
+        private void LoadNhaXuatBanComboBox()
         {
+            cmbNXB.Items.Clear();
+            cmbNXB.Items.Add("Tất cả");
+
+            try
+            {
+                using (var db = new Model1())
+                {
+                    var nxbNames = db.NHAXUATBANs
+                                     .AsNoTracking()
+                                     .Select(n => n.TENNXB)
+                                     .OrderBy(n => n)
+                                     .ToList();
+
+                    foreach (var name in nxbNames)
+                    {
+                        cmbNXB.Items.Add(name);
+                    }
+                }
+                cmbNXB.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi tải danh sách Nhà Xuất Bản: " + ex.Message, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // =========================================================
+        // XỬ LÝ SỰ KIỆN LỌC (Giữ nguyên)
+        // =========================================================
+        private void cmbTheLoai_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            TriggerBookLoad();
+        }
+
+        private void cmbNXB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            TriggerBookLoad();
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            TriggerBookLoad();
+        }
+
+        private void TriggerBookLoad()
+        {
+            string category = cmbTheLoai.SelectedItem?.ToString();
+            string nxbName = cmbNXB.SelectedItem?.ToString();
+            string search = txtSearchBook.Text.Trim();
+
+            if (category == "Tất cả") category = null;
+            if (nxbName == "Tất cả") nxbName = null;
+
+            LoadBookCards(category, nxbName, search);
+        }
+
+        // =========================================================
+        // LOGIC TẢI VÀ HIỂN THỊ BOOK CARDS
+        // =========================================================
+        private void LoadBookCards(string theLoaiFilter = null, string nxbFilter = null, string searchFilter = null)
+        {
+            pnlBookCardsContainer.Controls.Clear();
+
+            try
+            {
+                using (var db = new Model1())
+                {
+                    var query = db.SACHes.AsNoTracking()
+                                         .Where(s => s.TRANGTHAI == "Có sẵn");
+
+                    // Áp dụng bộ lọc
+                    if (!string.IsNullOrEmpty(theLoaiFilter))
+                        query = query.Where(s => s.THELOAI == theLoaiFilter);
+                    if (!string.IsNullOrEmpty(nxbFilter))
+                        query = query.Where(s => s.NHAXUATBAN.TENNXB == nxbFilter);
+                    if (!string.IsNullOrEmpty(searchFilter) && searchFilter != "Tìm tên sách...")
+                        query = query.Where(s => s.TENSACH.Contains(searchFilter));
+
+                    // Lấy dữ liệu và chiếu (Projection) sang BookItem
+                    var books = query.Select(s => new BookItem
+                    {
+                        MaSach = s.MASACH,
+                        Title = s.TENSACH ?? "Không tên",
+                        Subtitle = s.THELOAI ?? "",
+                        HinhAnh = s.HINHANH ?? "", // LẤY ĐƯỜNG DẪN ẢNH TỪ DB
+                        // Bỏ ImageColor
+                    })
+                    .OrderByDescending(s => s.MaSach)
+                    .ToList();
+
+                    // Hiển thị Cards
+                    foreach (var book in books)
+                    {
+                        Panel card = CreateBookCard(book);
+                        pnlBookCardsContainer.Controls.Add(card);
+                    }
+
+                    if (!books.Any())
+                    {
+                        Label lblNoResults = new Label { Text = "Không tìm thấy sách phù hợp.", AutoSize = true, Font = new Font("Segoe UI", 12F) };
+                        pnlBookCardsContainer.Controls.Add(lblNoResults);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"LỖI TRUY VẤN: Vui lòng kiểm tra dữ liệu hoặc cấu trúc DB. Chi tiết: {ex.Message}", "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // =========================================================
+        // HÀM TẠO CARD SÁCH VỚI PICTUREBOX
+        // =========================================================
+        private Panel CreateBookCard(BookItem book)
+        {
+            int width = 200;
+            int height = 350;
+
             Panel pnl = new Panel();
             pnl.Size = new Size(width, height);
+            pnl.Margin = new Padding(10, 10, 10, 10);
             pnl.BackColor = Color.White;
             pnl.BorderStyle = BorderStyle.FixedSingle;
 
-            // 1. Panel chứa ảnh (mô phỏng bìa sách)
-            Panel pnlImage = new Panel();
-            pnlImage.Size = new Size(width, 200);
-            pnlImage.Location = new Point(0, 0);
-            pnlImage.BackColor = book.ImageColor;
-            pnl.Controls.Add(pnlImage);
+            // 1. PictureBox chứa ảnh
+            PictureBox pbImage = new PictureBox();
+            pbImage.Size = new Size(width - 20, 200);
+            pbImage.Location = new Point(10, 10);
+            pbImage.BackColor = Color.LightGray; // Màu nền dự phòng (chứ không phải màu ngẫu nhiên)
+            pbImage.SizeMode = PictureBoxSizeMode.StretchImage; // Lấp đầy khung
+
+            // Logic tải ảnh từ HinhAnh (tên file ảnh)
+            if (!string.IsNullOrEmpty(book.HinhAnh))
+            {
+                LoadImageFromLocalFolder(pbImage, book.HinhAnh);
+            }
+            pnl.Controls.Add(pbImage);
+
 
             // 2. Tiêu đề sách
             Label lblTitle = new Label();
             lblTitle.Text = book.Title;
             lblTitle.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblTitle.Location = new Point(10, 210);
+            lblTitle.Location = new Point(10, 220);
             lblTitle.Size = new Size(width - 20, 20);
-            lblTitle.TextAlign = ContentAlignment.MiddleLeft;
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             pnl.Controls.Add(lblTitle);
 
-            // 3. Mô tả/Tác giả
+            // 3. Mô tả/Thể loại
             Label lblSubtitle = new Label();
-            lblSubtitle.Text = book.Subtitle;
+            lblSubtitle.Text = "Thể loại: " + book.Subtitle;
             lblSubtitle.Font = new Font("Segoe UI", 9F);
-            lblSubtitle.Location = new Point(10, 235);
+            lblSubtitle.Location = new Point(10, 245);
             lblSubtitle.Size = new Size(width - 20, 20);
-            lblSubtitle.TextAlign = ContentAlignment.MiddleLeft;
+            lblSubtitle.TextAlign = ContentAlignment.MiddleCenter;
             pnl.Controls.Add(lblSubtitle);
 
-            // 4. Nút Chi tiết (đã đơn giản hóa)
+            // 4. Nút Chi tiết
             Button btnDetail = new Button();
-            btnDetail.Text = "Chi tiết";
-            btnDetail.BackColor = Color.FromArgb(52, 152, 219);
+            btnDetail.Text = "Xem chi tiết";
+            btnDetail.BackColor = Color.FromArgb(41, 128, 185);
             btnDetail.ForeColor = Color.White;
             btnDetail.FlatStyle = FlatStyle.Flat;
             btnDetail.FlatAppearance.BorderSize = 0;
-            btnDetail.Location = new Point(50, height - 35);
-            btnDetail.Size = new Size(100, 30);
-            btnDetail.Tag = book.Title;
+            btnDetail.Location = new Point(10, height - 45);
+            btnDetail.Size = new Size(width - 20, 35);
+            btnDetail.Tag = book.MaSach;
+            btnDetail.Click += BtnDetail_Click;
             pnl.Controls.Add(btnDetail);
 
             return pnl;
+        }
+
+        // =========================================================
+        // HÀM HỖ TRỢ TẢI ẢNH TỪ THƯ MỤC CỤC BỘ "images" (Giữ nguyên)
+        // =========================================================
+        private void LoadImageFromLocalFolder(PictureBox pb, string imageFileName)
+        {
+            if (string.IsNullOrWhiteSpace(imageFileName)) return;
+
+            string fullPath = string.Empty;
+
+            try
+            {
+                // Tùy chọn 1: Thử đường dẫn Project Root (..\..\images)
+                string projectRoot = Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\"));
+                string path1 = Path.Combine(projectRoot, "images", imageFileName);
+
+                // Tùy chọn 2: Thử đường dẫn Executable Root (imagse)
+                string path2 = Path.Combine(Application.StartupPath, "images", imageFileName);
+
+                if (File.Exists(path1))
+                {
+                    fullPath = path1;
+                }
+                else if (File.Exists(path2))
+                {
+                    fullPath = path2;
+                }
+                else
+                {
+                    pb.Image = null;
+                    return;
+                }
+
+                // Load ảnh từ MemoryStream để không khóa file
+                using (var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        stream.CopyTo(ms);
+                        ms.Position = 0;
+                        pb.Image = Image.FromStream(ms);
+                    }
+                }
+            }
+            catch
+            {
+                pb.Image = null; // Đặt lại nếu lỗi
+            }
+        }
+
+
+        private void BtnDetail_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            if (btn != null && btn.Tag is int maSach)
+            {
+                MessageBox.Show($"Chức năng 'Xem chi tiết' cho sách có Mã: {maSach} chưa được triển khai.", "Thông báo");
+            }
         }
     }
 }

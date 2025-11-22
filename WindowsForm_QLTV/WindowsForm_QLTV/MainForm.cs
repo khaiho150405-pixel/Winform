@@ -50,7 +50,7 @@ namespace WindowsForm_QLTV
             btnTrangChu.Click += BtnItem_Click;
             btnSach.Click += BtnItem_Click;
             btnQLMuonTra.Click += BtnItem_Click; // QUẢN LÝ CHUNG (Dashboard)
-            btnMuonTra.Click += BtnItem_Click;   // MƯỢN TRẢ SÁCH (Chức năng trực tiếp)
+            btnMuonTra.Click += BtnItem_Click;    // MƯỢN TRẢ SÁCH (Chức năng trực tiếp)
             btnTaiKhoan.Click += BtnItem_Click;
             btnThongTinCaNhan.Click += BtnItem_Click;
 
@@ -61,7 +61,7 @@ namespace WindowsForm_QLTV
             btnTaiKhoan.Text = " 🔑 Quản lý tài khoản";
             btnSach.Text = " 📖 Quản lý sách";
             btnQLMuonTra.Text = " 📜 Quản lý mượn trả"; // Tên hiển thị QL chung
-            btnMuonTra.Text = " 📚 Mượn trả sách";   // Tên hiển thị chức năng phụ
+            btnMuonTra.Text = " 📚 Mượn trả sách";    // Tên hiển thị chức năng phụ
             btnTrangChu.Text = " 🏠 Trang chủ";
             btnThongTinCaNhan.Text = " 👤 Thông tin cá nhân";
             btnThoat.Text = " 🚪 Thoát";
@@ -72,8 +72,9 @@ namespace WindowsForm_QLTV
             Button btnItem = sender as Button;
             if (btnItem != null)
             {
-                // Lấy tên chức năng chính xác
+                // Lấy tên chức năng chính xác bằng cách loại bỏ icon và khoảng trắng
                 string controlName = btnItem.Text.Trim();
+                // Loại bỏ icon (các ký tự không phải chữ cái, số, hoặc khoảng trắng)
                 controlName = System.Text.RegularExpressions.Regex.Replace(controlName, @"\s*[\p{Cs}\p{So}][\p{Cs}\p{So}]?\s*", "").Trim();
 
                 ShowContentControl(controlName);
@@ -106,7 +107,7 @@ namespace WindowsForm_QLTV
         }
 
         // ********************************************************
-        // HÀM TẠO VÀ HIỂN THỊ NỘI DUNG
+        // HÀM TẠO VÀ HIỂN THỊ NỘI DUNG (CẬP NHẬT)
         // ********************************************************
         private void ShowContentControl(string controlName)
         {
@@ -121,11 +122,20 @@ namespace WindowsForm_QLTV
             switch (controlName)
             {
                 case "Trang chủ":
-                    newContent = CreateManagementControl("WELCOME TO HUFI", Color.WhiteSmoke, true);
+                    // GỌI FORM TRANG CHỦ MỚI
+                    try
+                    {
+                        newContent = new TrangChu();
+                    }
+                    catch (Exception ex)
+                    {
+                        newContent = new Label { Text = $"Lỗi: Không thể tải Form Trang Chủ. Chi tiết: {ex.Message}", AutoSize = true, ForeColor = Color.Red, Location = new Point(20, 20) };
+                    }
                     break;
                 case "Quản lý sách":
                     try
                     {
+                        // Giả định FormQLSach đã tồn tại
                         newContent = new FormQLSach();
                     }
                     catch (Exception ex)
@@ -133,9 +143,10 @@ namespace WindowsForm_QLTV
                         newContent = new Label { Text = $"Lỗi: Không thể tải Form Quản lý sách. Chi tiết: {ex.Message}", AutoSize = true, ForeColor = Color.Red, Location = new Point(20, 20) };
                     }
                     break;
-                case "Quản lý mượn trả": // Case cho btnQLMuonTra (Dashboard)
+                case "Quản lý mượn trả":
                     try
                     {
+                        // Giả định FormQLMuonTra đã tồn tại
                         newContent = new FormQLMuonTra();
                     }
                     catch (Exception ex)
@@ -143,10 +154,10 @@ namespace WindowsForm_QLTV
                         newContent = new Label { Text = $"Lỗi: Không thể tải Form Quản lý mượn trả. Chi tiết: {ex.Message}", AutoSize = true, ForeColor = Color.Red, Location = new Point(20, 20) };
                     }
                     break;
-                case "Mượn trả sách": // Case cho btnMuonTra (Chức năng trực tiếp)
-                    // Mở FormQLMuonTra Dashboard 
+                case "Mượn trả sách":
                     try
                     {
+                        // Giả định MuonTra đã tồn tại
                         newContent = new MuonTra();
                     }
                     catch (Exception ex)
@@ -155,9 +166,9 @@ namespace WindowsForm_QLTV
                     }
                     break;
                 case "Quản lý tài khoản":
-                    // Dùng FormQLTaiKhoan
                     try
                     {
+                        // Giả định FormQLTaiKhoan đã tồn tại
                         newContent = new FormQLTaiKhoan();
                     }
                     catch (Exception ex)
@@ -166,14 +177,14 @@ namespace WindowsForm_QLTV
                     }
                     break;
                 case "Thông tin cá nhân":
-                    // Dùng UserInfoForm cho thông tin cá nhân
                     try
                     {
+                        // Giả định UserInfoForm đã tồn tại
                         newContent = new UserInfoForm(username, role);
                     }
                     catch
                     {
-                        newContent = CreateManagementControl("THÔNG TIN CÁ NHÂN (PLACEHOLDER)", Color.LightPink);
+                        newContent = new Label { Text = "Lỗi: Không thể tải Form Thông tin cá nhân.", AutoSize = true, Location = new Point(20, 20) };
                     }
                     break;
                 default:
@@ -192,56 +203,6 @@ namespace WindowsForm_QLTV
             pnlContent.Controls.Add(newContent);
         }
 
-        // --- CÁC HÀM TẠO CONTROL MẪU ---
-        private Control CreateBookListingControl()
-        {
-            // Hàm tạo DataGridView mẫu
-            DataGridView dgvSach = new DataGridView();
-            // ... (code)
-            dgvSach.AllowUserToAddRows = false;
-            dgvSach.ReadOnly = true;
-            dgvSach.Font = new Font("Segoe UI", 10F);
-            dgvSach.Dock = DockStyle.Fill;
-
-            dgvSach.Columns.Add("MASACH", "Mã Sách");
-            dgvSach.Columns.Add("TENSACH", "Tên Sách");
-            dgvSach.Rows.Add(1, "Lập trình C#");
-
-            Panel pnlMain = new Panel();
-            pnlMain.Controls.Add(dgvSach);
-            return pnlMain;
-        }
-
-        private Control CreateManagementControl(string title, Color backColor, bool isHomepage = false)
-        {
-            Panel pnl = new Panel();
-            pnl.BackColor = backColor;
-            pnl.Dock = DockStyle.Fill;
-
-            if (isHomepage)
-            {
-                Label lbl = new Label();
-                lbl.Text = title;
-                lbl.Font = new Font("Segoe UI", 72F, FontStyle.Bold);
-                lbl.ForeColor = Color.FromArgb(52, 152, 219);
-                lbl.AutoSize = true;
-                lbl.TextAlign = ContentAlignment.MiddleCenter;
-                lbl.Dock = DockStyle.Fill;
-
-                pnl.Controls.Add(lbl);
-            }
-            else
-            {
-                Label lbl = new Label();
-                lbl.Text = title;
-                lbl.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-                lbl.ForeColor = Color.DarkBlue;
-                lbl.AutoSize = true;
-                lbl.Location = new Point(20, 20);
-                pnl.Controls.Add(lbl);
-            }
-
-            return pnl;
-        }
+        // --- CÁC HÀM TẠO CONTROL MẪU ĐÃ BỊ XÓA ---
     }
 }

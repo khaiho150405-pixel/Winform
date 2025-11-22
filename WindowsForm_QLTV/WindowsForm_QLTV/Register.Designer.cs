@@ -170,7 +170,6 @@
             this.txtEmail.Name = "txtEmail";
             this.txtEmail.Size = new System.Drawing.Size(250, 27);
             this.txtEmail.TabIndex = 15;
-            this.txtEmail.Visible = false;
             // 
             // lblEmail
             // 
@@ -182,7 +181,6 @@
             this.lblEmail.Size = new System.Drawing.Size(51, 20);
             this.lblEmail.TabIndex = 14;
             this.lblEmail.Text = "Email:";
-            this.lblEmail.Visible = false;
             // 
             // radNu
             // 

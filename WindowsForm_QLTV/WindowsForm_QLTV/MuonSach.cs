@@ -1,66 +1,57 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Data;
+using System.Collections.Generic;
+using System.Linq;
+using System.Data.Entity;
+using System.IO;
 
 namespace WindowsForm_QLTV
 {
     public partial class FormMuonSach : Form
     {
+        private const int CurrentMaTT = 1; // Lấy từ SessionManager.CurrentMaTT
+
         public FormMuonSach()
         {
             InitializeComponent();
+
+            btnXacNhan.Click += BtnXacNhanChoMuon_Click;
+            btnTuChoi.Click += BtnTuChoiMuon_Click;
+
+            dgvPendingLoans.CellClick += DgvPendingLoans_CellClick;
+            dgvChiTietMuon.CellClick += DgvChiTietMuon_CellClick;
+
+            SetupDataGridViews();
             this.Load += FormMuonSach_Load;
-
-            // Gán sự kiện
-            btnTimKiem.Click += BtnTimKiem_Click;
-            btnTimSach.Click += BtnTimSach_Click;
-            btnMuon.Click += BtnCRUD_Click;
-            btnSua.Click += BtnCRUD_Click;
-            btnXoa.Click += BtnCRUD_Click;
-            btnHuy.Click += BtnCRUD_Click;
-            btnLoadDanhSach.Click += BtnLoadDanhSach_Click;
-            // Đã bỏ btnHome.Click += BtnHome_Click;
-
-            // Thiết lập DataGridView
-            SetupDataGridView();
         }
 
         private void FormMuonSach_Load(object sender, EventArgs e)
         {
-            LoadComboboxData();
-            LoadDataMuonSach();
-
-            // Thiết lập Placeholder
-            txtTimKiem.Text = "Nhập mã độc giả hoặc mã sách...";
-            txtTimKiem.ForeColor = Color.Gray;
-
-            txtTimKiem.Enter += TxtTimKiem_Enter;
-            txtTimKiem.Leave += TxtTimKiem_Leave;
-
-            ClearInputFields();
+            LoadPendingLoans();
+            ClearDetailPanel();
         }
 
-        private void SetupDataGridView()
+        private void SetupDataGridViews()
         {
-            dgvMuonSach.AutoGenerateColumns = false;
-            dgvMuonSach.Columns.Clear();
+            // Thiết lập DGV chính: Danh sách phiếu chờ
+            dgvPendingLoans.AutoGenerateColumns = false;
+            dgvPendingLoans.Columns.Clear();
+            dgvPendingLoans.Columns.Add(CreateColumn("MaPhieuMuon", "Mã PM", 70));
+            dgvPendingLoans.Columns.Add(CreateColumn("TenDocGia", "Tên Độc Giả", 150));
+            dgvPendingLoans.Columns.Add(CreateColumn("NgayLap", "Ngày Lập", 90));
+            dgvPendingLoans.ReadOnly = true;
+            dgvPendingLoans.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
-            // Thêm các cột theo thứ tự trong hình ảnh (Đã bỏ SoThe và TenNhanVien)
-            dgvMuonSach.Columns.Add(CreateColumn("MaPhieuMuon", "Mã Phiếu", 80));
-            // dgvMuonSach.Columns.Add(CreateColumn("SoThe", "Số Thẻ", 80)); // Bỏ
-            dgvMuonSach.Columns.Add(CreateColumn("TenDocGia", "Tên Độc Giả", 150));
-            dgvMuonSach.Columns.Add(CreateColumn("TenSach", "Tên Sách", 150));
-            dgvMuonSach.Columns.Add(CreateColumn("SoLuongMuon", "SL Mượn", 80));
-            dgvMuonSach.Columns.Add(CreateColumn("NgayMuon", "Ngày Mượn", 100));
-            dgvMuonSach.Columns.Add(CreateColumn("HenTra", "Hẹn Trả", 100));
-            dgvMuonSach.Columns.Add(CreateColumn("TinhTrang", "Tình Trạng", 80));
-            // dgvMuonSach.Columns.Add(CreateColumn("TenNhanVien", "Tên NV", 100)); // Bỏ
-
-            dgvMuonSach.AllowUserToAddRows = false;
-            dgvMuonSach.ReadOnly = true;
-            dgvMuonSach.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvMuonSach.CellClick += DgvMuonSach_CellClick;
+            // Thiết lập DGV phụ: Chi tiết sách trong phiếu
+            dgvChiTietMuon.AutoGenerateColumns = false;
+            dgvChiTietMuon.Columns.Clear();
+            dgvChiTietMuon.Columns.Add(CreateColumn("MaSach", "Mã Sách", 60));
+            dgvChiTietMuon.Columns.Add(CreateColumn("TenSach", "Tên Sách", 180));
+            dgvChiTietMuon.Columns.Add(CreateColumn("SoLuongMuon", "SL Yêu Cầu", 80));
+            dgvChiTietMuon.Columns.Add(CreateColumn("SoLuongTon", "SL Tồn", 60));
+            dgvChiTietMuon.ReadOnly = true;
+            dgvChiTietMuon.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         }
 
         private DataGridViewTextBoxColumn CreateColumn(string name, string header, int width)
@@ -74,137 +65,280 @@ namespace WindowsForm_QLTV
             };
         }
 
-        private void LoadComboboxData()
+        private void ClearDetailPanel()
         {
-            // Đã bỏ cboSoThe
-            cboMaDocGia.Items.AddRange(new string[] { "MaDG01", "MaDG02" });
-            cboMaSach.Items.AddRange(new string[] { "MS01", "MS02", "MS03" });
-            cboTenSach.Items.AddRange(new string[] { "Sách Hay", "Lập trình C#" });
-            cboTinhTrang.Items.AddRange(new string[] { "Mới", "Quá hạn" });
-            // Đã bỏ cboMaNhanVien
+            dgvChiTietMuon.DataSource = null;
+            lblRequestInfo.Text = "Chọn một phiếu mượn bên cạnh để xem chi tiết.";
+            lblRequestInfo.Tag = null;
+            pbBookCover.Image = null;
+            txtTenSach.Text = string.Empty;
+            txtSoLuongTon.Text = string.Empty;
+            txtSLMuon.Text = string.Empty;
+            txtGiaMuon.Text = string.Empty;
         }
 
-        private void LoadDataMuonSach()
+        // --- Logic Tải Phiếu Chờ Duyệt ---
+        private void LoadPendingLoans()
         {
-            // Thay thế bằng logic truy vấn CSDL thực tế
-            DataTable dt = new DataTable();
-            dt.Columns.Add("MaPhieuMuon", typeof(string));
-            // dt.Columns.Add("SoThe", typeof(string)); // Bỏ
-            dt.Columns.Add("TenDocGia", typeof(string));
-            dt.Columns.Add("TenSach", typeof(string));
-            dt.Columns.Add("SoLuongMuon", typeof(int));
-            dt.Columns.Add("NgayMuon", typeof(string));
-            dt.Columns.Add("HenTra", typeof(string));
-            dt.Columns.Add("TinhTrang", typeof(string));
-            // dt.Columns.Add("TenNhanVien", typeof(string)); // Bỏ
-
-            // Dữ liệu giả lập (Đã điều chỉnh để khớp với cột mới)
-            dt.Rows.Add("PM01", "Nguyễn Kha Nam", "Sách Hay", 10, "1/1/2020", "2/2/2020", "Mới");
-            dt.Rows.Add("PM04", "Nguyễn Kha Nam", "Sách Hay", 2, "12/25/2020", "12/29/2020", "Mới");
-            dt.Rows.Add("PM02", "Lê Văn Hiếu", "Sách Hay", 3, "12/25/2020", "1/29/2021", "Mới");
-
-            dgvMuonSach.DataSource = dt;
-        }
-
-        private void ClearInputFields()
-        {
-            txtMaPhieuMuon.Clear();
-            // Đã bỏ cboSoThe
-            cboMaDocGia.SelectedIndex = -1;
-            txtSLMuon.Clear();
-            dtpNgayMuon.Value = DateTime.Now;
-            dtpHenTra.Value = DateTime.Now.AddDays(7);
-            cboTinhTrang.Text = "Mới";
-            // Đã bỏ cboMaNhanVien
-
-            cboMaSach.SelectedIndex = -1;
-            cboTenSach.SelectedIndex = -1;
-            txtSoLuongCon.Clear();
-            txtTenTacGia.Clear();
-
-            // Đặt lại placeholder
-            txtTimKiem.Text = "Nhập mã độc giả hoặc mã sách...";
-            txtTimKiem.ForeColor = Color.Gray;
-        }
-
-        // Xử lý sự kiện Placeholder
-        private void TxtTimKiem_Enter(object sender, EventArgs e)
-        {
-            if (txtTimKiem.Text == "Nhập mã độc giả hoặc mã sách...")
+            try
             {
-                txtTimKiem.Text = "";
-                txtTimKiem.ForeColor = Color.Black;
+                using (var db = new Model1())
+                {
+                    var pendingLoans = db.PHIEUMUONs
+                                         .AsNoTracking()
+                                         .Where(pm => pm.TRANGTHAI == "Chờ duyệt")
+                                         .Select(pm => new PendingLoanViewModel
+                                         {
+                                             MaPhieuMuon = pm.MAPM,
+                                             MaSV = pm.MASV,
+                                             TenDocGia = pm.SINHVIEN.HOVATEN,
+                                             NgayLap = pm.NGAYLAPPHIEUMUON,
+                                             HanTra = pm.HANTRA
+                                         })
+                                         .ToList();
+                    dgvPendingLoans.DataSource = pendingLoans;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi tải danh sách phiếu chờ duyệt: {ex.Message}", "Lỗi Database");
             }
         }
 
-        private void TxtTimKiem_Leave(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtTimKiem.Text))
-            {
-                txtTimKiem.Text = "Nhập mã độc giả hoặc mã sách...";
-                txtTimKiem.ForeColor = Color.Gray;
-            }
-        }
-
-        // --- Event Handlers ---
-
-        private void DgvMuonSach_CellClick(object sender, DataGridViewCellEventArgs e)
+        // --- Logic Hiển thị Chi tiết Phiếu khi chọn hàng ---
+        private void DgvPendingLoans_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)
             {
-                DataGridViewRow row = dgvMuonSach.Rows[e.RowIndex];
+                var row = dgvPendingLoans.Rows[e.RowIndex].DataBoundItem as PendingLoanViewModel;
+                if (row == null) return;
 
-                // Giả lập load dữ liệu lên Input Panel
-                txtMaPhieuMuon.Text = row.Cells["MaPhieuMuon"].Value.ToString();
-                // Bỏ cboSoThe
-                cboMaDocGia.Text = row.Cells["TenDocGia"].Value.ToString(); // Sử dụng tên độc giả để hiển thị
+                // Hiển thị thông tin tổng quan phiếu
+                lblRequestInfo.Text = $"Mã PM: {row.MaPhieuMuon} | Độc giả: {row.TenDocGia} | Hạn Trả: {row.HanTra.ToShortDateString()}";
+                lblRequestInfo.Tag = row.MaPhieuMuon; // Lưu Mã PM
 
-                // Cần thêm logic để load lại thông tin chi tiết
+                LoadLoanDetails(row.MaPhieuMuon);
             }
         }
 
-        private void BtnTimKiem_Click(object sender, EventArgs e)
+        private void LoadLoanDetails(int maPM)
         {
-            string keyword = txtTimKiem.Text.Trim();
-
-            if (keyword == "Nhập mã độc giả hoặc mã sách..." || string.IsNullOrWhiteSpace(keyword))
+            try
             {
-                MessageBox.Show("Vui lòng nhập từ khóa tìm kiếm.", "Thông báo");
+                using (var db = new Model1())
+                {
+                    var chiTiet = db.CHITIETPHIEUMUONs
+                                    .AsNoTracking()
+                                    .Include(ct => ct.SACH)
+                                    .Where(ct => ct.MAPM == maPM)
+                                    .Select(ct => new ChiTietMuonViewModel
+                                    {
+                                        MaSach = ct.MASACH,
+                                        TenSach = ct.SACH.TENSACH,
+                                        SoLuongMuon = ct.SOLUONG,
+                                        SoLuongTon = ct.SACH.SOLUONGTON,
+                                        HinhAnh = ct.SACH.HINHANH,
+                                        GiaMuon = ct.SACH.GIAMUON
+                                    })
+                                    .ToList();
+
+                    dgvChiTietMuon.DataSource = chiTiet;
+
+                    // Nếu có chi tiết, chọn hàng đầu tiên để hiển thị ảnh
+                    if (chiTiet.Any())
+                    {
+                        // Giả lập click vào hàng đầu tiên để load chi tiết sách
+                        DgvChiTietMuon_CellClick(dgvChiTietMuon, new DataGridViewCellEventArgs(0, 0));
+                    }
+                    else
+                    {
+                        ClearDetailPanel();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi tải chi tiết phiếu: {ex.Message}", "Lỗi Database");
+            }
+        }
+
+        // --- Logic Hiển thị Ảnh và Giá khi chọn sách trong chi tiết ---
+        private void DgvChiTietMuon_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && dgvChiTietMuon.Rows[e.RowIndex].DataBoundItem != null)
+            {
+                var row = dgvChiTietMuon.Rows[e.RowIndex].DataBoundItem as ChiTietMuonViewModel;
+                if (row == null) return;
+
+                // Hiển thị chi tiết sách
+                LoadImageFromLocalFolder(pbBookCover, row.HinhAnh);
+                txtTenSach.Text = row.TenSach;
+                txtSoLuongTon.Text = row.SoLuongTon.ToString();
+                txtSLMuon.Text = row.SoLuongMuon.ToString();
+                txtGiaMuon.Text = row.GiaMuon.ToString("N0") + " VNĐ"; // Hiển thị giá mượn (Chỉ đọc)
+
+                // Highlight nếu sách không đủ tồn kho
+                if (!row.IsAvailable)
+                {
+                    txtSoLuongTon.BackColor = Color.LightCoral;
+                    MessageBox.Show($"CẢNH BÁO: Sách '{row.TenSach}' không đủ tồn kho ({row.SoLuongTon} < {row.SoLuongMuon}).", "Lỗi Tồn Kho", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else
+                {
+                    txtSoLuongTon.BackColor = SystemColors.Window;
+                }
+            }
+        }
+
+        // --- HÀM HỖ TRỢ TẢI ẢNH TỪ THƯ MỤC CỤC BỘ ---
+        private void LoadImageFromLocalFolder(PictureBox pb, string imageFileName)
+        {
+            if (string.IsNullOrWhiteSpace(imageFileName))
+            {
+                pb.Image = null;
                 return;
             }
 
-            MessageBox.Show($"Tìm kiếm theo keyword: {keyword}", "Tìm kiếm");
-            // TODO: Lọc dữ liệu trong dgvMuonSach
-        }
+            string fullPath = string.Empty;
 
-        private void BtnTimSach_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Thực hiện tìm kiếm sách theo mã/tên đã chọn.", "Tìm kiếm sách");
-            // TODO: Điền thông tin sách (Tên sách, SL còn, Tên TG) vào Input Panel
-        }
-
-        private void BtnLoadDanhSach_Click(object sender, EventArgs e)
-        {
-            LoadDataMuonSach();
-            MessageBox.Show("Đã tải lại toàn bộ danh sách mượn.", "Thông báo");
-        }
-
-        private void BtnCRUD_Click(object sender, EventArgs e)
-        {
-            Button btn = sender as Button;
-            if (btn != null)
+            try
             {
-                if (btn.Text == "Hủy")
+                string projectRoot = Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\"));
+                string path1 = Path.Combine(projectRoot, "images", imageFileName);
+                string path2 = Path.Combine(Application.StartupPath, "images", imageFileName);
+
+                if (File.Exists(path1))
                 {
-                    ClearInputFields();
-                    MessageBox.Show("Đã hủy thao tác.", "Thông báo");
+                    fullPath = path1;
+                }
+                else if (File.Exists(path2))
+                {
+                    fullPath = path2;
+                }
+                else
+                {
+                    pb.Image = null;
                     return;
                 }
 
-                // Logic CRUD
-                MessageBox.Show($"Thực hiện chức năng: {btn.Text}", "CRUD");
-                // Sau khi CRUD thành công, gọi: LoadDataMuonSach(); ClearInputFields();
+                // Load ảnh từ MemoryStream để không khóa file
+                using (var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        stream.CopyTo(ms);
+                        ms.Position = 0;
+                        pb.Image = Image.FromStream(ms);
+                    }
+                }
             }
+            catch
+            {
+                pb.Image = null;
+            }
+        }
+
+        // --- Logic XÁC NHẬN CHO MƯỢN ---
+        private void BtnXacNhanChoMuon_Click(object sender, EventArgs e)
+        {
+            if (lblRequestInfo.Tag == null || !int.TryParse(lblRequestInfo.Tag.ToString(), out int maPM))
+            {
+                MessageBox.Show("Vui lòng chọn một Phiếu Mượn để xác nhận.", "Lỗi");
+                return;
+            }
+
+            try
+            {
+                using (var db = new Model1())
+                {
+                    var phieuMuon = db.PHIEUMUONs.Include(pm => pm.CHITIETPHIEUMUONs).FirstOrDefault(pm => pm.MAPM == maPM);
+
+                    if (phieuMuon == null || phieuMuon.TRANGTHAI != "Chờ duyệt") { return; }
+
+                    // 1. Kiểm tra tồn kho và cập nhật
+                    foreach (var ct in phieuMuon.CHITIETPHIEUMUONs)
+                    {
+                        var sach = db.SACHes.Find(ct.MASACH);
+                        if (sach == null || sach.SOLUONGTON < ct.SOLUONG)
+                        {
+                            MessageBox.Show($"Lỗi: Sách '{sach.TENSACH}' không đủ tồn kho. Phiếu sẽ được chuyển sang trạng thái Từ chối.", "Lỗi Tồn Kho", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            phieuMuon.TRANGTHAI = "Từ chối";
+                            db.SaveChanges();
+                            LoadPendingLoans();
+                            ClearDetailPanel();
+                            return;
+                        }
+                        sach.SOLUONGTON -= ct.SOLUONG; // Giảm số lượng tồn
+                    }
+
+                    // 2. Cập nhật trạng thái và Thủ thư
+                    phieuMuon.TRANGTHAI = "Đang mượn";
+                    phieuMuon.MATT = CurrentMaTT;
+
+                    db.SaveChanges();
+                    MessageBox.Show($"Đã XÁC NHẬN Phiếu Mượn PM{maPM}. Trạng thái: Đang mượn.", "Thành công");
+                    LoadPendingLoans();
+                    ClearDetailPanel();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi xác nhận Phiếu Mượn: " + ex.Message, "Lỗi Database");
+            }
+        }
+
+        // --- Logic TỪ CHỐI YÊU CẦU ---
+        private void BtnTuChoiMuon_Click(object sender, EventArgs e)
+        {
+            if (lblRequestInfo.Tag == null || !int.TryParse(lblRequestInfo.Tag.ToString(), out int maPM))
+            {
+                MessageBox.Show("Vui lòng chọn một Phiếu Mượn để từ chối.", "Lỗi");
+                return;
+            }
+
+            try
+            {
+                using (var db = new Model1())
+                {
+                    var phieuMuon = db.PHIEUMUONs.Find(maPM);
+
+                    if (phieuMuon == null || phieuMuon.TRANGTHAI != "Chờ duyệt") { return; }
+
+                    phieuMuon.TRANGTHAI = "Từ chối";
+                    phieuMuon.MATT = CurrentMaTT;
+
+                    db.SaveChanges();
+                    MessageBox.Show($"Đã TỪ CHỐI Phiếu Mượn PM{maPM}.", "Thành công");
+                    LoadPendingLoans();
+                    ClearDetailPanel();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi từ chối Phiếu Mượn: " + ex.Message, "Lỗi Database");
+            }
+        }
+
+        // ViewModel cho Chi tiết sách trong phiếu chờ duyệt
+        public class ChiTietMuonViewModel
+        {
+            public int MaSach { get; set; }
+            public string TenSach { get; set; }
+            public int SoLuongMuon { get; set; }
+            public int SoLuongTon { get; set; }
+            public string HinhAnh { get; set; }
+            public decimal GiaMuon { get; set; }
+            public bool IsAvailable => SoLuongTon >= SoLuongMuon;
+        }
+
+        // ViewModel cho Phiếu Mượn chờ duyệt
+        public class PendingLoanViewModel
+        {
+            public int MaPhieuMuon { get; set; }
+            public string TenDocGia { get; set; }
+            public int MaSV { get; set; }
+            public DateTime NgayLap { get; set; }
+            public DateTime HanTra { get; set; }
         }
     }
 }

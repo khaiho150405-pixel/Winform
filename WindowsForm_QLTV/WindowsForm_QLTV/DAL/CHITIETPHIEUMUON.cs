@@ -19,7 +19,7 @@ namespace WindowsForm_QLTV
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int MASACH { get; set; }
 
-        public int? SOLUONG { get; set; }
+        public int SOLUONG { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime? HANTRA { get; set; }

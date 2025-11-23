@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Linq; // Thêm thư viện Linq
+using System.Data.Entity; // Thêm thư viện Entity để dùng Include()
 
 namespace WindowsForm_QLTV
 {
     public partial class FormQLMuonTra : Form
     {
+        private Model1 db = new Model1(); // Khởi tạo Entity Framework Context
+
         public FormQLMuonTra()
         {
             InitializeComponent();
@@ -20,20 +24,20 @@ namespace WindowsForm_QLTV
         private void FormQLMuonTra_Load(object sender, EventArgs e)
         {
             // Thiết lập Placeholder cho ô tìm kiếm
-            txtSearch.Text = "Nhập mã sách hoặc thông tin người mượn...";
+            txtSearch.Text = "Nhập tên người mượn..."; // Đã sửa
             txtSearch.ForeColor = Color.Gray;
 
             txtSearch.Enter += TxtSearch_Enter;
             txtSearch.Leave += TxtSearch_Leave;
 
-            // Mặc định load nội dung tìm kiếm (Giả lập)
-            DisplayDefaultContent();
+            // Mặc định load danh sách phiếu mượn đang hoạt động
+            LoadActiveLoanSlips();
         }
 
         // Xử lý sự kiện Placeholder
         private void TxtSearch_Enter(object sender, EventArgs e)
         {
-            if (txtSearch.Text == "Nhập mã sách hoặc thông tin người mượn...")
+            if (txtSearch.Text == "Nhập tên người mượn...") // Đã sửa
             {
                 txtSearch.Text = "";
                 txtSearch.ForeColor = Color.Black;
@@ -44,7 +48,7 @@ namespace WindowsForm_QLTV
         {
             if (string.IsNullOrWhiteSpace(txtSearch.Text))
             {
-                txtSearch.Text = "Nhập mã sách hoặc thông tin người mượn...";
+                txtSearch.Text = "Nhập tên người mượn..."; // Đã sửa
                 txtSearch.ForeColor = Color.Gray;
             }
         }
@@ -60,10 +64,12 @@ namespace WindowsForm_QLTV
                 // Xác định Form cần load
                 if (action == "MƯỢN SÁCH")
                 {
+                    // Giả định FormMuonSach đã được định nghĩa
                     targetFormType = typeof(FormMuonSach);
                 }
                 else if (action == "TRẢ SÁCH")
                 {
+                    // Giả định FormTraSach đã được định nghĩa
                     targetFormType = typeof(FormTraSach);
                 }
 
@@ -97,25 +103,79 @@ namespace WindowsForm_QLTV
         private void BtnTimKiem_Click(object sender, EventArgs e)
         {
             string keyword = txtSearch.Text.Trim();
-            if (keyword == "Nhập mã sách hoặc thông tin người mượn..." || string.IsNullOrWhiteSpace(keyword))
+            string defaultPlaceholder = "Nhập tên người mượn...";
+
+            if (keyword == defaultPlaceholder || string.IsNullOrWhiteSpace(keyword))
             {
-                MessageBox.Show("Vui lòng nhập từ khóa tìm kiếm.", "Thông báo");
+                MessageBox.Show("Vui lòng nhập Tên Người Mượn để tìm kiếm hoặc nhấn OK để xem tất cả phiếu đang hoạt động.", "Thông báo");
+                LoadActiveLoanSlips(); // Load lại toàn bộ danh sách đang hoạt động
                 return;
             }
 
-            MessageBox.Show($"Tìm kiếm thông tin sách/mượn trả với từ khóa: {keyword}", "Tìm kiếm");
-            // TODO: Hiển thị kết quả tìm kiếm trong pnlMainContent
+            // Gọi hàm tải dữ liệu với từ khóa tìm kiếm
+            LoadActiveLoanSlips(keyword);
         }
 
+        // Phương thức mới: Tải các phiếu mượn đang hoạt động
+        private void LoadActiveLoanSlips(string keyword = null)
+        {
+            try
+            {
+                // Các trạng thái được coi là "đang hoạt động" 
+                // (Chờ duyệt/Đang mượn/Quá hạn/Thiếu/Quá hạn và Thiếu)
+                var activeStatuses = new[] { "Chờ duyệt", "Đang mượn", "Quá hạn", "Thiếu", "Quá hạn và Thiếu" };
+
+                // 1. Xây dựng truy vấn cơ sở: Lấy các phiếu mượn có trạng thái đang hoạt động
+                var query = db.PHIEUMUONs
+                    .Include(pm => pm.SINHVIEN) // Bắt buộc phải Include để truy cập SINHVIEN.HOVATEN
+                    .Where(pm => activeStatuses.Contains(pm.TRANGTHAI));
+
+                // 2. Lọc theo từ khóa (Tên người mượn)
+                if (!string.IsNullOrWhiteSpace(keyword))
+                {
+                    // Chuyển từ khóa về chữ thường (hoặc không dấu nếu database hỗ trợ) 
+                    // để tìm kiếm không phân biệt chữ hoa/thường (LIKE N'%keyword%')
+                    string searchKeyword = keyword.ToLower();
+
+                    query = query.Where(pm => pm.SINHVIEN.HOVATEN.ToLower().Contains(searchKeyword));
+                }
+
+                // 3. Chọn các trường cần hiển thị và định dạng
+                var loanList = query
+                    .OrderBy(pm => pm.TRANGTHAI) // Sắp xếp theo trạng thái để ưu tiên Quá hạn
+                    .Select(pm => new
+                    {
+                        Mã_Phiếu = pm.MAPM,
+                        Tên_Sinh_Viên = pm.SINHVIEN.HOVATEN,
+                        Ngày_Mượn = pm.NGAYLAPPHIEUMUON,
+                        Hạn_Trả_Gốc = pm.HANTRA,
+                        Trạng_Thái = pm.TRANGTHAI,
+                        Số_lần_GH = pm.SOLANGIAHAN
+                    })
+                    .ToList();
+
+                // 4. Gán dữ liệu vào DataGridView
+                pnlMainContent.Controls.Clear(); // Xóa control cũ (Label Placeholder)
+                pnlMainContent.Controls.Add(dgvActiveLoans); // Thêm DataGridView đã được định nghĩa trong Designer
+                dgvActiveLoans.DataSource = loanList;
+                dgvActiveLoans.Dock = DockStyle.Fill;
+                dgvActiveLoans.BringToFront();
+
+                if (!string.IsNullOrWhiteSpace(keyword) && loanList.Count == 0)
+                {
+                    MessageBox.Show($"Không tìm thấy phiếu mượn đang hoạt động nào cho tên '{keyword}'.", "Thông báo");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi tải dữ liệu phiếu mượn: " + ex.Message, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Sửa hàm này để gọi LoadActiveLoanSlips() mặc định
         private void DisplayDefaultContent()
         {
-            pnlMainContent.Controls.Clear();
-            Label lbl = new Label();
-            lbl.Text = "Kết quả tìm kiếm sẽ hiển thị tại đây...";
-            lbl.Font = new Font("Segoe UI", 12F);
-            lbl.AutoSize = true;
-            lbl.Location = new Point(20, 20);
-            pnlMainContent.Controls.Add(lbl);
+            LoadActiveLoanSlips();
         }
     }
 }

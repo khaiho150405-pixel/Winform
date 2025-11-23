@@ -2,8 +2,15 @@
 {
     partial class FormQLMuonTra
     {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -15,6 +22,10 @@
 
         #region Windows Form Designer generated code
 
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
         private void InitializeComponent()
         {
             this.pnlBackground = new System.Windows.Forms.Panel();
@@ -23,6 +34,9 @@
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.lblSearchTitle = new System.Windows.Forms.Label();
             this.pnlMainContent = new System.Windows.Forms.Panel();
+            // KHAI BÁO THÊM DATAGRIDVIEW
+            this.dgvActiveLoans = new System.Windows.Forms.DataGridView();
+            // KẾT THÚC KHAI BÁO THÊM DATAGRIDVIEW
             this.pnlDashboard = new System.Windows.Forms.Panel();
             this.pnlTraSach = new System.Windows.Forms.Panel();
             this.btnTraSach = new System.Windows.Forms.Button();
@@ -32,6 +46,8 @@
             this.lblFormTitle = new System.Windows.Forms.Label();
             this.pnlBackground.SuspendLayout();
             this.pnlSearchArea.SuspendLayout();
+            this.pnlMainContent.SuspendLayout(); // Thêm dòng này để DataGridView là con trực tiếp
+            ((System.ComponentModel.ISupportInitialize)(this.dgvActiveLoans)).BeginInit(); // Khởi tạo DataGridView
             this.pnlDashboard.SuspendLayout();
             this.pnlTraSach.SuspendLayout();
             this.pnlMuonSach.SuspendLayout();
@@ -93,7 +109,7 @@
             this.lblSearchTitle.Name = "lblSearchTitle";
             this.lblSearchTitle.Size = new System.Drawing.Size(306, 28);
             this.lblSearchTitle.TabIndex = 0;
-            this.lblSearchTitle.Text = "TÌM KIẾM THÔNG TIN SÁCH";
+            this.lblSearchTitle.Text = "TÌM KIẾM THEO TÊN NGƯỜI MƯỢN"; // ĐÃ SỬA
             // 
             // pnlMainContent
             // 
@@ -101,11 +117,30 @@
             | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlMainContent.BackColor = System.Drawing.Color.White;
+            this.pnlMainContent.Controls.Add(this.dgvActiveLoans); // THÊM DATAGRIDVIEW
             this.pnlMainContent.Location = new System.Drawing.Point(350, 130);
             this.pnlMainContent.Name = "pnlMainContent";
             this.pnlMainContent.Size = new System.Drawing.Size(640, 560);
             this.pnlMainContent.TabIndex = 3;
             // 
+            // dgvActiveLoans
+            //
+            this.dgvActiveLoans.AllowUserToAddRows = false;
+            this.dgvActiveLoans.AllowUserToDeleteRows = false;
+            this.dgvActiveLoans.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvActiveLoans.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvActiveLoans.BackgroundColor = System.Drawing.Color.White;
+            this.dgvActiveLoans.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvActiveLoans.Location = new System.Drawing.Point(0, 0); // Kéo DataGridView ra sát viền panel
+            this.dgvActiveLoans.Name = "dgvActiveLoans";
+            this.dgvActiveLoans.ReadOnly = true;
+            this.dgvActiveLoans.RowHeadersWidth = 51;
+            this.dgvActiveLoans.RowTemplate.Height = 24;
+            this.dgvActiveLoans.Size = new System.Drawing.Size(640, 560); // Đặt kích thước bằng Panel
+            this.dgvActiveLoans.TabIndex = 0;
+            //
             // pnlDashboard
             // 
             this.pnlDashboard.Controls.Add(this.pnlTraSach);
@@ -196,6 +231,8 @@
             this.pnlBackground.ResumeLayout(false);
             this.pnlSearchArea.ResumeLayout(false);
             this.pnlSearchArea.PerformLayout();
+            this.pnlMainContent.ResumeLayout(false); // Sửa: dgv không có Autoscroll, nên không cần .PerformLayout
+            ((System.ComponentModel.ISupportInitialize)(this.dgvActiveLoans)).EndInit(); // Kết thúc DataGridView
             this.pnlDashboard.ResumeLayout(false);
             this.pnlTraSach.ResumeLayout(false);
             this.pnlMuonSach.ResumeLayout(false);
@@ -220,5 +257,7 @@
         private System.Windows.Forms.Label lblSearchTitle;
         private System.Windows.Forms.TextBox txtSearch;
         private System.Windows.Forms.Button btnTimKiem;
+        // KHAI BÁO THÊM DATAGRIDVIEW
+        private System.Windows.Forms.DataGridView dgvActiveLoans;
     }
 }

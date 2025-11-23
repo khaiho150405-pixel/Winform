@@ -3,6 +3,8 @@
     partial class MuonTra
     {
         private System.ComponentModel.IContainer components = null;
+        private System.Windows.Forms.Button btnGuiYeuCauMuon;
+        private System.Windows.Forms.Button btnGuiYeuCauTra;
 
         protected override void Dispose(bool disposing)
         {
@@ -19,25 +21,24 @@
         {
             this.pnlBackground = new System.Windows.Forms.Panel();
             this.pnlGridContainer = new System.Windows.Forms.Panel();
-            this.dgvSachDangMuon = new System.Windows.Forms.DataGridView();
-            this.pnlSearch = new System.Windows.Forms.Panel();
-            this.btnTimKiem = new System.Windows.Forms.Button();
-            this.txtTimKiem = new System.Windows.Forms.TextBox();
-            this.lblTimKiem = new System.Windows.Forms.Label();
-            this.lblFormTitle = new System.Windows.Forms.Label(); // Giữ lại tiêu đề Form
+            this.dgvLoanHistory = new System.Windows.Forms.DataGridView();
+            this.pnlActions = new System.Windows.Forms.Panel();
+            this.btnGuiYeuCauTra = new System.Windows.Forms.Button();
+            this.btnGuiYeuCauMuon = new System.Windows.Forms.Button();
+            this.lblFormTitle = new System.Windows.Forms.Label();
 
             this.pnlBackground.SuspendLayout();
             this.pnlGridContainer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvSachDangMuon)).BeginInit();
-            this.pnlSearch.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvLoanHistory)).BeginInit();
+            this.pnlActions.SuspendLayout();
             this.SuspendLayout();
 
             // 
-            // pnlBackground (Dock.Fill)
+            // pnlBackground
             // 
             this.pnlBackground.BackColor = System.Drawing.Color.White;
             this.pnlBackground.Controls.Add(this.pnlGridContainer);
-            this.pnlBackground.Controls.Add(this.pnlSearch);
+            this.pnlBackground.Controls.Add(this.pnlActions);
             this.pnlBackground.Controls.Add(this.lblFormTitle);
             this.pnlBackground.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlBackground.Location = new System.Drawing.Point(0, 0);
@@ -46,7 +47,7 @@
             this.pnlBackground.TabIndex = 0;
 
             // 
-            // lblFormTitle (Tiêu đề Form)
+            // lblFormTitle
             // 
             this.lblFormTitle.AutoSize = true;
             this.lblFormTitle.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -55,56 +56,49 @@
             this.lblFormTitle.Name = "lblFormTitle";
             this.lblFormTitle.Size = new System.Drawing.Size(400, 41);
             this.lblFormTitle.TabIndex = 0;
-            this.lblFormTitle.Text = "SÁCH ĐANG ĐƯỢC MƯỢN";
-
+            this.lblFormTitle.Text = "LỊCH SỬ MƯỢN/TRẢ CỦA TÔI";
 
             // 
-            // pnlSearch (Thanh Tìm kiếm)
+            // pnlActions (Chứa các nút chức năng)
             // 
-            this.pnlSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.pnlActions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlSearch.Controls.Add(this.btnTimKiem);
-            this.pnlSearch.Controls.Add(this.txtTimKiem);
-            this.pnlSearch.Controls.Add(this.lblTimKiem);
-            this.pnlSearch.Location = new System.Drawing.Point(20, 80);
-            this.pnlSearch.Name = "pnlSearch";
-            this.pnlSearch.Size = new System.Drawing.Size(960, 50);
-            this.pnlSearch.TabIndex = 1;
+            this.pnlActions.Controls.Add(this.btnGuiYeuCauTra);
+            this.pnlActions.Controls.Add(this.btnGuiYeuCauMuon);
+            this.pnlActions.Location = new System.Drawing.Point(20, 80);
+            this.pnlActions.Name = "pnlActions";
+            this.pnlActions.Size = new System.Drawing.Size(960, 50);
+            this.pnlActions.TabIndex = 1;
 
             // 
-            // lblTimKiem
+            // btnGuiYeuCauMuon (Nút Mượn)
             // 
-            this.lblTimKiem.AutoSize = true;
-            this.lblTimKiem.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.lblTimKiem.Location = new System.Drawing.Point(10, 15);
-            this.lblTimKiem.Name = "lblTimKiem";
-            this.lblTimKiem.Size = new System.Drawing.Size(91, 23);
-            this.lblTimKiem.TabIndex = 0;
-            this.lblTimKiem.Text = "Tên Sách:";
+            this.btnGuiYeuCauMuon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(174)))), ((int)(((byte)(96))))); // XANH LÁ
+            this.btnGuiYeuCauMuon.FlatAppearance.BorderSize = 0;
+            this.btnGuiYeuCauMuon.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnGuiYeuCauMuon.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnGuiYeuCauMuon.ForeColor = System.Drawing.Color.White;
+            this.btnGuiYeuCauMuon.Location = new System.Drawing.Point(10, 8);
+            this.btnGuiYeuCauMuon.Name = "btnGuiYeuCauMuon";
+            this.btnGuiYeuCauMuon.Size = new System.Drawing.Size(220, 35);
+            this.btnGuiYeuCauMuon.TabIndex = 0;
+            this.btnGuiYeuCauMuon.Text = "➕ GỬI YÊU CẦU MƯỢN MỚI";
+            this.btnGuiYeuCauMuon.UseVisualStyleBackColor = false;
 
             // 
-            // txtTimKiem
+            // btnGuiYeuCauTra (Nút Trả)
             // 
-            this.txtTimKiem.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtTimKiem.Location = new System.Drawing.Point(110, 12);
-            this.txtTimKiem.Name = "txtTimKiem";
-            this.txtTimKiem.Size = new System.Drawing.Size(280, 30);
-            this.txtTimKiem.TabIndex = 1;
-
-            // 
-            // btnTimKiem
-            // 
-            this.btnTimKiem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.btnTimKiem.FlatAppearance.BorderSize = 0;
-            this.btnTimKiem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnTimKiem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.btnTimKiem.ForeColor = System.Drawing.Color.White;
-            this.btnTimKiem.Location = new System.Drawing.Point(400, 11);
-            this.btnTimKiem.Name = "btnTimKiem";
-            this.btnTimKiem.Size = new System.Drawing.Size(100, 32);
-            this.btnTimKiem.TabIndex = 2;
-            this.btnTimKiem.Text = "Tìm Kiếm";
-            this.btnTimKiem.UseVisualStyleBackColor = false;
+            this.btnGuiYeuCauTra.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(126)))), ((int)(((byte)(34))))); // CAM
+            this.btnGuiYeuCauTra.FlatAppearance.BorderSize = 0;
+            this.btnGuiYeuCauTra.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnGuiYeuCauTra.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnGuiYeuCauTra.ForeColor = System.Drawing.Color.White;
+            this.btnGuiYeuCauTra.Location = new System.Drawing.Point(240, 8);
+            this.btnGuiYeuCauTra.Name = "btnGuiYeuCauTra";
+            this.btnGuiYeuCauTra.Size = new System.Drawing.Size(200, 35);
+            this.btnGuiYeuCauTra.TabIndex = 1;
+            this.btnGuiYeuCauTra.Text = "↩️ GỬI YÊU CẦU TRẢ SÁCH";
+            this.btnGuiYeuCauTra.UseVisualStyleBackColor = false;
 
             // 
             // pnlGridContainer (Chứa DataGridView)
@@ -112,24 +106,24 @@
             this.pnlGridContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlGridContainer.Controls.Add(this.dgvSachDangMuon);
+            this.pnlGridContainer.Controls.Add(this.dgvLoanHistory);
             this.pnlGridContainer.Location = new System.Drawing.Point(20, 140);
             this.pnlGridContainer.Name = "pnlGridContainer";
-            this.pnlGridContainer.Size = new System.Drawing.Size(960, 500);
+            this.pnlGridContainer.Size = new System.Drawing.Size(960, 480);
             this.pnlGridContainer.TabIndex = 2;
 
             // 
-            // dgvSachDangMuon
+            // dgvLoanHistory
             // 
-            this.dgvSachDangMuon.BackgroundColor = System.Drawing.Color.White;
-            this.dgvSachDangMuon.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvSachDangMuon.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvSachDangMuon.Location = new System.Drawing.Point(0, 0);
-            this.dgvSachDangMuon.Name = "dgvSachDangMuon";
-            this.dgvSachDangMuon.RowHeadersWidth = 51;
-            this.dgvSachDangMuon.RowTemplate.Height = 24;
-            this.dgvSachDangMuon.Size = new System.Drawing.Size(960, 500);
-            this.dgvSachDangMuon.TabIndex = 0;
+            this.dgvLoanHistory.BackgroundColor = System.Drawing.Color.White;
+            this.dgvLoanHistory.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvLoanHistory.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvLoanHistory.Location = new System.Drawing.Point(0, 0);
+            this.dgvLoanHistory.Name = "dgvLoanHistory";
+            this.dgvLoanHistory.RowHeadersWidth = 51;
+            this.dgvLoanHistory.RowTemplate.Height = 24;
+            this.dgvLoanHistory.Size = new System.Drawing.Size(960, 480);
+            this.dgvLoanHistory.TabIndex = 0;
 
             // 
             // MuonTra (Cấu hình Form)
@@ -140,14 +134,13 @@
             this.Controls.Add(this.pnlBackground);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "MuonTra";
-            this.Text = "Xử lý Trả Sách";
+            this.Text = "Lịch sử Mượn/Trả";
 
             this.pnlBackground.ResumeLayout(false);
             this.pnlBackground.PerformLayout();
             this.pnlGridContainer.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dgvSachDangMuon)).EndInit();
-            this.pnlSearch.ResumeLayout(false);
-            this.pnlSearch.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvLoanHistory)).EndInit();
+            this.pnlActions.ResumeLayout(false);
             this.ResumeLayout(false);
         }
 
@@ -155,11 +148,8 @@
 
         private System.Windows.Forms.Panel pnlBackground;
         private System.Windows.Forms.Label lblFormTitle;
-        private System.Windows.Forms.Panel pnlSearch;
-        private System.Windows.Forms.TextBox txtTimKiem;
-        private System.Windows.Forms.Label lblTimKiem;
-        private System.Windows.Forms.Button btnTimKiem;
+        private System.Windows.Forms.Panel pnlActions;
         private System.Windows.Forms.Panel pnlGridContainer;
-        private System.Windows.Forms.DataGridView dgvSachDangMuon;
+        private System.Windows.Forms.DataGridView dgvLoanHistory;
     }
 }

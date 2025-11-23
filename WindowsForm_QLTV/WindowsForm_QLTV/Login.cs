@@ -1,8 +1,11 @@
 ﻿using System;
-using System.Data.Entity;  // Dùng cho Entity Framework
+using System.Data.Entity;
 using System.Drawing;
-using System.Linq;         // Dùng cho LINQ
+using System.Linq;
 using System.Windows.Forms;
+// ĐÃ BỎ: using System.Security.Cryptography; 
+// ĐÃ BỎ: using System.Text; 
+using System.Collections.Generic; // Cần thiết nếu dùng List/IEnumerable
 
 namespace WindowsForm_QLTV
 {
@@ -12,10 +15,6 @@ namespace WindowsForm_QLTV
         public Login()
         {
             InitializeComponent();
-
-            // Gán sự kiện cho nút Đăng Ký
-            this.btnDangnhap.Click += new System.EventHandler(this.btnDangnhap_Click);
-            this.btnDangky.Click += new System.EventHandler(this.btnDangky_Click);
         }
 
         private void btnDangnhap_Click(object sender, EventArgs e)
@@ -35,14 +34,14 @@ namespace WindowsForm_QLTV
 
             if (userRole != null)
             {
-                // Đăng nhập thành công, mở MainForm
+                // Đăng nhập thành công
                 MessageBox.Show($"Đăng nhập thành công! Quyền: {userRole}.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // Mở MainForm
+                // **SỬA LỖI LUỒNG:** Mở MainForm, Ẩn Login Form và đóng nó
                 MainForm mainForm = new MainForm(username, userRole);
                 this.Hide();
-                mainForm.ShowDialog();
-                this.Show();
+                mainForm.Show();
+                // Không gọi Close() ở đây, để hệ thống tự đóng khi MainForm đóng hoặc gọi Application.Exit()
             }
             else
             {
@@ -67,9 +66,8 @@ namespace WindowsForm_QLTV
             }
         }
 
-
         /// <summary>
-        /// Xác thực người dùng và lấy Vai trò (TENQUYEN) từ CSDL bằng Entity Framework.
+        /// Xác thực người dùng và lấy Vai trò (TENQUYEN) từ CSDL bằng Entity Framework (SỬ DỤNG MẬT KHẨU PLAIN TEXT).
         /// </summary>
         private string ValidateUserAndGetRole(string username, string password)
         {
@@ -79,19 +77,16 @@ namespace WindowsForm_QLTV
             {
                 using (var db = new Model1()) // SỬ DỤNG ENTITY FRAMEWORK CONTEXT
                 {
-                    // Sử dụng LINQ để truy vấn (tương đương JOIN trong SQL)
                     var account = db.TAIKHOANs
-                                    .AsNoTracking() // Tăng hiệu suất
-                                                    // Include PHANQUYEN để truy cập TENQUYEN
-                                    .Include(tk => tk.PHANQUYEN)
-                                    .SingleOrDefault(tk =>
-                                        tk.TENDANGNHAP == username &&
-                                        tk.MATKHAU == password &&
-                                        tk.TRANGTHAI == "Hoạt động");
+                                     .AsNoTracking()
+                                     .Include(tk => tk.PHANQUYEN)
+                                     .SingleOrDefault(tk =>
+                                         tk.TENDANGNHAP == username &&
+                                         tk.MATKHAU == password && // SO SÁNH VỚI MẬT KHẨU PLAIN TEXT
+                                         tk.TRANGTHAI == "Hoạt động");
 
                     if (account != null)
                     {
-                        // Lấy TENQUYEN từ Navigation Property
                         role = account.PHANQUYEN.TENQUYEN;
                     }
                 }
@@ -105,7 +100,6 @@ namespace WindowsForm_QLTV
             return role;
         }
 
-
         private void btnThoat_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -113,6 +107,7 @@ namespace WindowsForm_QLTV
 
         private void Login_FormClosing(object sender, FormClosingEventArgs e)
         {
+            // Giữ lại xác nhận thoát khi người dùng đóng Form bằng nút X
             DialogResult result = MessageBox.Show(
                 "Bạn có chắc chắn muốn thoát khỏi chương trình?",
                 "Xác Nhận Thoát",

@@ -22,3 +22,4 @@ C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bi
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsF.020193DB.Up2Date
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.TrangChu.resources
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.EditSach.resources
+C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.FormMuonSach.resources

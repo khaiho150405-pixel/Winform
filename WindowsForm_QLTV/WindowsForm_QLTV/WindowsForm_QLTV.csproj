@@ -87,6 +87,18 @@
     <Compile Include="EditSach.Designer.cs">
       <DependentUpon>EditSach.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormGuiYeuCauMuon.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormGuiYeuCauMuon.Designer.cs">
+      <DependentUpon>FormGuiYeuCauMuon.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormGuiYeuCauTra.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormGuiYeuCauTra.Designer.cs">
+      <DependentUpon>FormGuiYeuCauTra.cs</DependentUpon>
+    </Compile>
     <Compile Include="Login.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -175,6 +187,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MuonSach.resx">
+      <DependentUpon>MuonSach.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MuonTra.resx">
       <DependentUpon>MuonTra.cs</DependentUpon>

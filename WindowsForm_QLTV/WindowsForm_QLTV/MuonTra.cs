@@ -9,79 +9,51 @@ namespace WindowsForm_QLTV
 {
     public partial class MuonTra : Form
     {
-        // Constructor và Event Handlers
+        // GIẢ ĐỊNH: Lấy Mã SV từ Session Manager
+        private int _currentMaSV = SessionManager.CurrentMaSV;
+
         public MuonTra()
         {
             InitializeComponent();
-            this.Load += FormTraSachCoNut_Load;
+            this.Load += MuonTra_Load;
 
-            // Gán lại sự kiện
-            btnTimKiem.Click += BtnTimKiem_Click;
-            dgvSachDangMuon.CellContentClick += DgvSachDangMuon_CellContentClick;
-
-            // Cải tiến UI: Thêm sự kiện Enter/Leave cho TextBox (Placeholder)
-            txtTimKiem.Enter += TxtTimKiem_Enter;
-            txtTimKiem.Leave += TxtTimKiem_Leave;
+            // Gắn sự kiện cho các nút hành động
+            btnGuiYeuCauMuon.Click += BtnGuiYeuCauMuon_Click;
+            btnGuiYeuCauTra.Click += BtnGuiYeuCauTra_Click;
 
             SetupDataGridView();
         }
 
-        private void FormTraSachCoNut_Load(object sender, EventArgs e)
+        private void MuonTra_Load(object sender, EventArgs e)
         {
-            // Thiết lập Placeholder mặc định khi Load
-            txtTimKiem.Text = "Nhập tên sách cần tìm...";
-            txtTimKiem.ForeColor = Color.Gray;
-
-            LoadDataSachDangMuon();
-        }
-
-        // Cải tiến UI/UX: Placeholder cho TextBox
-        private void TxtTimKiem_Enter(object sender, EventArgs e)
-        {
-            if (txtTimKiem.Text == "Nhập tên sách cần tìm...")
+            if (_currentMaSV == -1)
             {
-                txtTimKiem.Text = "";
-                txtTimKiem.ForeColor = Color.Black;
+                MessageBox.Show("Không thể xác định thông tin Độc Giả. Vui lòng đăng nhập lại.", "Lỗi Session", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
-        }
-
-        private void TxtTimKiem_Leave(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtTimKiem.Text))
-            {
-                txtTimKiem.Text = "Nhập tên sách cần tìm...";
-                txtTimKiem.ForeColor = Color.Gray;
-            }
+            LoadLoanHistoryForUser();
         }
 
         private void SetupDataGridView()
         {
-            dgvSachDangMuon.AutoGenerateColumns = false;
-            dgvSachDangMuon.Columns.Clear();
+            dgvLoanHistory.AutoGenerateColumns = false;
+            dgvLoanHistory.Columns.Clear();
 
-            // 1. Cột dữ liệu
-            dgvSachDangMuon.Columns.Add(CreateTextColumn("MaPhieuMuon", "Mã PM", 80));
-            dgvSachDangMuon.Columns.Add(CreateTextColumn("TenDocGia", "Độc Giả", 150));
-            dgvSachDangMuon.Columns.Add(CreateTextColumn("TenSach", "Tên Sách", 250));
-            dgvSachDangMuon.Columns.Add(CreateTextColumn("SoLuong", "SL", 50));
-            dgvSachDangMuon.Columns.Add(CreateTextColumn("NgayMuon", "Ngày Mượn", 100));
-            dgvSachDangMuon.Columns.Add(CreateTextColumn("HenTra", "Hẹn Trả", 100));
+            // Cấu trúc DataGridView cho LỊCH SỬ MƯỢN
+            dgvLoanHistory.Columns.Add(CreateTextColumn("MaPhieuMuon", "Mã PM", 80));
+            dgvLoanHistory.Columns.Add(CreateTextColumn("TenSach", "Tên Sách", 250));
+            dgvLoanHistory.Columns.Add(CreateTextColumn("SoLuong", "SL", 50));
+            dgvLoanHistory.Columns.Add(CreateTextColumn("NgayMuon", "Ngày Mượn", 100));
+            dgvLoanHistory.Columns.Add(CreateTextColumn("HanTra", "Hẹn Trả", 100));
+            dgvLoanHistory.Columns.Add(CreateTextColumn("TrangThai", "Trạng Thái", 120));
+            dgvLoanHistory.Columns.Add(CreateTextColumn("NgayTraThucTe", "Ngày Trả", 100));
 
-            // 2. Cột Nút "Trả Sách"
-            DataGridViewButtonColumn btnCol = new DataGridViewButtonColumn();
-            btnCol.HeaderText = "Thao tác";
-            btnCol.Text = "Trả Sách";
-            btnCol.Name = "btnTraSach";
-            btnCol.UseColumnTextForButtonValue = true;
-            btnCol.Width = 100;
-            dgvSachDangMuon.Columns.Add(btnCol);
-
-            // Cải tiến UI: Styling cho DataGridView
-            dgvSachDangMuon.AllowUserToAddRows = false;
-            dgvSachDangMuon.ReadOnly = true;
-            dgvSachDangMuon.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvSachDangMuon.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvSachDangMuon.AllowUserToResizeRows = false;
+            // Cải tiến UI: Styling
+            dgvLoanHistory.AllowUserToAddRows = false;
+            dgvLoanHistory.ReadOnly = true;
+            dgvLoanHistory.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvLoanHistory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvLoanHistory.AllowUserToResizeRows = false;
         }
 
         private DataGridViewTextBoxColumn CreateTextColumn(string name, string header, int width)
@@ -96,188 +68,108 @@ namespace WindowsForm_QLTV
             };
         }
 
-        // ******************************************************
-        // LOGIC TẢI DỮ LIỆU SỬ DỤNG ENTITY FRAMEWORK
-        // ******************************************************
-        private void LoadDataSachDangMuon(string searchKeyword = null)
-        {
-            try
-            {
-                using (var db = new Model1()) // SỬ DỤNG ENTITY FRAMEWORK
-                {
-                    // Truy vấn phức hợp:
-                    // 1. Lấy Chi tiết Phiếu Mượn đang ở trạng thái 'Đang mượn'
-                    var query = db.CHITIETPHIEUMUONs
-                                  .AsNoTracking()
-                                  .Where(ctpm => ctpm.PHIEUMUON.TRANGTHAI == "Đang mượn")
-                                  // Map vào ViewModel
-                                  .Select(ctpm => new MuonTraItem
-                                  {
-                                      MaPhieuMuon = ctpm.MAPM,
-                                      MaSach = ctpm.MASACH,
-                                      TenDocGia = ctpm.PHIEUMUON.SINHVIEN.HOVATEN,
-                                      TenSach = ctpm.SACH.TENSACH,
-                                      NgayMuon = ctpm.PHIEUMUON.NGAYLAPPHIEUMUON,
-                                      HenTra = ctpm.PHIEUMUON.HANTRA,
-                                      SoLuong = (int)ctpm.SOLUONG
-                                  });
-
-                    // 2. Áp dụng bộ lọc Tên Sách
-                    if (!string.IsNullOrWhiteSpace(searchKeyword))
-                    {
-                        query = query.Where(item => item.TenSach.Contains(searchKeyword));
-                    }
-
-                    var resultList = query.ToList();
-
-                    dgvSachDangMuon.DataSource = resultList;
-
-                    // Cải tiến UI: Đánh dấu các sách quá hạn
-                    HighlightOverdueBooks();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("LỖI TẢI DỮ LIỆU: " + ex.Message, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                dgvSachDangMuon.DataSource = null;
-            }
-        }
-
-        // Cải tiến UI: Đánh dấu dòng quá hạn
-        private void HighlightOverdueBooks()
-        {
-            foreach (DataGridViewRow row in dgvSachDangMuon.Rows)
-            {
-                // Lấy giá trị cột Hẹn Trả (HenTra)
-                if (row.Cells["HenTra"].Value != null && DateTime.TryParse(row.Cells["HenTra"].Value.ToString(), out DateTime henTra))
-                {
-                    if (henTra < DateTime.Today)
-                    {
-                        // Tô màu cảnh báo (Đỏ nhạt)
-                        row.DefaultCellStyle.BackColor = Color.FromArgb(255, 230, 230);
-                        row.DefaultCellStyle.ForeColor = Color.DarkRed;
-                        row.Cells["HenTra"].ToolTipText = "Đã quá hạn trả!";
-                    }
-                }
-            }
-        }
-
-        // --- Event Handlers ---
-
-        private void BtnTimKiem_Click(object sender, EventArgs e)
-        {
-            string keyword = txtTimKiem.Text.Trim();
-
-            // Xử lý placeholder
-            if (keyword == "Nhập tên sách cần tìm...")
-            {
-                keyword = null;
-            }
-
-            LoadDataSachDangMuon(keyword);
-        }
-
-        private void DgvSachDangMuon_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            // Kiểm tra có phải là cột nút "Trả Sách" được click không
-            if (dgvSachDangMuon.Columns[e.ColumnIndex].Name == "btnTraSach" && e.RowIndex >= 0)
-            {
-                DataGridViewRow row = dgvSachDangMuon.Rows[e.RowIndex];
-
-                // Lấy MaPhieuMuon và MaSach
-                int maPhieuMuon = (int)row.Cells["MaPhieuMuon"].Value;
-                int maSach = (int)row.Cells["MaSach"].Value;
-                string tenSach = row.Cells["TenSach"].Value.ToString();
-
-                int maThuThu = 1; // GIẢ ĐỊNH MA THỦ THƯ ĐANG ĐĂNG NHẬP LÀ 1
-
-                if (MessageBox.Show($"Xác nhận TRẢ SÁCH '{tenSach}' (Mã PM: {maPhieuMuon})?", "Xác Nhận Trả", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-                    if (ProcessBookReturn(maPhieuMuon, maSach, maThuThu))
-                    {
-                        MessageBox.Show($"Đã xử lý yêu cầu trả sách cho PM: {maPhieuMuon}. Vui lòng kiểm tra lại.", "Hoàn thành");
-                        LoadDataSachDangMuon(); // Tải lại dữ liệu sau khi xử lý
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Logic xử lý ghi nhận trả sách và cập nhật trạng thái phiếu mượn/sách.
-        /// </summary>
-        private bool ProcessBookReturn(int maPhieuMuon, int maSach, int maThuThu)
+        // LOGIC TẢI LỊCH SỬ CHO ĐỘC GIẢ
+        private void LoadLoanHistoryForUser()
         {
             try
             {
                 using (var db = new Model1())
                 {
-                    using (var transaction = db.Database.BeginTransaction())
-                    {
-                        // 1. Cập nhật PHIEUMUON (Đánh dấu phiếu là 'Đã trả')
-                        var phieuMuon = db.PHIEUMUONs.Find(maPhieuMuon);
-                        if (phieuMuon == null) return false;
+                    // Truy vấn tất cả các sách đã từng mượn (đang mượn, đã trả, quá hạn)
+                    var historyQuery = from pm in db.PHIEUMUONs
+                                       join ctpm in db.CHITIETPHIEUMUONs on pm.MAPM equals ctpm.MAPM
+                                       join sach in db.SACHes on ctpm.MASACH equals sach.MASACH
+                                       // Lấy ngày trả thực tế từ CHITIETPHIEUTRA (Left Join)
+                                       from pt in db.PHIEUTRAs.Where(p => p.MAPM == pm.MAPM).DefaultIfEmpty()
+                                       from ctpt in db.CHITIETPHIEUTRAs.Where(c => c.MAPT == pt.MAPT && c.MASACH == ctpm.MASACH).DefaultIfEmpty()
+                                       where pm.MASV == _currentMaSV
+                                       select new LoanHistoryItem
+                                       {
+                                           MaPhieuMuon = pm.MAPM,
+                                           TenSach = sach.TENSACH,
+                                           SoLuong = (int)ctpm.SOLUONG,
+                                           NgayMuon = pm.NGAYLAPPHIEUMUON,
+                                           HanTra = pm.HANTRA,
+                                           TrangThai = pm.TRANGTHAI,
+                                           NgayTraThucTe = (DateTime?)ctpt.NGAYTRA
+                                       };
 
-                        phieuMuon.TRANGTHAI = "Đã trả"; // Đánh dấu phiếu mượn đã hoàn thành
-                        db.Entry(phieuMuon).State = EntityState.Modified;
+                    var resultList = historyQuery.OrderByDescending(item => item.NgayMuon).ToList();
 
-                        // 2. Tạo PHIEUTRA
-                        var phieuTra = db.PHIEUTRAs.FirstOrDefault(pt => pt.MAPM == maPhieuMuon);
-                        if (phieuTra == null)
-                        {
-                            phieuTra = new PHIEUTRA
-                            {
-                                MAPM = maPhieuMuon,
-                                MATT = maThuThu,
-                                NGAYLAPPHIEUTRA = DateTime.Today,
-                                SONGAYQUAHAN = (phieuMuon.HANTRA < DateTime.Today) ? (DateTime.Today - phieuMuon.HANTRA).Days : 0,
-                                TONGTIENPHAT = 0 // Giữ 0 để tính toán sau (nếu cần)
-                            };
-                            db.PHIEUTRAs.Add(phieuTra);
-                            db.SaveChanges(); // Lưu để lấy MAPT
-                        }
-
-                        // 3. Tạo CHITIETPHIEUTRA (Giả định trả đủ 1 cuốn sách)
-                        var chiTietTra = new CHITIETPHIEUTRA
-                        {
-                            MAPT = phieuTra.MAPT,
-                            MASACH = maSach,
-                            SOLUONGTRA = 1,
-                            NGAYTRA = DateTime.Today
-                        };
-                        db.CHITIETPHIEUTRAs.Add(chiTietTra);
-
-                        // 4. Cập nhật Số lượng tồn của SÁCH
-                        var sach = db.SACHes.Find(maSach);
-                        if (sach != null)
-                        {
-                            sach.SOLUONGTON += 1;
-                            sach.TRANGTHAI = "Có sẵn";
-                            db.Entry(sach).State = EntityState.Modified;
-                        }
-
-                        db.SaveChanges();
-                        transaction.Commit();
-                        return true;
-                    }
+                    dgvLoanHistory.DataSource = resultList;
+                    HighlightOverdueBooks();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("LỖI XỬ LÝ TRẢ SÁCH: " + ex.Message, "Lỗi Hệ Thống", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
+                MessageBox.Show("LỖI TẢI LỊCH SỬ MƯỢN/TRẢ: " + ex.Message, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                dgvLoanHistory.DataSource = null;
             }
         }
 
-        public class MuonTraItem
+        // Cải tiến UI: Đánh dấu dòng quá hạn (áp dụng cho cột Trạng Thái)
+        private void HighlightOverdueBooks()
         {
-            // Các trường DataPropertyName trong SetupDataGridView phải khớp với các tên này
+            foreach (DataGridViewRow row in dgvLoanHistory.Rows)
+            {
+                if (row.Cells["TrangThai"].Value != null && row.Cells["TrangThai"].Value.ToString().Contains("Quá hạn"))
+                {
+                    // Tô màu cảnh báo (Đỏ nhạt)
+                    row.DefaultCellStyle.BackColor = Color.FromArgb(255, 230, 230);
+                    row.DefaultCellStyle.ForeColor = Color.DarkRed;
+                }
+            }
+        }
+
+        // --- Event Handlers Gửi Yêu Cầu ---
+
+        private void BtnGuiYeuCauMuon_Click(object sender, EventArgs e)
+        {
+            // Mở form mới để gửi yêu cầu mượn
+            try
+            {
+                FormGuiYeuCauMuon formMuon = new FormGuiYeuCauMuon(_currentMaSV);
+                formMuon.ShowDialog();
+                LoadLoanHistoryForUser(); // Tải lại lịch sử sau khi đóng form
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi mở Form Yêu Cầu Mượn: " + ex.Message, "Lỗi Hệ Thống");
+            }
+        }
+
+        private void BtnGuiYeuCauTra_Click(object sender, EventArgs e)
+        {
+            // Mở form mới để gửi yêu cầu trả
+            try
+            {
+                FormGuiYeuCauTra formTra = new FormGuiYeuCauTra(_currentMaSV);
+                formTra.ShowDialog();
+                LoadLoanHistoryForUser(); // Tải lại lịch sử sau khi đóng form
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi mở Form Yêu Cầu Trả: " + ex.Message, "Lỗi Hệ Thống");
+            }
+        }
+
+        // --- ViewModel cho Lịch sử Mượn/Trả ---
+        public class LoanHistoryItem
+        {
             public int MaPhieuMuon { get; set; }
-            public int MaSach { get; set; }
-            public string TenDocGia { get; set; }
             public string TenSach { get; set; }
-            public DateTime NgayMuon { get; set; }
-            public DateTime HenTra { get; set; }
             public int SoLuong { get; set; }
+            public DateTime NgayMuon { get; set; }
+            public DateTime HanTra { get; set; }
+            public string TrangThai { get; set; }
+            public DateTime? NgayTraThucTe { get; set; }
+        }
+
+        // GIẢ ĐỊNH: Class SessionManager (Cần tồn tại trong dự án)
+        public static class SessionManager
+        {
+            // Sử dụng MaSV = 1 cho testing nếu chưa có hệ thống đăng nhập
+            public static int CurrentMaSV { get; set; } = 1;
         }
     }
 }

@@ -29,7 +29,7 @@ namespace WindowsForm_QLTV
         public string GIOITINH { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? NGAYSINH { get; set; }
+        public DateTime NGAYSINH { get; set; }
 
         [StringLength(15)]
         public string SDT { get; set; }

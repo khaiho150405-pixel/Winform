@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Data;
+using System.Collections.Generic; // Cần thiết cho List
 
 namespace WindowsForm_QLTV
 {
@@ -22,8 +23,8 @@ namespace WindowsForm_QLTV
             lblUserRoleHeader.Text = $"Vai trò: {role}";
             tsslUsername.Text = $"Đang đăng nhập: {username} | Quyền: {role}";
 
-            ApplyUserPermissions(role);
             AttachMenuEventHandlers();
+            ApplyUserPermissions(role); // Áp dụng phân quyền sau khi gán sự kiện
 
             // Tải nội dung mặc định (Trang chủ)
             ShowContentControl("Trang chủ");
@@ -34,14 +35,52 @@ namespace WindowsForm_QLTV
         {
             string normalizedRole = role.Trim().ToUpper();
 
-            bool isAdminOrThuThu = normalizedRole == "ADMIN" || normalizedRole == "THỦ THƯ";
+            // Mặc định: Ẩn tất cả các nút quản lý trừ Trang Chủ và Thông tin cá nhân
+            btnTrangChu.Visible = true;
+            btnThongTinCaNhan.Visible = true;
+            btnThoat.Visible = true;
 
-            btnTaiKhoan.Visible = isAdminOrThuThu;
+            btnTaiKhoan.Visible = false;
+            btnSach.Visible = false;
+            btnQLMuonTra.Visible = false;
+            btnMuonTra.Visible = false;
 
-            // Phân quyền cho hai nút Mượn Trả
-            bool canMuonTra = isAdminOrThuThu || normalizedRole == "ĐỘC GIẢ";
-            btnMuonTra.Visible = canMuonTra;   // Mượn trả sách (chức năng trực tiếp)
-            btnQLMuonTra.Visible = isAdminOrThuThu; // Quản lý mượn trả (dashboard)
+            // Các nút bị loại bỏ khỏi thiết kế nhưng vẫn tồn tại trong code logic
+            btnBaoCao.Visible = false;
+            btnTacGia.Visible = false;
+            btnNhaXuatBan.Visible = false;
+
+            switch (normalizedRole)
+            {
+                case "ADMIN":
+                    // ADMIN: Full quyền
+                    btnTaiKhoan.Visible = true;
+                    btnSach.Visible = true;
+                    btnQLMuonTra.Visible = true;
+                    btnMuonTra.Visible = true;
+                    break;
+
+                case "THỦ THƯ":
+                    // THỦ THƯ: Không có Quản lý Tài khoản, Quản lý Sách
+                    btnQLMuonTra.Visible = true;
+                    btnMuonTra.Visible = true;
+                    break;
+
+                case "THỦ KHO":
+                    // THỦ KHO: Chỉ có Quản lý Sách, không có Quản lý Tài khoản và QL Mượn Trả
+                    btnSach.Visible = true;
+                    btnMuonTra.Visible = true;
+                    break;
+
+                case "ĐỘC GIẢ":
+                    // ĐỘC GIẢ: Chỉ có Trang chủ, Thông tin cá nhân và Mượn trả sách
+                    btnMuonTra.Visible = true;
+                    break;
+
+                default:
+                    // Vai trò không xác định: Hầu hết đều ẩn, chỉ giữ lại các nút cơ bản
+                    break;
+            }
         }
 
         private void AttachMenuEventHandlers()
@@ -49,19 +88,19 @@ namespace WindowsForm_QLTV
             // Gán sự kiện Click cho các nút Sidebar
             btnTrangChu.Click += BtnItem_Click;
             btnSach.Click += BtnItem_Click;
-            btnQLMuonTra.Click += BtnItem_Click; // QUẢN LÝ CHUNG (Dashboard)
-            btnMuonTra.Click += BtnItem_Click;    // MƯỢN TRẢ SÁCH (Chức năng trực tiếp)
+            btnQLMuonTra.Click += BtnItem_Click;
+            btnMuonTra.Click += BtnItem_Click;
             btnTaiKhoan.Click += BtnItem_Click;
             btnThongTinCaNhan.Click += BtnItem_Click;
 
             // Nút Thoát
             btnThoat.Click += BtnThoat_Click;
 
-            // Đặt lại Text cho các Button
+            // Đặt lại Text cho các Button (Giữ nguyên)
             btnTaiKhoan.Text = " 🔑 Quản lý tài khoản";
             btnSach.Text = " 📖 Quản lý sách";
-            btnQLMuonTra.Text = " 📜 Quản lý mượn trả"; // Tên hiển thị QL chung
-            btnMuonTra.Text = " 📚 Mượn trả sách";    // Tên hiển thị chức năng phụ
+            btnQLMuonTra.Text = " 📜 Quản lý mượn trả";
+            btnMuonTra.Text = " 📚 Mượn trả sách";
             btnTrangChu.Text = " 🏠 Trang chủ";
             btnThongTinCaNhan.Text = " 👤 Thông tin cá nhân";
             btnThoat.Text = " 🚪 Thoát";
@@ -113,84 +152,51 @@ namespace WindowsForm_QLTV
         {
             pnlContent.Controls.Clear();
 
+            // Lấy thông tin người dùng từ StatusStrip để truyền vào các Form con
             string statusText = tsslUsername.Text;
             string username = statusText.Contains("Đang đăng nhập:") ? statusText.Split('|')[0].Replace("Đang đăng nhập:", "").Trim() : "N/A";
             string role = statusText.Contains("Quyền:") ? statusText.Split('|')[1].Replace("Quyền:", "").Trim() : "N/A";
 
-            Control newContent;
+            // KHỞI TẠO BIẾN CỤC BỘ VỚI GIÁ TRỊ MẶC ĐỊNH
+            Control newContent = new Label { Text = $"Chức năng '{controlName}' không xác định hoặc không khả dụng.", AutoSize = true, Location = new Point(20, 20) };
+            Type formType = null;
 
-            switch (controlName)
+            try
             {
-                case "Trang chủ":
-                    // GỌI FORM TRANG CHỦ MỚI
-                    try
-                    {
-                        newContent = new TrangChu();
-                    }
-                    catch (Exception ex)
-                    {
-                        newContent = new Label { Text = $"Lỗi: Không thể tải Form Trang Chủ. Chi tiết: {ex.Message}", AutoSize = true, ForeColor = Color.Red, Location = new Point(20, 20) };
-                    }
-                    break;
-                case "Quản lý sách":
-                    try
-                    {
-                        // Giả định FormQLSach đã tồn tại
-                        newContent = new FormQLSach();
-                    }
-                    catch (Exception ex)
-                    {
-                        newContent = new Label { Text = $"Lỗi: Không thể tải Form Quản lý sách. Chi tiết: {ex.Message}", AutoSize = true, ForeColor = Color.Red, Location = new Point(20, 20) };
-                    }
-                    break;
-                case "Quản lý mượn trả":
-                    try
-                    {
-                        // Giả định FormQLMuonTra đã tồn tại
-                        newContent = new FormQLMuonTra();
-                    }
-                    catch (Exception ex)
-                    {
-                        newContent = new Label { Text = $"Lỗi: Không thể tải Form Quản lý mượn trả. Chi tiết: {ex.Message}", AutoSize = true, ForeColor = Color.Red, Location = new Point(20, 20) };
-                    }
-                    break;
-                case "Mượn trả sách":
-                    try
-                    {
-                        // Giả định MuonTra đã tồn tại
-                        newContent = new MuonTra();
-                    }
-                    catch (Exception ex)
-                    {
-                        newContent = new Label { Text = $"Lỗi: Không thể tải Form Mượn trả sách. Chi tiết: {ex.Message}", AutoSize = true, ForeColor = Color.Red, Location = new Point(20, 20) };
-                    }
-                    break;
-                case "Quản lý tài khoản":
-                    try
-                    {
-                        // Giả định FormQLTaiKhoan đã tồn tại
-                        newContent = new FormQLTaiKhoan();
-                    }
-                    catch (Exception ex)
-                    {
-                        newContent = new Label { Text = $"Lỗi: Không thể tải Form Quản lý tài khoản. Chi tiết: {ex.Message}", AutoSize = true, ForeColor = Color.Red, Location = new Point(20, 20) };
-                    }
-                    break;
-                case "Thông tin cá nhân":
-                    try
-                    {
-                        // Giả định UserInfoForm đã tồn tại
+                switch (controlName)
+                {
+                    case "Trang chủ":
+                        formType = typeof(TrangChu);
+                        break;
+                    case "Quản lý sách":
+                        formType = typeof(FormQLSach);
+                        break;
+                    case "Quản lý mượn trả":
+                        formType = typeof(FormQLMuonTra);
+                        break;
+                    case "Mượn trả sách":
+                        formType = typeof(MuonTra);
+                        break;
+                    case "Quản lý tài khoản":
+                        formType = typeof(FormQLTaiKhoan);
+                        break;
+                    case "Thông tin cá nhân":
                         newContent = new UserInfoForm(username, role);
-                    }
-                    catch
-                    {
-                        newContent = new Label { Text = "Lỗi: Không thể tải Form Thông tin cá nhân.", AutoSize = true, Location = new Point(20, 20) };
-                    }
-                    break;
-                default:
-                    newContent = new Label { Text = "Chức năng không xác định.", AutoSize = true, Location = new Point(20, 20) };
-                    break;
+                        break;
+                }
+
+                if (formType != null)
+                {
+                    // Tạo Form từ Type nếu nó là Form
+                    newContent = (Form)Activator.CreateInstance(formType);
+                }
             }
+            catch (Exception ex)
+            {
+                // Nếu có lỗi trong quá trình Activator.CreateInstance (ví dụ: Form không tồn tại)
+                newContent = new Label { Text = $"Lỗi tải Form {controlName}: {ex.Message}", AutoSize = true, ForeColor = Color.Red, Location = new Point(20, 20) };
+            }
+
 
             if (newContent is Form form)
             {
@@ -202,7 +208,5 @@ namespace WindowsForm_QLTV
             newContent.Dock = DockStyle.Fill;
             pnlContent.Controls.Add(newContent);
         }
-
-        // --- CÁC HÀM TẠO CONTROL MẪU ĐÃ BỊ XÓA ---
     }
 }

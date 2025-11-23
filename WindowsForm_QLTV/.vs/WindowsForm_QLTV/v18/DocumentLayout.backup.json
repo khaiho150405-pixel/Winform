@@ -1,12 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|c:\\users\\ho si khai\\downloads\\do_an\\winform\\windowsform_qltv\\windowsform_qltv\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -14,21 +9,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": -1,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MainForm.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\MainForm.cs",
-              "RelativeDocumentMoniker": "WindowsForm_QLTV\\MainForm.cs",
-              "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\MainForm.cs [Design]",
-              "RelativeToolTip": "WindowsForm_QLTV\\MainForm.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-21T16:01:44.278Z",
-              "IsPinned": true,
-              "EditorCaption": " [Design]"
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"

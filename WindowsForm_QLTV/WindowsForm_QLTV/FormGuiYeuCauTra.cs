@@ -15,7 +15,7 @@ namespace WindowsForm_QLTV
         private int _soLuongConNo = 0;
         private int _soLanGiaHan = 0;
         private DateTime _hanTraCu = DateTime.MinValue;
-        private string _selectedTenSach = string.Empty; // <-- Biến này đã được khai báo ở đây
+        private string _selectedTenSach = string.Empty;
         private const int MaxGiaHan = 2;
 
         public FormGuiYeuCauTra(int maSV)
@@ -34,6 +34,12 @@ namespace WindowsForm_QLTV
 
         private void FormGuiYeuCauTra_Load(object sender, EventArgs e)
         {
+            if (_maSV <= 0)
+            {
+                MessageBox.Show("Lỗi hệ thống: Mã Sinh Viên không hợp lệ (MaSV = 0). Vui lòng đăng nhập lại.", "Lỗi Session", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Close();
+                return;
+            }
             LoadActiveLoans();
         }
 
@@ -48,9 +54,9 @@ namespace WindowsForm_QLTV
             dgvActiveLoans.Columns.Add(CreateTextColumn("SoLanGiaHan", "Lần GH", 60));
             dgvActiveLoans.Columns.Add(CreateTextColumn("TrangThai", "Trạng Thái PM", 100));
 
-            // Cột MaSach cần thiết cho logic, nhưng có thể ẩn
-            dgvActiveLoans.Columns.Add(CreateTextColumn("MaSach", "Mã Sách", 60));
-            dgvActiveLoans.Columns["MaSach"].Visible = false;
+            var colMaSach = CreateTextColumn("MaSach", "Mã Sách", 60);
+            colMaSach.Visible = false;
+            dgvActiveLoans.Columns.Add(colMaSach);
 
             dgvActiveLoans.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
@@ -73,36 +79,50 @@ namespace WindowsForm_QLTV
             {
                 using (var db = new Model1())
                 {
-                    // Truy vấn tất cả sách đã mượn (ctpm) của sinh viên này
-                    var activeLoanItems = (from ctpm in db.CHITIETPHIEUMUONs
-                                           join pm in db.PHIEUMUONs on ctpm.MAPM equals pm.MAPM
-                                           join sach in db.SACHes on ctpm.MASACH equals sach.MASACH
-                                           where pm.MASV == _maSV && (pm.TRANGTHAI == "Đang mượn" || pm.TRANGTHAI == "Quá hạn" || pm.TRANGTHAI == "Thiếu" || pm.TRANGTHAI == "Quá hạn và Thiếu")
-                                           select new
-                                           {
-                                               MaPM = ctpm.MAPM,
-                                               MaSach = ctpm.MASACH,
-                                               SoLuongMuonBanDau = ctpm.SOLUONG,
-                                               TenSach = sach.TENSACH,
-                                               HanTraCT = ctpm.HANTRA,
-                                               SoLanGiaHan = ctpm.SOLANGIAHAN,
-                                               TrangThaiPM = pm.TRANGTHAI,
-                                           })
-                                       .ToList();
+                    var trangThaiHopLe = new[] { "Đang mượn", "Quá hạn", "Thiếu", "Quá hạn và Thiếu" };
 
-                    // Tính toán số lượng còn nợ sau khi đã trả trước đó
+                    var rawLoans = (from ctpm in db.CHITIETPHIEUMUONs
+                                    join pm in db.PHIEUMUONs on ctpm.MAPM equals pm.MAPM
+                                    join sach in db.SACHes on ctpm.MASACH equals sach.MASACH
+                                    where pm.MASV == _maSV && trangThaiHopLe.Contains(pm.TRANGTHAI)
+                                    select new
+                                    {
+                                        MaPM = ctpm.MAPM,
+                                        MaSach = ctpm.MASACH,
+                                        SoLuongMuon = ctpm.SOLUONG,
+                                        TenSach = sach.TENSACH,
+                                        HanTra = ctpm.HANTRA,
+                                        SoLanGiaHan = ctpm.SOLANGIAHAN,
+                                        TrangThai = pm.TRANGTHAI
+                                    }).ToList();
+
+                    if (rawLoans.Count == 0)
+                    {
+                        dgvActiveLoans.DataSource = null;
+                        return;
+                    }
+
+                    var listMaPM = rawLoans.Select(x => x.MaPM).Distinct().ToList();
+
+                    var rawReturns = (from ctpt in db.CHITIETPHIEUTRAs
+                                      join pt in db.PHIEUTRAs on ctpt.MAPT equals pt.MAPT
+                                      where listMaPM.Contains(pt.MAPM)
+                                      select new
+                                      {
+                                          MaPM = pt.MAPM,
+                                          MaSach = ctpt.MASACH,
+                                          SoLuongTra = ctpt.SOLUONGTRA
+                                      }).ToList();
+
                     var resultList = new List<ActiveLoanItem>();
 
-                    foreach (var item in activeLoanItems)
+                    foreach (var item in rawLoans)
                     {
-                        // Tính tổng số lượng đã trả trước đó cho cuốn sách này
-                        int soLuongDaTra = db.CHITIETPHIEUTRAs
-                            .Where(ctpt => ctpt.MASACH == item.MaSach)
-                            .Join(db.PHIEUTRAs, ctpt => ctpt.MAPT, pt => pt.MAPT, (ctpt, pt) => new { ctpt, pt })
-                            .Where(j => j.pt.MAPM == item.MaPM)
-                            .Sum(j => j.ctpt.SOLUONGTRA.HasValue ? j.ctpt.SOLUONGTRA.Value : 0);
+                        int daTra = rawReturns
+                                    .Where(r => r.MaPM == item.MaPM && r.MaSach == item.MaSach)
+                                    .Sum(r => r.SoLuongTra.GetValueOrDefault(0));
 
-                        int conNo = item.SoLuongMuonBanDau - soLuongDaTra;
+                        int conNo = item.SoLuongMuon - daTra;
 
                         if (conNo > 0)
                         {
@@ -110,11 +130,11 @@ namespace WindowsForm_QLTV
                             {
                                 MaPhieuMuon = item.MaPM,
                                 MaSach = item.MaSach,
-                                TenSach = item.TenSach, // <-- Đảm bảo TenSach được gán tại đây
+                                TenSach = item.TenSach,
                                 SoLuongConNo = conNo,
-                                HanTra = item.HanTraCT.HasValue ? item.HanTraCT.Value : item.HanTraCT.GetValueOrDefault(),
-                                SoLanGiaHan = item.SoLanGiaHan.GetValueOrDefault(),
-                                TrangThai = item.TrangThaiPM
+                                HanTra = item.HanTra.GetValueOrDefault(DateTime.MaxValue),
+                                SoLanGiaHan = item.SoLanGiaHan.GetValueOrDefault(0),
+                                TrangThai = item.TrangThai
                             });
                         }
                     }
@@ -124,18 +144,16 @@ namespace WindowsForm_QLTV
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi tải danh sách sách đang mượn: " + ex.Message, "Lỗi Database");
+                MessageBox.Show("Lỗi tải dữ liệu: " + ex.Message, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void DgvActiveLoans_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
+            if (e.RowIndex >= 0 && e.RowIndex < dgvActiveLoans.Rows.Count)
             {
-                DataGridViewRow row = dgvActiveLoans.Rows[e.RowIndex];
-
-                // Lấy thông tin cần thiết từ DataBoundItem
-                ActiveLoanItem selectedItem = row.DataBoundItem as ActiveLoanItem;
+                var row = dgvActiveLoans.Rows[e.RowIndex];
+                var selectedItem = row.DataBoundItem as ActiveLoanItem;
 
                 if (selectedItem != null)
                 {
@@ -144,36 +162,28 @@ namespace WindowsForm_QLTV
                     _soLuongConNo = selectedItem.SoLuongConNo;
                     _soLanGiaHan = selectedItem.SoLanGiaHan;
                     _hanTraCu = selectedItem.HanTra;
-                    _selectedTenSach = selectedItem.TenSach; // <-- Dòng này đã đúng
+                    _selectedTenSach = selectedItem.TenSach;
 
-                    lblSelectedBook.Text = $"Sách đã chọn: {_selectedTenSach} (PM #{_selectedMaPM}, còn nợ: {_soLuongConNo} cuốn)";
+                    lblSelectedBook.Text = $"Sách chọn: {_selectedTenSach} (PM #{_selectedMaPM}, Nợ: {_soLuongConNo})";
                     numQuantity.Maximum = _soLuongConNo;
                     numQuantity.Value = 1;
 
-                    // Cập nhật trạng thái nút Gia hạn
-                    btnGiaHan.Enabled = _soLanGiaHan < MaxGiaHan && _hanTraCu >= DateTime.Today;
-                    btnGiaHan.Text = _soLanGiaHan < MaxGiaHan
-                        ? $"GIA HẠN (Đã GH {_soLanGiaHan}/{MaxGiaHan} lần)"
-                        : "HẾT LƯỢT GIA HẠN";
+                    bool conLuot = _soLanGiaHan < MaxGiaHan;
+                    bool chuaQuaHan = _hanTraCu >= DateTime.Today;
+
+                    btnGiaHan.Enabled = conLuot && chuaQuaHan;
+                    if (!conLuot) btnGiaHan.Text = "HẾT LƯỢT GIA HẠN";
+                    else if (!chuaQuaHan) btnGiaHan.Text = "QUÁ HẠN (Không thể gia hạn)";
+                    else btnGiaHan.Text = $"GIA HẠN (Đã GH {_soLanGiaHan}/{MaxGiaHan})";
                 }
             }
         }
 
         private void BtnGiaHan_Click(object sender, EventArgs e)
         {
-            if (_selectedMaSach == -1 || _soLuongConNo == 0)
+            if (_selectedMaSach == -1)
             {
-                MessageBox.Show("Vui lòng chọn sách đang mượn để gia hạn.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            if (_soLanGiaHan >= MaxGiaHan)
-            {
-                MessageBox.Show("Sách này đã hết lượt gia hạn tối đa (2 lần).", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            if (_hanTraCu < DateTime.Today)
-            {
-                MessageBox.Show("Không thể gia hạn sách đã quá hạn. Vui lòng mang sách đến quầy Thủ Thư.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng chọn sách cần gia hạn.", "Thông báo");
                 return;
             }
 
@@ -181,57 +191,126 @@ namespace WindowsForm_QLTV
             {
                 using (var db = new Model1())
                 {
-                    // Lấy Chi Tiết Phiếu Mượn (CTPM) để cập nhật
-                    CHITIETPHIEUMUON ctpm = db.CHITIETPHIEUMUONs
+                    var ctpm = db.CHITIETPHIEUMUONs
                         .FirstOrDefault(ct => ct.MAPM == _selectedMaPM && ct.MASACH == _selectedMaSach);
 
-                    if (ctpm == null)
+                    if (ctpm != null)
                     {
-                        MessageBox.Show("Không tìm thấy chi tiết phiếu mượn.", "Lỗi");
-                        return;
+                        DateTime newDeadline = ctpm.HANTRA.GetValueOrDefault(DateTime.Today).AddDays(14);
+                        ctpm.HANTRA = newDeadline;
+                        ctpm.SOLANGIAHAN = ctpm.SOLANGIAHAN.GetValueOrDefault(0) + 1;
+
+                        db.Entry(ctpm).State = EntityState.Modified;
+                        db.SaveChanges();
+
+                        MessageBox.Show($"Gia hạn thành công! Hạn trả mới: {newDeadline:dd/MM/yyyy}", "Thành công");
+                        LoadActiveLoans();
                     }
-
-                    // Cập nhật
-                    DateTime hanTraMoi = ctpm.HANTRA.GetValueOrDefault(ctpm.PHIEUMUON.HANTRA).AddDays(14);
-                    ctpm.HANTRA = hanTraMoi;
-                    ctpm.SOLANGIAHAN = ctpm.SOLANGIAHAN.GetValueOrDefault(0) + 1;
-
-                    db.Entry(ctpm).State = EntityState.Modified;
-                    db.SaveChanges();
-
-                    MessageBox.Show($"Đã gia hạn thành công cuốn '{_selectedTenSach}'. Hạn trả mới: {hanTraMoi.ToShortDateString()}.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    LoadActiveLoans(); // Tải lại danh sách
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi gia hạn sách: " + ex.Message, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            catch (Exception ex) { MessageBox.Show("Lỗi gia hạn: " + ex.Message); }
         }
 
+        // --- SỬA ĐỔI CHÍNH Ở ĐÂY: THỰC HIỆN TRẢ SÁCH NGAY LẬP TỨC ---
         private void BtnGuiYeuCau_Click(object sender, EventArgs e)
         {
             if (_selectedMaSach == -1)
             {
-                MessageBox.Show("Vui lòng chọn một cuốn sách để gửi yêu cầu trả.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng chọn sách cần trả.", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             int soLuongTra = (int)numQuantity.Value;
 
-            // Gửi yêu cầu trả sách là một thao tác thông báo cho Thủ Thư 
-            MessageBox.Show($"Yêu cầu trả {_selectedTenSach} (SL: {soLuongTra}) trong Phiếu #{_selectedMaPM} đã được ghi nhận. Vui lòng mang sách đến quầy Thủ Thư để hoàn tất.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            if (MessageBox.Show($"Xác nhận trả {soLuongTra} cuốn '{_selectedTenSach}'?",
+                "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+            {
+                return;
+            }
+
+            using (var db = new Model1())
+            {
+                using (var transaction = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        // --- BƯỚC 1: TẠO PHIẾU TRẢ ---
+                        PHIEUTRA pt = new PHIEUTRA
+                        {
+                            MAPM = _selectedMaPM,
+                            MATT = 1,
+                            NGAYLAPPHIEUTRA = DateTime.Now,
+                            TONGTIENPHAT = 0
+                        };
+                        db.PHIEUTRAs.Add(pt);
+                        db.SaveChanges();
+
+                        // --- BƯỚC 2: CHI TIẾT TRẢ ---
+                        CHITIETPHIEUTRA ctpt = new CHITIETPHIEUTRA
+                        {
+                            MAPT = pt.MAPT,
+                            MASACH = _selectedMaSach,
+                            SOLUONGTRA = soLuongTra,
+                            NGAYTRA = DateTime.Now
+                        };
+                        db.CHITIETPHIEUTRAs.Add(ctpt);
+
+                        // --- BƯỚC 3: (ĐÃ XÓA) KHÔNG CẬP NHẬT KHO BẰNG CODE NỮA ---
+                        // Lý do: Trigger TG_CAPNHATSLTONCUASACH_CTPT trong SQL Server sẽ tự động làm việc này
+                        // khi lệnh db.SaveChanges() ở dưới được thực thi.
+
+                        // --- BƯỚC 4: CẬP NHẬT TRẠNG THÁI PHIẾU MƯỢN ---
+                        var phieuMuon = db.PHIEUMUONs.Find(_selectedMaPM);
+
+                        // Tính toán số liệu để xem đã trả hết chưa
+                        int tongMuon = db.CHITIETPHIEUMUONs
+                                         .Where(ct => ct.MAPM == _selectedMaPM)
+                                         .Sum(ct => ct.SOLUONG);
+
+                        // Lấy tổng trả cũ trong DB
+                        int tongDaTraCu = db.CHITIETPHIEUTRAs
+                                            .Where(ct => ct.PHIEUTRA.MAPM == _selectedMaPM)
+                                            .Sum(ct => (int?)ct.SOLUONGTRA) ?? 0;
+
+                        // Tổng thực tế = Cũ + Mới đang trả
+                        int tongTraTotal = tongDaTraCu + soLuongTra;
+
+                        if (phieuMuon != null)
+                        {
+                            if (tongTraTotal >= tongMuon)
+                            {
+                                phieuMuon.TRANGTHAI = "Đã trả";
+                            }
+                            else
+                            {
+                                phieuMuon.TRANGTHAI = "Đang mượn";
+                            }
+                            db.Entry(phieuMuon).State = EntityState.Modified;
+                        }
+
+                        // --- BƯỚC 5: LƯU VÀ KÍCH HOẠT TRIGGER ---
+                        db.SaveChanges();
+                        transaction.Commit();
+
+                        MessageBox.Show($"Trả sách thành công!\n(Số lượng kho sẽ được Trigger tự động cập nhật).", "Hoàn tất", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        this.DialogResult = DialogResult.OK;
+                        this.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        MessageBox.Show("Lỗi: " + ex.Message, "Lỗi Hệ Thống", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
         }
 
-        // ViewModels (Đã đảm bảo có TenSach)
         public class ActiveLoanItem
         {
             public int MaPhieuMuon { get; set; }
             public int MaSach { get; set; }
-            public string TenSach { get; set; } // <-- Đã khai báo
+            public string TenSach { get; set; }
             public int SoLuongConNo { get; set; }
             public DateTime HanTra { get; set; }
             public int SoLanGiaHan { get; set; }

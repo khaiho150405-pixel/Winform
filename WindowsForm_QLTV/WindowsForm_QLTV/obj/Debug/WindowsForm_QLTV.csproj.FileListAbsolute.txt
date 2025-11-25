@@ -23,3 +23,29 @@ C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\ob
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.TrangChu.resources
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.EditSach.resources
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.FormMuonSach.resources
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\WindowsForm_QLTV.exe.config
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\WindowsForm_QLTV.exe
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\WindowsForm_QLTV.pdb
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\EntityFramework.dll
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\EntityFramework.SqlServer.dll
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\EntityFramework.xml
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\EntityFramework.SqlServer.xml
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.csproj.AssemblyReference.cache
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.EditSach.resources
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.Login.resources
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.MainForm.resources
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.FormMuonSach.resources
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.MuonTra.resources
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.Properties.Resources.resources
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.FormQLNXB.resources
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.FormQLTacGia.resources
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.Register.resources
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.TrangChu.resources
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.FormTraSach.resources
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.UserInfoForm.resources
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.csproj.GenerateResource.cache
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.csproj.CoreCompileInputs.cache
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsF.020193DB.Up2Date
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.exe
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.pdb
+D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.FormGuiYeuCauTra.resources

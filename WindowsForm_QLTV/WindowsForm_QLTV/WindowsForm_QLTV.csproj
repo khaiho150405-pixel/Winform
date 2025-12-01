@@ -59,6 +59,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Chatbot.cs" />
+    <Compile Include="ChatBubble.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="DAL\CHITIETPHIEUMUON.cs" />
     <Compile Include="DAL\CHITIETPHIEUNHAP.cs" />
     <Compile Include="DAL\CHITIETPHIEUTRA.cs" />

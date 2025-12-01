@@ -15,12 +15,9 @@ namespace WindowsForm_QLTV
             InitializeComponent();
             this.Load += FormQLSach_Load;
 
-            // Gán sự kiện cho các nút Dashboard
             btnQLSach.Click += DashboardButton_Click;
             btnTacGia.Click += DashboardButton_Click;
             btnNhaXuatBan.Click += DashboardButton_Click;
-
-            // Đã bỏ btnQuayLai
         }
 
         private void FormQLSach_Load(object sender, EventArgs e)
@@ -28,65 +25,45 @@ namespace WindowsForm_QLTV
             LoadBookCards();
         }
 
-        // Hàm LoadSubForm và DashboardButton_Click (Giữ nguyên)
+        // --- HÀM LOAD FORM CON (GIỮ NGUYÊN) ---
+        private void LoadSubForm(Form form)
+        {
+            Panel pnlContent = this.Parent as Panel;
+            if (pnlContent != null)
+            {
+                pnlContent.Controls.Clear();
+                form.TopLevel = false;
+                form.FormBorderStyle = FormBorderStyle.None;
+                form.Dock = DockStyle.Fill;
+                pnlContent.Controls.Add(form);
+                form.Show();
+            }
+        }
 
         private void LoadSubForm(Type formType)
         {
-            Panel pnlContent = this.Parent as Panel;
-
-            if (pnlContent != null)
+            try
             {
-                try
-                {
-                    Form form = (Form)Activator.CreateInstance(formType);
-                    pnlContent.Controls.Clear();
-                    form.TopLevel = false;
-                    form.FormBorderStyle = FormBorderStyle.None;
-                    form.Dock = DockStyle.Fill;
-                    pnlContent.Controls.Add(form);
-                    form.Show();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Lỗi tải Form {formType.Name}: {ex.Message}\nĐảm bảo Form đã được biên dịch.", "Lỗi Hệ Thống", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                Form form = (Form)Activator.CreateInstance(formType);
+                LoadSubForm(form);
             }
-            else
-            {
-                MessageBox.Show("Không tìm thấy Panel nội dung chính (pnlContent).", "Lỗi Cấu trúc Form");
-            }
+            catch { }
         }
-
 
         private void DashboardButton_Click(object sender, EventArgs e)
         {
-            Button clickedButton = sender as Button;
-            if (clickedButton != null)
-            {
-                string buttonText = clickedButton.Text.Trim();
+            Button btn = sender as Button;
+            if (btn == null) return;
 
-                switch (buttonText)
-                {
-                    case "Quản Lý Sách":
-                        LoadSubForm(typeof(EditSach));
-                        break;
-                    case "Tác Giả":
-                        LoadSubForm(typeof(FormQLTacGia));
-                        break;
-                    case "Nhà Xuất Bản":
-                        LoadSubForm(typeof(FormQLNXB));
-                        break;
-                    default:
-                        break;
-                }
-            }
+            if (btn.Text == "Quản Lý Sách") LoadSubForm(typeof(EditSach));
+            else if (btn.Text == "Tác Giả") LoadSubForm(typeof(FormQLTacGia));
+            else if (btn.Text == "Nhà Xuất Bản") LoadSubForm(typeof(FormQLNXB));
         }
 
-        // LOGIC TẢI CARD SÁCH (Đã bỏ ImageColor)
+        // --- [SỬA ĐỔI 1] LƯU MÃ SÁCH KHI TẢI DỮ LIỆU ---
         private void LoadBookCards()
         {
             pnlCardContainer.Controls.Clear();
-
             List<BookItem> books = new List<BookItem>();
 
             try
@@ -102,156 +79,91 @@ namespace WindowsForm_QLTV
                     {
                         books.Add(new BookItem
                         {
+                            MaSach = book.MASACH, // <-- QUAN TRỌNG: Lưu mã sách
                             Title = book.TENSACH,
                             Subtitle = book.THELOAI,
-                            HinhAnh = book.HINHANH, // LẤY ĐƯỜNG DẪN ẢNH TỪ DB
+                            HinhAnh = book.HINHANH,
                         });
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi tải dữ liệu sách từ CSDL: " + ex.Message, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
+            catch (Exception ex) { MessageBox.Show("Lỗi: " + ex.Message); return; }
 
-            // PHẦN HIỂN THỊ THẺ SÁCH (Giữ nguyên bố cục)
-            int x = 10;
-            int y = 10;
-            int cardWidth = 200;
-            int cardHeight = 350;
-            int padding = 20;
-            int cardsPerRow = 4;
-            int cardIndex = 0;
+            int x = 10, y = 10, w = 200, h = 350, padding = 20, cols = 4, idx = 0;
 
             foreach (var book in books)
             {
-                Panel card = CreateBookCard(book, cardWidth, cardHeight);
+                Panel card = CreateBookCard(book, w, h);
                 card.Location = new Point(x, y);
                 pnlCardContainer.Controls.Add(card);
 
-                x += cardWidth + padding;
-                cardIndex++;
-
-                if (cardIndex % cardsPerRow == 0)
-                {
-                    x = 10;
-                    y += cardHeight + padding;
-                }
+                x += w + padding;
+                idx++;
+                if (idx % cols == 0) { x = 10; y += h + padding; }
             }
         }
 
-        // HÀM TẠO CARD SÁCH (Đã bỏ ImageColor)
+        // --- [SỬA ĐỔI 2] GÁN MÃ SÁCH VÀO NÚT BẤM ---
         private Panel CreateBookCard(BookItem book, int width, int height)
         {
-            Panel pnl = new Panel();
-            pnl.Size = new Size(width, height);
-            pnl.BackColor = Color.White;
-            pnl.BorderStyle = BorderStyle.FixedSingle;
+            Panel pnl = new Panel { Size = new Size(width, height), BackColor = Color.White, BorderStyle = BorderStyle.FixedSingle };
 
-            // 1. PictureBox chứa ảnh
-            PictureBox pbImage = new PictureBox();
-            pbImage.Size = new Size(width - 20, 200);
-            pbImage.Location = new Point(10, 10);
-            pbImage.BackColor = Color.WhiteSmoke; // Màu nền trung tính dự phòng
-            pbImage.SizeMode = PictureBoxSizeMode.StretchImage; // Lấp đầy khung
+            PictureBox pb = new PictureBox { Size = new Size(width - 20, 200), Location = new Point(10, 10), BackColor = Color.WhiteSmoke, SizeMode = PictureBoxSizeMode.StretchImage };
+            if (!string.IsNullOrEmpty(book.HinhAnh)) LoadImageFromLocalFolder(pb, book.HinhAnh);
+            pnl.Controls.Add(pb);
 
-            // Logic tải ảnh từ HinhAnh (tên file ảnh)
-            if (!string.IsNullOrEmpty(book.HinhAnh))
-            {
-                LoadImageFromLocalFolder(pbImage, book.HinhAnh);
-            }
-            pnl.Controls.Add(pbImage);
-
-            // 2. Tiêu đề sách (Giữ nguyên)
-            Label lblTitle = new Label();
-            lblTitle.Text = book.Title;
-            lblTitle.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblTitle.Location = new Point(10, 220);
-            lblTitle.Size = new Size(width - 20, 20);
-            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
+            Label lblTitle = new Label { Text = book.Title, Font = new Font("Segoe UI", 10F, FontStyle.Bold), Location = new Point(10, 220), Size = new Size(width - 20, 20), TextAlign = ContentAlignment.MiddleCenter };
             pnl.Controls.Add(lblTitle);
 
-            // 3. Mô tả/Thể loại (Giữ nguyên)
-            Label lblSubtitle = new Label();
-            lblSubtitle.Text = "Thể loại: " + book.Subtitle;
-            lblSubtitle.Font = new Font("Segoe UI", 9F);
-            lblSubtitle.Location = new Point(10, 245);
-            lblSubtitle.Size = new Size(width - 20, 20);
-            lblSubtitle.TextAlign = ContentAlignment.MiddleCenter;
-            pnl.Controls.Add(lblSubtitle);
+            Label lblSub = new Label { Text = "Thể loại: " + book.Subtitle, Font = new Font("Segoe UI", 9F), Location = new Point(10, 245), Size = new Size(width - 20, 20), TextAlign = ContentAlignment.MiddleCenter };
+            pnl.Controls.Add(lblSub);
 
-            // 4. Nút Chi tiết (Giữ nguyên)
-            Button btnDetail = new Button();
-            btnDetail.Text = "Xem chi tiết";
-            btnDetail.BackColor = Color.FromArgb(39, 174, 96);
-            btnDetail.ForeColor = Color.White;
-            btnDetail.FlatStyle = FlatStyle.Flat;
-            btnDetail.FlatAppearance.BorderSize = 0;
-            btnDetail.Location = new Point(10, height - 45);
-            btnDetail.Size = new Size(width - 20, 35);
-            btnDetail.Tag = book.Title;
-            btnDetail.Click += BtnDetail_Click;
-            pnl.Controls.Add(btnDetail);
+            Button btn = new Button
+            {
+                Text = "Xem chi tiết",
+                BackColor = Color.FromArgb(39, 174, 96),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Location = new Point(10, height - 45),
+                Size = new Size(width - 20, 35),
+                Tag = book.MaSach // <-- QUAN TRỌNG: Gán ID vào Tag thay vì Title
+            };
+            btn.FlatAppearance.BorderSize = 0;
+            btn.Click += BtnDetail_Click;
+            pnl.Controls.Add(btn);
 
             return pnl;
         }
 
-        // HÀM HỖ TRỢ TẢI ẢNH TỪ THƯ MỤC CỤC BỘ "images" (Giữ nguyên)
-        private void LoadImageFromLocalFolder(PictureBox pb, string imageFileName)
+        private void LoadImageFromLocalFolder(PictureBox pb, string fileName)
         {
-            if (string.IsNullOrWhiteSpace(imageFileName)) return;
-
-            string fullPath = string.Empty;
-
             try
             {
-                // Tùy chọn 1: Thử đường dẫn Project Root (..\..\images)
-                string projectRoot = Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\"));
-                string path1 = Path.Combine(projectRoot, "images", imageFileName);
-
-                // Tùy chọn 2: Thử đường dẫn Executable Root (images)
-                string path2 = Path.Combine(Application.StartupPath, "images", imageFileName);
-
-                if (File.Exists(path1))
-                {
-                    fullPath = path1;
-                }
-                else if (File.Exists(path2))
-                {
-                    fullPath = path2;
-                }
-                else
-                {
-                    pb.Image = null;
-                    return;
-                }
-
-                // Load ảnh từ MemoryStream để không khóa file
-                using (var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
-                {
-                    using (var ms = new MemoryStream())
-                    {
-                        stream.CopyTo(ms);
-                        ms.Position = 0;
-                        pb.Image = Image.FromStream(ms);
-                    }
-                }
+                string root = Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\images"));
+                string path = Path.Combine(root, fileName);
+                if (File.Exists(path)) using (var ms = new MemoryStream(File.ReadAllBytes(path))) pb.Image = Image.FromStream(ms);
             }
-            catch
-            {
-                pb.Image = null; // Đặt lại nếu lỗi
-            }
+            catch { pb.Image = null; }
         }
 
-
+        // --- [SỬA ĐỔI 3] MỞ FORM CHI TIẾT THAY VÌ MESSAGEBOX ---
         private void BtnDetail_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
-            MessageBox.Show($"Xem chi tiết sách: {btn.Tag}", "Thông báo");
-            // TODO: Thêm logic để mở Form chỉnh sửa sách
-        }
+            if (btn != null && btn.Tag != null)
+            {
+                if (int.TryParse(btn.Tag.ToString(), out int maSach))
+                {
+                    // Tạo Form Chi Tiết Sách (Code form này bạn đã có ở câu trả lời trước)
+                    FormChiTietSach formChiTiet = new FormChiTietSach(maSach);
 
-        // ĐÃ BỎ HÀM GetRandomColor
+                    // Cách 1: Mở dạng cửa sổ nổi (Popup) - Giống hệt Ảnh 2
+                    formChiTiet.ShowDialog();
+
+                    // Cách 2: Mở lồng vào Panel chính (nếu bạn muốn giữ phong cách Dashboard)
+                    // LoadSubForm(formChiTiet);
+                }
+            }
+        }
     }
 }

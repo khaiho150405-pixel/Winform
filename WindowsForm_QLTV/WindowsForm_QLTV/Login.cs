@@ -3,9 +3,7 @@ using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-// ĐÃ BỎ: using System.Security.Cryptography; 
-// ĐÃ BỎ: using System.Text; 
-using System.Collections.Generic; // Cần thiết nếu dùng List/IEnumerable
+using System.Collections.Generic;
 
 namespace WindowsForm_QLTV
 {
@@ -34,14 +32,49 @@ namespace WindowsForm_QLTV
 
             if (userRole != null)
             {
+                // --- BƯỚC QUAN TRỌNG: LƯU THÔNG TIN VÀO SESSION ---
+                Session.CurrentUsername = username;
+                Session.CurrentRole = userRole;
+                Session.CurrentMaSV = 0; // Reset về 0 để tránh lưu vết cũ
+
+                // Nếu là Độc giả/Sinh viên, cần lấy MASV ngay lập tức
+                if (userRole.Equals("Độc giả", StringComparison.OrdinalIgnoreCase) ||
+                    userRole.Equals("Sinh viên", StringComparison.OrdinalIgnoreCase))
+                {
+                    try
+                    {
+                        using (var db = new Model1())
+                        {
+                            // Tìm sinh viên dựa trên tên đăng nhập
+                            var sv = db.SINHVIENs
+                                       .AsNoTracking()
+                                       .FirstOrDefault(s => s.TAIKHOAN.TENDANGNHAP == username);
+
+                            if (sv != null)
+                            {
+                                Session.CurrentMaSV = sv.MASV;
+                            }
+                            else
+                            {
+                                // Trường hợp có tài khoản nhưng chưa liên kết hồ sơ sinh viên
+                                MessageBox.Show("Cảnh báo: Tài khoản này chưa được liên kết với hồ sơ Sinh viên.", "Lỗi Dữ Liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Lỗi khi lấy thông tin sinh viên: " + ex.Message);
+                    }
+                }
+
                 // Đăng nhập thành công
                 MessageBox.Show($"Đăng nhập thành công! Quyền: {userRole}.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // **SỬA LỖI LUỒNG:** Mở MainForm, Ẩn Login Form và đóng nó
+                // Mở MainForm
                 MainForm mainForm = new MainForm(username, userRole);
                 this.Hide();
                 mainForm.Show();
-                // Không gọi Close() ở đây, để hệ thống tự đóng khi MainForm đóng hoặc gọi Application.Exit()
+                // Không gọi Close() ở đây
             }
             else
             {
@@ -56,7 +89,6 @@ namespace WindowsForm_QLTV
         {
             try
             {
-                // Giả định có Form Register
                 Register registerForm = new Register();
                 registerForm.ShowDialog();
             }
@@ -67,7 +99,7 @@ namespace WindowsForm_QLTV
         }
 
         /// <summary>
-        /// Xác thực người dùng và lấy Vai trò (TENQUYEN) từ CSDL bằng Entity Framework (SỬ DỤNG MẬT KHẨU PLAIN TEXT).
+        /// Xác thực người dùng và lấy Vai trò (TENQUYEN) từ CSDL
         /// </summary>
         private string ValidateUserAndGetRole(string username, string password)
         {
@@ -75,14 +107,14 @@ namespace WindowsForm_QLTV
 
             try
             {
-                using (var db = new Model1()) // SỬ DỤNG ENTITY FRAMEWORK CONTEXT
+                using (var db = new Model1())
                 {
                     var account = db.TAIKHOANs
                                      .AsNoTracking()
                                      .Include(tk => tk.PHANQUYEN)
                                      .SingleOrDefault(tk =>
                                          tk.TENDANGNHAP == username &&
-                                         tk.MATKHAU == password && // SO SÁNH VỚI MẬT KHẨU PLAIN TEXT
+                                         tk.MATKHAU == password &&
                                          tk.TRANGTHAI == "Hoạt động");
 
                     if (account != null)
@@ -93,7 +125,6 @@ namespace WindowsForm_QLTV
             }
             catch (Exception ex)
             {
-                // Báo lỗi kết nối CSDL chung (bao gồm lỗi EF)
                 MessageBox.Show("LỖI KẾT NỐI CSDL: " + ex.Message, "Lỗi Hệ Thống", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
@@ -107,16 +138,23 @@ namespace WindowsForm_QLTV
 
         private void Login_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // Giữ lại xác nhận thoát khi người dùng đóng Form bằng nút X
-            DialogResult result = MessageBox.Show(
-                "Bạn có chắc chắn muốn thoát khỏi chương trình?",
-                "Xác Nhận Thoát",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
-
-            if (result == DialogResult.No)
+            // Chỉ hỏi thoát nếu người dùng bấm X (UserClosing), không hỏi khi gọi lệnh Hide()
+            if (e.CloseReason == CloseReason.UserClosing)
             {
-                e.Cancel = true;
+                DialogResult result = MessageBox.Show(
+                    "Bạn có chắc chắn muốn thoát khỏi chương trình?",
+                    "Xác Nhận Thoát",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (result == DialogResult.No)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    Application.Exit();
+                }
             }
         }
     }

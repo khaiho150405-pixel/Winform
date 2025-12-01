@@ -289,9 +289,20 @@ namespace WindowsForm_QLTV
         private void BtnDetail_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
-            if (btn != null && btn.Tag is int maSach)
+
+            // Kiểm tra xem Tag có chứa Mã Sách (int) không
+            if (btn != null && btn.Tag != null)
             {
-                MessageBox.Show($"Chức năng 'Xem chi tiết' cho sách có Mã: {maSach} chưa được triển khai.", "Thông báo");
+                if (int.TryParse(btn.Tag.ToString(), out int maSach))
+                {
+                    // Khởi tạo form chi tiết và hiển thị dưới dạng Dialog (cửa sổ con)
+                    FormChiTietSach formChiTiet = new FormChiTietSach(maSach);
+                    formChiTiet.ShowDialog();
+                }
+                else
+                {
+                    MessageBox.Show("Không lấy được mã sách hợp lệ.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
     }

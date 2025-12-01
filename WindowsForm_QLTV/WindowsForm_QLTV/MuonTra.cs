@@ -9,12 +9,16 @@ namespace WindowsForm_QLTV
 {
     public partial class MuonTra : Form
     {
-        // GIẢ ĐỊNH: Lấy Mã SV từ Session Manager
-        private int _currentMaSV = SessionManager.CurrentMaSV;
+        // Sử dụng biến Session toàn cục để lấy Mã SV hiện tại
+        private int _currentMaSV;
 
         public MuonTra()
         {
             InitializeComponent();
+
+            // Lấy giá trị từ Session ngay khi khởi tạo
+            _currentMaSV = Session.CurrentMaSV;
+
             this.Load += MuonTra_Load;
 
             // Gắn sự kiện cho các nút hành động
@@ -26,11 +30,19 @@ namespace WindowsForm_QLTV
 
         private void MuonTra_Load(object sender, EventArgs e)
         {
-            if (_currentMaSV == -1)
+            // Kiểm tra xem đã có thông tin sinh viên trong Session chưa
+            // (Lưu ý: Session.CurrentMaSV phải được gán giá trị từ Form Login)
+            if (_currentMaSV <= 0)
             {
-                MessageBox.Show("Không thể xác định thông tin Độc Giả. Vui lòng đăng nhập lại.", "Lỗi Session", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Không tìm thấy thông tin Độc Giả. Vui lòng Đăng Xuất và Đăng Nhập lại bằng tài khoản Sinh Viên.",
+                                "Lỗi Xác Thực", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Close(); // Đóng form nếu không xác định được người dùng
                 return;
             }
+
+            // Hiển thị thông tin người dùng trên tiêu đề (Optional)
+            this.Text = $"Mượn Trả Sách - Độc giả: {Session.CurrentUsername} (MSV: {_currentMaSV})";
+
             LoadLoanHistoryForUser();
         }
 
@@ -125,9 +137,9 @@ namespace WindowsForm_QLTV
 
         private void BtnGuiYeuCauMuon_Click(object sender, EventArgs e)
         {
-            // Mở form mới để gửi yêu cầu mượn
             try
             {
+                // Mở form gửi yêu cầu mượn với Mã SV hiện tại
                 FormGuiYeuCauMuon formMuon = new FormGuiYeuCauMuon(_currentMaSV);
                 formMuon.ShowDialog();
                 LoadLoanHistoryForUser(); // Tải lại lịch sử sau khi đóng form
@@ -140,9 +152,9 @@ namespace WindowsForm_QLTV
 
         private void BtnGuiYeuCauTra_Click(object sender, EventArgs e)
         {
-            // Mở form mới để gửi yêu cầu trả
             try
             {
+                // Mở form gửi yêu cầu trả với Mã SV hiện tại
                 FormGuiYeuCauTra formTra = new FormGuiYeuCauTra(_currentMaSV);
                 formTra.ShowDialog();
                 LoadLoanHistoryForUser(); // Tải lại lịch sử sau khi đóng form
@@ -164,12 +176,16 @@ namespace WindowsForm_QLTV
             public string TrangThai { get; set; }
             public DateTime? NgayTraThucTe { get; set; }
         }
+    }
 
-        // GIẢ ĐỊNH: Class SessionManager (Cần tồn tại trong dự án)
-        public static class SessionManager
-        {
-            // Sử dụng MaSV = 1 cho testing nếu chưa có hệ thống đăng nhập
-            public static int CurrentMaSV { get; set; } = 1;
-        }
+    // =============================================================
+    // CLASS SESSION TOÀN CỤC (Global)
+    // Nằm ngoài class MuonTra để Login.cs và các form khác đều gọi được
+    // =============================================================
+    public static class Session
+    {
+        public static int CurrentMaSV { get; set; } = 0; // Mặc định là 0 (Chưa đăng nhập)
+        public static string CurrentUsername { get; set; } = "";
+        public static string CurrentRole { get; set; } = "";
     }
 }

@@ -1,18 +1,31 @@
 ﻿using System;
+using System.Collections.Generic; // Cần thiết cho List
+using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data;
-using System.Collections.Generic; // Cần thiết cho List
+using WindowsForm_QLTV.Services; // Namespace chứa GeminiService
+using WindowsForm_QLTV.CustomControls;
+// LƯU Ý: Không cần 'using WindowsForm_QLTV.DAL;' vì Model1 nằm cùng namespace gốc
 
 namespace WindowsForm_QLTV
 {
     public partial class MainForm : Form
     {
         // Constructor mặc định
+        private Panel pnlChatContainer;
+        private FlowLayoutPanel flpChatHistory;
+        private TextBox txtChatInput;
+        private Button btnSendChat;
+        private Button btnToggleChat;
+        private Chatbot chatbotService;
+        private bool isChatOpen = false;
+
         public MainForm()
         {
             InitializeComponent();
+            InitializeChatbotUI();
         }
 
         // Constructor quan trọng để truyền dữ liệu người dùng
@@ -50,6 +63,9 @@ namespace WindowsForm_QLTV
             btnTacGia.Visible = false;
             btnNhaXuatBan.Visible = false;
 
+            // Ẩn nút Tương tác mặc định (kiểm tra null để tránh lỗi nếu chưa kéo nút)
+            if (btnTuongTac != null) btnTuongTac.Visible = false;
+
             switch (normalizedRole)
             {
                 case "ADMIN":
@@ -64,6 +80,8 @@ namespace WindowsForm_QLTV
                     // THỦ THƯ: Không có Quản lý Tài khoản, Quản lý Sách
                     btnQLMuonTra.Visible = true;
                     btnMuonTra.Visible = true;
+                    // Hiện nút tương tác cho thủ thư
+                    if (btnTuongTac != null) btnTuongTac.Visible = true;
                     break;
 
                 case "THỦ KHO":
@@ -75,6 +93,8 @@ namespace WindowsForm_QLTV
                 case "ĐỘC GIẢ":
                     // ĐỘC GIẢ: Chỉ có Trang chủ, Thông tin cá nhân và Mượn trả sách
                     btnMuonTra.Visible = true;
+                    // Hiện nút tương tác cho độc giả
+                    if (btnTuongTac != null) btnTuongTac.Visible = true;
                     break;
 
                 default:
@@ -92,6 +112,13 @@ namespace WindowsForm_QLTV
             btnMuonTra.Click += BtnItem_Click;
             btnTaiKhoan.Click += BtnItem_Click;
             btnThongTinCaNhan.Click += BtnItem_Click;
+
+            // Xử lý nút Tương tác
+            if (btnTuongTac != null)
+            {
+                btnTuongTac.Click += BtnItem_Click;
+                btnTuongTac.Text = " 💬 Tương tác"; // Đặt icon và tên
+            }
 
             // Nút Thoát
             btnThoat.Click += BtnThoat_Click;
@@ -157,8 +184,7 @@ namespace WindowsForm_QLTV
             string username = statusText.Contains("Đang đăng nhập:") ? statusText.Split('|')[0].Replace("Đang đăng nhập:", "").Trim() : "N/A";
             string role = statusText.Contains("Quyền:") ? statusText.Split('|')[1].Replace("Quyền:", "").Trim() : "N/A";
 
-            // KHỞI TẠO BIẾN CỤC BỘ VỚI GIÁ TRỊ MẶC ĐỊNH
-            Control newContent = new Label { Text = $"Chức năng '{controlName}' không xác định hoặc không khả dụng.", AutoSize = true, Location = new Point(20, 20) };
+            Control newContent = null;
             Type formType = null;
 
             try
@@ -183,6 +209,43 @@ namespace WindowsForm_QLTV
                     case "Thông tin cá nhân":
                         newContent = new UserInfoForm(username, role);
                         break;
+
+                    // === LOGIC MỚI CHO TƯƠNG TÁC ===
+                    case "Tương tác":
+                        // Logic lấy ID thật từ CSDL dựa trên Username
+                        int realId = 0;
+
+                        // Sử dụng Model1 trực tiếp vì nó cùng Namespace
+                        using (var db = new Model1())
+                        {
+                            var tk = db.TAIKHOANs.FirstOrDefault(t => t.TENDANGNHAP == username);
+                            if (tk != null)
+                            {
+                                if (role.Trim().ToUpper() == "ĐỘC GIẢ")
+                                {
+                                    var sv = db.SINHVIENs.FirstOrDefault(s => s.MATAIKHOAN == tk.MATAIKHOAN);
+                                    if (sv != null) realId = sv.MASV;
+                                }
+                                else if (role.Trim().ToUpper() == "THỦ THƯ")
+                                {
+                                    var tt = db.THUTHUs.FirstOrDefault(t => t.MATAIKHOAN == tk.MATAIKHOAN);
+                                    if (tt != null) realId = tt.MATT;
+                                }
+                            }
+                        }
+
+                        if (realId > 0)
+                        {
+                            if (role.Trim().ToUpper() == "ĐỘC GIẢ")
+                                newContent = new FormTuongTacDocGia(realId);
+                            else if (role.Trim().ToUpper() == "THỦ THƯ")
+                                newContent = new FormTraLoiHoiDap(realId);
+                        }
+                        else
+                        {
+                            newContent = new Label { Text = "Không tìm thấy thông tin Sinh viên/Thủ thư tương ứng tài khoản này.", AutoSize = true, ForeColor = Color.Red, Location = new Point(20, 20) };
+                        }
+                        break;
                 }
 
                 if (formType != null)
@@ -202,11 +265,227 @@ namespace WindowsForm_QLTV
             {
                 form.TopLevel = false;
                 form.FormBorderStyle = FormBorderStyle.None;
+                form.Dock = DockStyle.Fill;
+                pnlContent.Controls.Add(form);
                 form.Show();
             }
+            else if (newContent != null)
+            {
+                newContent.Dock = DockStyle.Fill;
+                pnlContent.Controls.Add(newContent);
+            }
+        }
 
-            newContent.Dock = DockStyle.Fill;
-            pnlContent.Controls.Add(newContent);
+        private void InitializeChatbotUI()
+        {
+            chatbotService = new Chatbot();
+
+            btnToggleChat = new Button
+            {
+                Text = "Trợ lý ảo",
+                Size = new Size(120, 40),
+                BackColor = Color.FromArgb(52, 152, 219),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Right
+            };
+            btnToggleChat.FlatAppearance.BorderSize = 0;
+            btnToggleChat.Location = new Point(ClientSize.Width - btnToggleChat.Width - 30, ClientSize.Height - btnToggleChat.Height - 30);
+            btnToggleChat.Click += BtnToggleChat_Click;
+
+            pnlChatContainer = new Panel
+            {
+                Size = new Size(360, 420),
+                BackColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle,
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
+                Visible = false
+            };
+            pnlChatContainer.Location = new Point(ClientSize.Width - pnlChatContainer.Width - 30, ClientSize.Height - pnlChatContainer.Height - 80);
+
+            Label lblChatHeader = new Label
+            {
+                Text = "Trợ lý thư viện",
+                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(44, 62, 80),
+                Dock = DockStyle.Top,
+                Height = 40,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+
+            flpChatHistory = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoScroll = true,
+                FlowDirection = FlowDirection.TopDown,
+                WrapContents = false,
+                Padding = new Padding(10),
+                BackColor = Color.WhiteSmoke
+            };
+            flpChatHistory.SizeChanged += (s, e) => AdjustBubbleWidths();
+
+            Panel pnlChatInput = new Panel
+            {
+                Dock = DockStyle.Bottom,
+                Height = 90,
+                Padding = new Padding(10),
+                BackColor = Color.White
+            };
+
+            txtChatInput = new TextBox
+            {
+                Multiline = true,
+                Dock = DockStyle.Fill,
+                Font = new Font("Segoe UI", 10F),
+                ScrollBars = ScrollBars.Vertical
+            };
+            txtChatInput.KeyDown += TxtChatInput_KeyDown;
+
+            btnSendChat = new Button
+            {
+                Text = "Gửi",
+                Width = 70,
+                Dock = DockStyle.Right,
+                BackColor = Color.FromArgb(52, 152, 219),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnSendChat.FlatAppearance.BorderSize = 0;
+            btnSendChat.Click += async (s, e) => await SendMessageAsync();
+
+            pnlChatInput.Controls.Add(txtChatInput);
+            pnlChatInput.Controls.Add(btnSendChat);
+
+            pnlChatContainer.Controls.Add(flpChatHistory);
+            pnlChatContainer.Controls.Add(pnlChatInput);
+            pnlChatContainer.Controls.Add(lblChatHeader);
+
+            Controls.Add(pnlChatContainer);
+            Controls.Add(btnToggleChat);
+
+            pnlChatContainer.BringToFront();
+            btnToggleChat.BringToFront();
+        }
+
+        private void BtnToggleChat_Click(object sender, EventArgs e)
+        {
+            isChatOpen = !isChatOpen;
+            pnlChatContainer.Visible = isChatOpen;
+            btnToggleChat.Text = isChatOpen ? "Đóng chat" : "Trợ lý ảo";
+            if (isChatOpen)
+            {
+                pnlChatContainer.BringToFront();
+                btnToggleChat.BringToFront();
+                txtChatInput?.Focus();
+            }
+        }
+
+        private async void TxtChatInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && !e.Shift)
+            {
+                e.SuppressKeyPress = true;
+                await SendMessageAsync();
+            }
+        }
+
+        private async Task SendMessageAsync()
+        {
+            if (txtChatInput == null || chatbotService == null)
+            {
+                return;
+            }
+
+            string userMessage = txtChatInput.Text.Trim();
+            if (string.IsNullOrWhiteSpace(userMessage))
+            {
+                return;
+            }
+
+            txtChatInput.Clear();
+            AppendChatBubble(userMessage, BubbleType.Outgoing);
+
+            btnSendChat.Enabled = false;
+            var typingIndicator = CreateTypingIndicator();
+            flpChatHistory.Controls.Add(typingIndicator);
+            ScrollChatToBottom();
+
+            try
+            {
+                string botReply = await chatbotService.GetResponse(userMessage);
+                flpChatHistory.Controls.Remove(typingIndicator);
+
+                if (string.IsNullOrWhiteSpace(botReply))
+                {
+                    botReply = "Xin lỗi, tôi chưa có dữ liệu để trả lời câu hỏi này.";
+                }
+
+                AppendChatBubble(botReply, BubbleType.Incoming);
+            }
+            catch (Exception ex)
+            {
+                flpChatHistory.Controls.Remove(typingIndicator);
+                AppendChatBubble("Không thể kết nối tới chatbot: " + ex.Message, BubbleType.Incoming);
+            }
+            finally
+            {
+                btnSendChat.Enabled = true;
+                txtChatInput.Focus();
+            }
+        }
+
+        private Control CreateTypingIndicator()
+        {
+            return new Label
+            {
+                Text = "Trợ lý đang phản hồi...",
+                AutoSize = true,
+                ForeColor = Color.DimGray,
+                MaximumSize = new Size(flpChatHistory.ClientSize.Width - 20, 0),
+                Margin = new Padding(0, 0, 0, 10)
+            };
+        }
+
+        private void AppendChatBubble(string message, BubbleType type)
+        {
+            if (flpChatHistory == null)
+            {
+                return;
+            }
+
+            var bubble = new ChatBubble(message, type)
+            {
+                Width = flpChatHistory.ClientSize.Width - 20,
+                Margin = new Padding(0, 0, 0, 10)
+            };
+            flpChatHistory.Controls.Add(bubble);
+            AdjustBubbleWidths();
+            ScrollChatToBottom();
+        }
+
+        private void AdjustBubbleWidths()
+        {
+            if (flpChatHistory == null)
+            {
+                return;
+            }
+
+            int targetWidth = flpChatHistory.ClientSize.Width - 20;
+            foreach (Control ctrl in flpChatHistory.Controls)
+            {
+                ctrl.Width = targetWidth;
+            }
+        }
+
+        private void ScrollChatToBottom()
+        {
+            if (flpChatHistory == null || flpChatHistory.Controls.Count == 0)
+            {
+                return;
+            }
+
+            var lastControl = flpChatHistory.Controls[flpChatHistory.Controls.Count - 1];
+            flpChatHistory.ScrollControlIntoView(lastControl);
         }
     }
 }

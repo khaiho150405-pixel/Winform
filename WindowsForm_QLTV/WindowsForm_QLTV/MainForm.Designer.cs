@@ -64,6 +64,7 @@
             this.pnlContent = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.tsslUsername = new System.Windows.Forms.ToolStripStatusLabel();
+            this.btnTuongTac = new System.Windows.Forms.Button();
             this.pnlSidebar.SuspendLayout();
             this.pnlUserInfoSidebar.SuspendLayout();
             this.pnlHeader.SuspendLayout();
@@ -74,6 +75,7 @@
             // 
             this.pnlSidebar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
             this.pnlSidebar.Controls.Add(this.btnThoat);
+            this.pnlSidebar.Controls.Add(this.btnTuongTac);
             this.pnlSidebar.Controls.Add(this.btnThongTinCaNhan);
             this.pnlSidebar.Controls.Add(this.btnTaiKhoan);
             this.pnlSidebar.Controls.Add(this.btnMuonTra);
@@ -224,7 +226,7 @@
             this.lblUserNameHeader.ForeColor = System.Drawing.Color.White;
             this.lblUserNameHeader.Location = new System.Drawing.Point(10, 15);
             this.lblUserNameHeader.Name = "lblUserNameHeader";
-            this.lblUserNameHeader.Size = new System.Drawing.Size(178, 23);
+            this.lblUserNameHeader.Size = new System.Drawing.Size(210, 28);
             this.lblUserNameHeader.TabIndex = 0;
             this.lblUserNameHeader.Text = "MÃ TK: [USERNAME]";
             // 
@@ -235,7 +237,7 @@
             this.lblUserRoleHeader.ForeColor = System.Drawing.Color.LightGray;
             this.lblUserRoleHeader.Location = new System.Drawing.Point(10, 40);
             this.lblUserRoleHeader.Name = "lblUserRoleHeader";
-            this.lblUserRoleHeader.Size = new System.Drawing.Size(104, 20);
+            this.lblUserRoleHeader.Size = new System.Drawing.Size(124, 25);
             this.lblUserRoleHeader.TabIndex = 1;
             this.lblUserRoleHeader.Text = "Vai trò: [ROLE]";
             // 
@@ -329,7 +331,24 @@
             // tsslUsername
             // 
             this.tsslUsername.Name = "tsslUsername";
-            this.tsslUsername.Size = new System.Drawing.Size(0, 16);
+            this.tsslUsername.Size = new System.Drawing.Size(0, 15);
+            // 
+            // btnTuongTac
+            // 
+            this.btnTuongTac.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
+            this.btnTuongTac.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnTuongTac.FlatAppearance.BorderSize = 0;
+            this.btnTuongTac.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnTuongTac.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnTuongTac.ForeColor = System.Drawing.Color.White;
+            this.btnTuongTac.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnTuongTac.Location = new System.Drawing.Point(0, 420);
+            this.btnTuongTac.Name = "btnTuongTac";
+            this.btnTuongTac.Padding = new System.Windows.Forms.Padding(15, 0, 0, 0);
+            this.btnTuongTac.Size = new System.Drawing.Size(240, 50);
+            this.btnTuongTac.TabIndex = 8;
+            this.btnTuongTac.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnTuongTac.UseVisualStyleBackColor = false;
             // 
             // MainForm
             // 
@@ -352,5 +371,7 @@
         }
 
         #endregion
+
+        private System.Windows.Forms.Button btnTuongTac;
     }
 }

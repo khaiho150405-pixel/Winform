@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsForm_QLTV.Services; // Namespace chứa GeminiService
 using WindowsForm_QLTV.CustomControls;
+// LƯU Ý: Không cần 'using WindowsForm_QLTV.DAL;' vì Model1 nằm cùng namespace gốc
 
 namespace WindowsForm_QLTV
 {
@@ -20,6 +21,7 @@ namespace WindowsForm_QLTV
         private Button btnToggleChat;
         private Chatbot chatbotService;
         private bool isChatOpen = false;
+
         public MainForm()
         {
             InitializeComponent();
@@ -61,6 +63,9 @@ namespace WindowsForm_QLTV
             btnTacGia.Visible = false;
             btnNhaXuatBan.Visible = false;
 
+            // Ẩn nút Tương tác mặc định (kiểm tra null để tránh lỗi nếu chưa kéo nút)
+            if (btnTuongTac != null) btnTuongTac.Visible = false;
+
             switch (normalizedRole)
             {
                 case "ADMIN":
@@ -75,6 +80,8 @@ namespace WindowsForm_QLTV
                     // THỦ THƯ: Không có Quản lý Tài khoản, Quản lý Sách
                     btnQLMuonTra.Visible = true;
                     btnMuonTra.Visible = true;
+                    // Hiện nút tương tác cho thủ thư
+                    if (btnTuongTac != null) btnTuongTac.Visible = true;
                     break;
 
                 case "THỦ KHO":
@@ -86,6 +93,8 @@ namespace WindowsForm_QLTV
                 case "ĐỘC GIẢ":
                     // ĐỘC GIẢ: Chỉ có Trang chủ, Thông tin cá nhân và Mượn trả sách
                     btnMuonTra.Visible = true;
+                    // Hiện nút tương tác cho độc giả
+                    if (btnTuongTac != null) btnTuongTac.Visible = true;
                     break;
 
                 default:
@@ -103,6 +112,13 @@ namespace WindowsForm_QLTV
             btnMuonTra.Click += BtnItem_Click;
             btnTaiKhoan.Click += BtnItem_Click;
             btnThongTinCaNhan.Click += BtnItem_Click;
+
+            // Xử lý nút Tương tác
+            if (btnTuongTac != null)
+            {
+                btnTuongTac.Click += BtnItem_Click;
+                btnTuongTac.Text = " 💬 Tương tác"; // Đặt icon và tên
+            }
 
             // Nút Thoát
             btnThoat.Click += BtnThoat_Click;
@@ -168,8 +184,7 @@ namespace WindowsForm_QLTV
             string username = statusText.Contains("Đang đăng nhập:") ? statusText.Split('|')[0].Replace("Đang đăng nhập:", "").Trim() : "N/A";
             string role = statusText.Contains("Quyền:") ? statusText.Split('|')[1].Replace("Quyền:", "").Trim() : "N/A";
 
-            // KHỞI TẠO BIẾN CỤC BỘ VỚI GIÁ TRỊ MẶC ĐỊNH
-            Control newContent = new Label { Text = $"Chức năng '{controlName}' không xác định hoặc không khả dụng.", AutoSize = true, Location = new Point(20, 20) };
+            Control newContent = null;
             Type formType = null;
 
             try
@@ -194,6 +209,43 @@ namespace WindowsForm_QLTV
                     case "Thông tin cá nhân":
                         newContent = new UserInfoForm(username, role);
                         break;
+
+                    // === LOGIC MỚI CHO TƯƠNG TÁC ===
+                    case "Tương tác":
+                        // Logic lấy ID thật từ CSDL dựa trên Username
+                        int realId = 0;
+
+                        // Sử dụng Model1 trực tiếp vì nó cùng Namespace
+                        using (var db = new Model1())
+                        {
+                            var tk = db.TAIKHOANs.FirstOrDefault(t => t.TENDANGNHAP == username);
+                            if (tk != null)
+                            {
+                                if (role.Trim().ToUpper() == "ĐỘC GIẢ")
+                                {
+                                    var sv = db.SINHVIENs.FirstOrDefault(s => s.MATAIKHOAN == tk.MATAIKHOAN);
+                                    if (sv != null) realId = sv.MASV;
+                                }
+                                else if (role.Trim().ToUpper() == "THỦ THƯ")
+                                {
+                                    var tt = db.THUTHUs.FirstOrDefault(t => t.MATAIKHOAN == tk.MATAIKHOAN);
+                                    if (tt != null) realId = tt.MATT;
+                                }
+                            }
+                        }
+
+                        if (realId > 0)
+                        {
+                            if (role.Trim().ToUpper() == "ĐỘC GIẢ")
+                                newContent = new FormTuongTacDocGia(realId);
+                            else if (role.Trim().ToUpper() == "THỦ THƯ")
+                                newContent = new FormTraLoiHoiDap(realId);
+                        }
+                        else
+                        {
+                            newContent = new Label { Text = "Không tìm thấy thông tin Sinh viên/Thủ thư tương ứng tài khoản này.", AutoSize = true, ForeColor = Color.Red, Location = new Point(20, 20) };
+                        }
+                        break;
                 }
 
                 if (formType != null)
@@ -213,11 +265,15 @@ namespace WindowsForm_QLTV
             {
                 form.TopLevel = false;
                 form.FormBorderStyle = FormBorderStyle.None;
+                form.Dock = DockStyle.Fill;
+                pnlContent.Controls.Add(form);
                 form.Show();
             }
-
-            newContent.Dock = DockStyle.Fill;
-            pnlContent.Controls.Add(newContent);
+            else if (newContent != null)
+            {
+                newContent.Dock = DockStyle.Fill;
+                pnlContent.Controls.Add(newContent);
+            }
         }
 
         private void InitializeChatbotUI()

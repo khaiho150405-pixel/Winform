@@ -154,7 +154,7 @@ CREATE TABLE PHIEUMUON (
     CONSTRAINT CK_PM_Ngay CHECK (NGAYLAPPHIEUMUON <= HANTRA),
     
     -- Ràng buộc trạng thái
-    CONSTRAINT CK_PM_TRANGTHAI CHECK (TRANGTHAI IN (N'Chờ duyệt', N'Đang mượn', N'Đã trả', N'Quá hạn', N'Thiếu', N'Quá hạn và Thiếu', N'Từ chối'))
+    CONSTRAINT CK_PM_TRANGTHAI CHECK (TRANGTHAI IN (N'Chờ duyệt', N'Đang mượn', N'Chờ trả', N'Đã trả', N'Quá hạn', N'Thiếu', N'Quá hạn và Thiếu', N'Từ chối'))
 );
 GO
 
@@ -314,6 +314,19 @@ CREATE TABLE DANHGIASACH (
 );
 GO
 
+-- =========================================================
+-- 20) BẢNG NHẬT KÝ HOẠT ĐỘNG (Bổ sung do thiếu sót khi merge)
+-- =========================================================
+CREATE TABLE NHATKYHOATDONG (
+    MANHATKY INT IDENTITY(1,1) PRIMARY KEY,
+    MATAIKHOAN INT NOT NULL,
+    HANHDONG NVARCHAR(255) NOT NULL,
+    THOIGIAN DATETIME DEFAULT GETDATE(),
+    GHICHU NVARCHAR(MAX),
+
+    CONSTRAINT FK_NK_TK FOREIGN KEY (MATAIKHOAN) REFERENCES TAIKHOAN(MATAIKHOAN)
+);
+GO
 
 -- =====================================================================================================================
 -- ||                                               TRIGGER (HỢP NHẤT)                                                ||
@@ -340,8 +353,7 @@ GO
 -- Lưu ý: Trigger này sẽ trừ tồn kho ngay khi tạo phiếu (hoặc chi tiết phiếu).
 -- Nếu Backend đã trừ rồi thì trigger này sẽ trừ thêm lần nữa.
 -- Tuy nhiên để đảm bảo tính toàn vẹn dữ liệu mức DB, ta giữ lại và nên bỏ logic trừ ở Backend.
-GO
-DROP TRIGGER IF EXISTS TG_CAPNHATSLTONCUASACH_CTPM
+
 
 
 -- 3. CẬP NHẬT SỐ LƯỢNG TỒN KHI TRẢ
@@ -449,10 +461,6 @@ GO
 
 -- 8. CẬP NHẬT TRẠNG THÁI SÁCH (CÒN/HẾT)
 GO
-
-DROP TRIGGER TG_TRANGTHAI_SACH
-GO 
-
 CREATE TRIGGER TG_TRANGTHAI_SACH
 ON SACH
 AFTER INSERT, UPDATE
@@ -704,3 +712,67 @@ BEGIN
     VALUES (CAST(@MaPN AS INT), CAST(@MaSach AS INT), @SoLuong, @GiaNhap);
 END;
 GO
+
+-- SP: Thêm Tài Khoản và Người Dùng (Admin)
+GO
+CREATE PROCEDURE SP_ADMIN_THEM_TAIKHOAN
+    @TenDangNhap NVARCHAR(50),
+    @MatKhau NVARCHAR(255),
+    @MaQuyen INT,           -- 1:Admin, 2:Thủ thư, 3:Thủ kho, 4:Độc giả
+    @HoVaTen NVARCHAR(100),
+    @GioiTinh NVARCHAR(5),
+    @NgaySinh DATE,
+    @Sdt VARCHAR(15),
+    @Email VARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @MaTaiKhoan INT;
+    
+    -- 1. Thêm vào bảng TAIKHOAN
+    INSERT INTO TAIKHOAN (TENDANGNHAP, MATKHAU, MAQUYEN)
+    VALUES (@TenDangNhap, @MatKhau, @MaQuyen);
+
+    SET @MaTaiKhoan = SCOPE_IDENTITY(); -- Lấy ID vừa tạo
+
+    -- 2. Thêm vào bảng người dùng tương ứng
+    IF @MaQuyen = 2 -- Thủ thư
+    BEGIN
+        INSERT INTO THUTHU (MATAIKHOAN, HOVATEN, GIOITINH, NGAYSINH, SDT, EMAIL)
+        VALUES (@MaTaiKhoan, @HoVaTen, @GioiTinh, @NgaySinh, @Sdt, @Email);
+    END
+    ELSE IF @MaQuyen = 3 -- Thủ kho
+    BEGIN
+        INSERT INTO THUKHO (MATAIKHOAN, HOVATEN, GIOITINH, NGAYSINH, SDT, EMAIL)
+        VALUES (@MaTaiKhoan, @HoVaTen, @GioiTinh, @NgaySinh, @Sdt, @Email);
+    END
+    ELSE IF @MaQuyen = 4 -- Sinh viên/Độc giả
+    BEGIN
+        INSERT INTO SINHVIEN (MATAIKHOAN, HOVATEN, GIOITINH, NGAYSINH, SDT, EMAIL)
+        VALUES (@MaTaiKhoan, @HoVaTen, @GioiTinh, @NgaySinh, @Sdt, @Email);
+    END
+
+    -- Trả về Mã Tài Khoản để xác nhận thành công
+    SELECT @MaTaiKhoan AS MaTaiKhoan;
+END;
+GO
+
+-- SP: Cập nhật Trạng thái Tài khoản
+GO
+CREATE PROCEDURE SP_ADMIN_CAPNHAT_TRANGTHAI
+    @MaTaiKhoan INT,
+    @TrangThaiMoi NVARCHAR(20) -- N'Hoạt động' hoặc N'Ngừng hoạt động'
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE TAIKHOAN
+    SET TRANGTHAI = @TrangThaiMoi
+    WHERE MATAIKHOAN = @MaTaiKhoan;
+
+    IF @@ROWCOUNT > 0
+        SELECT 1 AS Success;
+    ELSE
+        SELECT 0 AS Success;
+END;
+GO
+

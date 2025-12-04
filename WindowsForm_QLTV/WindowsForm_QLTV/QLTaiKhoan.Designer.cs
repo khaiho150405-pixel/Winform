@@ -70,16 +70,21 @@
             this.pnlBackground.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlBackground.Location = new System.Drawing.Point(0, 0);
             this.pnlBackground.Name = "pnlBackground";
-            this.pnlBackground.Size = new System.Drawing.Size(1200, 700); // Kích thước mới
+            this.pnlBackground.Size = new System.Drawing.Size(1200, 700);
             this.pnlBackground.TabIndex = 0;
             // 
             // pnlDataGrid
             // 
+            // --- QUAN TRỌNG: Anchor 4 phía để bảng giãn full màn hình ---
+            this.pnlDataGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            // -----------------------------------------------------------
             this.pnlDataGrid.Controls.Add(this.dgvTaiKhoan);
             this.pnlDataGrid.Controls.Add(this.pnlPagination);
-            this.pnlDataGrid.Location = new System.Drawing.Point(340, 100); // Dịch chuyển lên 60px
+            this.pnlDataGrid.Location = new System.Drawing.Point(340, 100);
             this.pnlDataGrid.Name = "pnlDataGrid";
-            this.pnlDataGrid.Size = new System.Drawing.Size(840, 560); // Tăng chiều rộng và chiều cao
+            this.pnlDataGrid.Size = new System.Drawing.Size(840, 560);
             this.pnlDataGrid.TabIndex = 4;
             // 
             // dgvTaiKhoan
@@ -153,16 +158,23 @@
             // 
             // pnlSearch
             // 
+            // --- QUAN TRỌNG: Anchor Left | Right để thanh tìm kiếm giãn ngang ---
+            this.pnlSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            // -------------------------------------------------------------------
             this.pnlSearch.Controls.Add(this.btnTimKiem);
             this.pnlSearch.Controls.Add(this.txtTimKiem);
             this.pnlSearch.Controls.Add(this.lblTimKiem);
             this.pnlSearch.Location = new System.Drawing.Point(340, 50);
             this.pnlSearch.Name = "pnlSearch";
-            this.pnlSearch.Size = new System.Drawing.Size(840, 40); // Chiều rộng mới, chiều cao giảm
+            this.pnlSearch.Size = new System.Drawing.Size(840, 40);
             this.pnlSearch.TabIndex = 3;
             // 
             // btnTimKiem
             // 
+            // --- QUAN TRỌNG: Anchor Top | Right để nút luôn dính mép phải ---
+            this.btnTimKiem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            // ----------------------------------------------------------------
             this.btnTimKiem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
             this.btnTimKiem.FlatAppearance.BorderSize = 0;
             this.btnTimKiem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -177,6 +189,10 @@
             // 
             // txtTimKiem
             // 
+            // --- QUAN TRỌNG: Anchor Left | Right để ô nhập giãn ra ---
+            this.txtTimKiem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            // ---------------------------------------------------------
             this.txtTimKiem.Location = new System.Drawing.Point(520, 10);
             this.txtTimKiem.Name = "txtTimKiem";
             this.txtTimKiem.Size = new System.Drawing.Size(220, 22);
@@ -196,7 +212,7 @@
             this.pnlControl.Controls.Add(this.btnLuu);
             this.pnlControl.Controls.Add(this.btnXoa);
             this.pnlControl.Controls.Add(this.btnTaoMoi);
-            this.pnlControl.Location = new System.Drawing.Point(30, 360); // Dịch chuyển lên
+            this.pnlControl.Location = new System.Drawing.Point(30, 360);
             this.pnlControl.Name = "pnlControl";
             this.pnlControl.Size = new System.Drawing.Size(290, 50);
             this.pnlControl.TabIndex = 2;
@@ -261,17 +277,17 @@
             this.pnlInput.Controls.Add(this.lblMaTK);
             this.pnlInput.Location = new System.Drawing.Point(30, 50);
             this.pnlInput.Name = "pnlInput";
-            this.pnlInput.Size = new System.Drawing.Size(290, 300); // Chiều cao giảm
+            this.pnlInput.Size = new System.Drawing.Size(290, 300);
             this.pnlInput.TabIndex = 1;
             // 
             // cboRole
             // 
             this.cboRole.FormattingEnabled = true;
             this.cboRole.Items.AddRange(new object[] {
-            "Admin",
-            "Thủ thư",
-            "Độc giả"});
-            this.cboRole.Location = new System.Drawing.Point(120, 260); // Dịch chuyển lên
+    "Admin",
+    "Thủ thư",
+    "Độc giả"});
+            this.cboRole.Location = new System.Drawing.Point(120, 260);
             this.cboRole.Name = "cboRole";
             this.cboRole.Size = new System.Drawing.Size(150, 24);
             this.cboRole.TabIndex = 13;
@@ -279,7 +295,7 @@
             // lblRole
             // 
             this.lblRole.AutoSize = true;
-            this.lblRole.Location = new System.Drawing.Point(20, 263); // Dịch chuyển lên
+            this.lblRole.Location = new System.Drawing.Point(20, 263);
             this.lblRole.Name = "lblRole";
             this.lblRole.Size = new System.Drawing.Size(64, 16);
             this.lblRole.TabIndex = 12;
@@ -287,7 +303,7 @@
             // 
             // txtEmail
             // 
-            this.txtEmail.Location = new System.Drawing.Point(120, 220); // Dịch chuyển lên
+            this.txtEmail.Location = new System.Drawing.Point(120, 220);
             this.txtEmail.Name = "txtEmail";
             this.txtEmail.Size = new System.Drawing.Size(150, 22);
             this.txtEmail.TabIndex = 11;
@@ -295,7 +311,7 @@
             // lblEmail
             // 
             this.lblEmail.AutoSize = true;
-            this.lblEmail.Location = new System.Drawing.Point(20, 223); // Dịch chuyển lên
+            this.lblEmail.Location = new System.Drawing.Point(20, 223);
             this.lblEmail.Name = "lblEmail";
             this.lblEmail.Size = new System.Drawing.Size(44, 16);
             this.lblEmail.TabIndex = 10;
@@ -303,7 +319,7 @@
             // 
             // txtSDT
             // 
-            this.txtSDT.Location = new System.Drawing.Point(120, 180); // Dịch chuyển lên
+            this.txtSDT.Location = new System.Drawing.Point(120, 180);
             this.txtSDT.Name = "txtSDT";
             this.txtSDT.Size = new System.Drawing.Size(150, 22);
             this.txtSDT.TabIndex = 9;
@@ -311,7 +327,7 @@
             // lblSDT
             // 
             this.lblSDT.AutoSize = true;
-            this.lblSDT.Location = new System.Drawing.Point(20, 183); // Dịch chuyển lên
+            this.lblSDT.Location = new System.Drawing.Point(20, 183);
             this.lblSDT.Name = "lblSDT";
             this.lblSDT.Size = new System.Drawing.Size(37, 16);
             this.lblSDT.TabIndex = 8;
@@ -320,7 +336,7 @@
             // dtpNgaySinh
             // 
             this.dtpNgaySinh.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpNgaySinh.Location = new System.Drawing.Point(120, 140); // Dịch chuyển lên
+            this.dtpNgaySinh.Location = new System.Drawing.Point(120, 140);
             this.dtpNgaySinh.Name = "dtpNgaySinh";
             this.dtpNgaySinh.Size = new System.Drawing.Size(150, 22);
             this.dtpNgaySinh.TabIndex = 7;
@@ -329,10 +345,10 @@
             // 
             this.cboGioiTinh.FormattingEnabled = true;
             this.cboGioiTinh.Items.AddRange(new object[] {
-            "Nam",
-            "Nữ",
-            "Khác"});
-            this.cboGioiTinh.Location = new System.Drawing.Point(120, 100); // Dịch chuyển lên
+    "Nam",
+    "Nữ",
+    "Khác"});
+            this.cboGioiTinh.Location = new System.Drawing.Point(120, 100);
             this.cboGioiTinh.Name = "cboGioiTinh";
             this.cboGioiTinh.Size = new System.Drawing.Size(150, 24);
             this.cboGioiTinh.TabIndex = 6;
@@ -340,7 +356,7 @@
             // lblNgaySinh
             // 
             this.lblNgaySinh.AutoSize = true;
-            this.lblNgaySinh.Location = new System.Drawing.Point(20, 143); // Dịch chuyển lên
+            this.lblNgaySinh.Location = new System.Drawing.Point(20, 143);
             this.lblNgaySinh.Name = "lblNgaySinh";
             this.lblNgaySinh.Size = new System.Drawing.Size(71, 16);
             this.lblNgaySinh.TabIndex = 5;
@@ -349,7 +365,7 @@
             // lblGioiTinh
             // 
             this.lblGioiTinh.AutoSize = true;
-            this.lblGioiTinh.Location = new System.Drawing.Point(20, 103); // Dịch chuyển lên
+            this.lblGioiTinh.Location = new System.Drawing.Point(20, 103);
             this.lblGioiTinh.Name = "lblGioiTinh";
             this.lblGioiTinh.Size = new System.Drawing.Size(57, 16);
             this.lblGioiTinh.TabIndex = 4;
@@ -403,7 +419,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1200, 700); // Chiều rộng Form mới
+            this.ClientSize = new System.Drawing.Size(1200, 700);
             this.Controls.Add(this.pnlBackground);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FormQLTaiKhoan";

@@ -35,7 +35,7 @@ namespace WindowsForm_QLTV
                 // --- BƯỚC QUAN TRỌNG: LƯU THÔNG TIN VÀO SESSION ---
                 Session.CurrentUsername = username;
                 Session.CurrentRole = userRole;
-                Session.CurrentMaSV = 0; // Reset về 0 để tránh lưu vết cũ
+                Session.CurrentMaSV = 0;
 
                 // Nếu là Độc giả/Sinh viên, cần lấy MASV ngay lập tức
                 if (userRole.Equals("Độc giả", StringComparison.OrdinalIgnoreCase) ||

@@ -177,15 +177,4 @@ namespace WindowsForm_QLTV
             public DateTime? NgayTraThucTe { get; set; }
         }
     }
-
-    // =============================================================
-    // CLASS SESSION TOÀN CỤC (Global)
-    // Nằm ngoài class MuonTra để Login.cs và các form khác đều gọi được
-    // =============================================================
-    public static class Session
-    {
-        public static int CurrentMaSV { get; set; } = 0; // Mặc định là 0 (Chưa đăng nhập)
-        public static string CurrentUsername { get; set; } = "";
-        public static string CurrentRole { get; set; } = "";
-    }
 }

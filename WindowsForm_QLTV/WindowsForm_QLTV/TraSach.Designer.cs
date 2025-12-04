@@ -59,6 +59,8 @@
             // 
             // pnlAction
             // 
+            this.pnlAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlAction.Controls.Add(this.btnHuy);
             this.pnlAction.Controls.Add(this.btnXacNhanTra);
             this.pnlAction.Location = new System.Drawing.Point(30, 620);
@@ -68,12 +70,13 @@
             // 
             // btnHuy
             // 
+            this.btnHuy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnHuy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(126)))), ((int)(((byte)(34)))));
             this.btnHuy.FlatAppearance.BorderSize = 0;
             this.btnHuy.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnHuy.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Bold);
             this.btnHuy.ForeColor = System.Drawing.Color.White;
-            this.btnHuy.Location = new System.Drawing.Point(780, 5);
+            this.btnHuy.Location = new System.Drawing.Point(183, 3);
             this.btnHuy.Name = "btnHuy";
             this.btnHuy.Size = new System.Drawing.Size(110, 40);
             this.btnHuy.TabIndex = 1;
@@ -82,12 +85,13 @@
             // 
             // btnXacNhanTra
             // 
+            this.btnXacNhanTra.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnXacNhanTra.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(174)))), ((int)(((byte)(96)))));
             this.btnXacNhanTra.FlatAppearance.BorderSize = 0;
             this.btnXacNhanTra.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnXacNhanTra.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Bold);
             this.btnXacNhanTra.ForeColor = System.Drawing.Color.White;
-            this.btnXacNhanTra.Location = new System.Drawing.Point(600, 5);
+            this.btnXacNhanTra.Location = new System.Drawing.Point(3, 3);
             this.btnXacNhanTra.Name = "btnXacNhanTra";
             this.btnXacNhanTra.Size = new System.Drawing.Size(170, 40);
             this.btnXacNhanTra.TabIndex = 0;
@@ -106,6 +110,8 @@
             // 
             // pnlDetails
             // 
+            this.pnlDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlDetails.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlDetails.Controls.Add(this.dgvLoanDetails);
             this.pnlDetails.Controls.Add(this.lblLoanDetailsTitle);
@@ -139,6 +145,9 @@
             // 
             // pnlActiveLoans
             // 
+            this.pnlActiveLoans.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlActiveLoans.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlActiveLoans.Controls.Add(this.dgvActiveLoans);
             this.pnlActiveLoans.Controls.Add(this.lblActiveLoansTitle);
@@ -172,6 +181,8 @@
             // 
             // pnlSearch
             // 
+            this.pnlSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlSearch.Controls.Add(this.lblDocGiaStatus);
             this.pnlSearch.Controls.Add(this.txtSLTra);

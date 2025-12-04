@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsForm_QLTV.Services; // Namespace chứa GeminiService
 using WindowsForm_QLTV.CustomControls;
-// LƯU Ý: Không cần 'using WindowsForm_QLTV.DAL;' vì Model1 nằm cùng namespace gốc
 
 namespace WindowsForm_QLTV
 {
@@ -28,18 +27,24 @@ namespace WindowsForm_QLTV
             InitializeChatbotUI();
         }
 
-        // Constructor quan trọng để truyền dữ liệu người dùng
+        // Constructor nhận thông tin đăng nhập
         public MainForm(string username, string role) : this()
         {
-            // Cập nhật thông tin vào Header Sidebar
+            // Cập nhật Session nếu chưa có (phòng trường hợp gọi thẳng Form)
+            if (string.IsNullOrEmpty(Session.CurrentUsername))
+            {
+                Session.CurrentUsername = username;
+                Session.CurrentRole = role;
+            }
+
             lblUserNameHeader.Text = $"MÃ TK: {username}";
             lblUserRoleHeader.Text = $"Vai trò: {role}";
             tsslUsername.Text = $"Đang đăng nhập: {username} | Quyền: {role}";
 
             AttachMenuEventHandlers();
-            ApplyUserPermissions(role); // Áp dụng phân quyền sau khi gán sự kiện
+            ApplyUserPermissions(role);
 
-            // Tải nội dung mặc định (Trang chủ)
+            // Tải nội dung mặc định
             ShowContentControl("Trang chủ");
             HighlightButton(btnTrangChu);
         }
@@ -48,57 +53,65 @@ namespace WindowsForm_QLTV
         {
             string normalizedRole = role.Trim().ToUpper();
 
-            // Mặc định: Ẩn tất cả các nút quản lý trừ Trang Chủ và Thông tin cá nhân
+            // 1. Reset: Ẩn tất cả các nút chức năng quản lý trước
+            btnTaiKhoan.Visible = false;      // Quản lý tài khoản
+            btnSach.Visible = false;          // Quản lý sách
+            btnQLMuonTra.Visible = false;     // Quản lý mượn trả (duyệt phiếu)
+            btnMuonTra.Visible = false;       // Chức năng mượn/trả sách (tác vụ)
+
+            // Các nút phụ (nếu có trong Designer)
+            if (btnTacGia != null) btnTacGia.Visible = false;
+            if (btnNhaXuatBan != null) btnNhaXuatBan.Visible = false;
+            if (btnBaoCao != null) btnBaoCao.Visible = false;
+            if (btnTuongTac != null) btnTuongTac.Visible = false;
+
+            // Luôn hiện các nút cơ bản
             btnTrangChu.Visible = true;
             btnThongTinCaNhan.Visible = true;
             btnThoat.Visible = true;
 
-            btnTaiKhoan.Visible = false;
-            btnSach.Visible = false;
-            btnQLMuonTra.Visible = false;
-            btnMuonTra.Visible = false;
-
-            // Các nút bị loại bỏ khỏi thiết kế nhưng vẫn tồn tại trong code logic
-            btnBaoCao.Visible = false;
-            btnTacGia.Visible = false;
-            btnNhaXuatBan.Visible = false;
-
-            // Ẩn nút Tương tác mặc định (kiểm tra null để tránh lỗi nếu chưa kéo nút)
-            if (btnTuongTac != null) btnTuongTac.Visible = false;
-
+            // 2. Bật hiển thị theo quyền
             switch (normalizedRole)
             {
                 case "ADMIN":
-                    // ADMIN: Full quyền
+                case "QUẢN TRỊ VIÊN":
+                    // ADMIN: Hiện TẤT CẢ chức năng
                     btnTaiKhoan.Visible = true;
                     btnSach.Visible = true;
                     btnQLMuonTra.Visible = true;
-                    btnMuonTra.Visible = true;
+                    btnMuonTra.Visible = false;
+
+                    // Hiện các nút quản lý danh mục (nếu đã kéo thả button trong Design)
+                    if (btnTacGia != null) btnTacGia.Visible = true;
+                    if (btnNhaXuatBan != null) btnNhaXuatBan.Visible = true;
+                    if (btnBaoCao != null) btnBaoCao.Visible = true;
+
+                    // Admin cũng có thể vào xem tương tác (thường là để trả lời)
+                    if (btnTuongTac != null) btnTuongTac.Visible = true;
                     break;
 
                 case "THỦ THƯ":
-                    // THỦ THƯ: Không có Quản lý Tài khoản, Quản lý Sách
+                    // THỦ THƯ: Quản lý mượn trả, Tương tác
                     btnQLMuonTra.Visible = true;
-                    btnMuonTra.Visible = true;
-                    // Hiện nút tương tác cho thủ thư
+                    btnMuonTra.Visible = false;
+                    // Thủ thư thường không được xóa sách hay xóa tài khoản admin, nhưng tùy nghiệp vụ
                     if (btnTuongTac != null) btnTuongTac.Visible = true;
                     break;
 
                 case "THỦ KHO":
-                    // THỦ KHO: Chỉ có Quản lý Sách, không có Quản lý Tài khoản và QL Mượn Trả
+                    // THỦ KHO: Quản lý nhập sách, danh mục sách
                     btnSach.Visible = true;
-                    btnMuonTra.Visible = true;
+                    if (btnTacGia != null) btnTacGia.Visible = true;
+                    if (btnNhaXuatBan != null) btnNhaXuatBan.Visible = true;
+                    // Thủ kho có thể cần kiểm tra kho sách (mượn trả để xem tồn kho)
+                    btnMuonTra.Visible = false;
                     break;
 
                 case "ĐỘC GIẢ":
-                    // ĐỘC GIẢ: Chỉ có Trang chủ, Thông tin cá nhân và Mượn trả sách
-                    btnMuonTra.Visible = true;
-                    // Hiện nút tương tác cho độc giả
+                case "SINH VIÊN":
+                    // ĐỘC GIẢ: Chỉ mượn sách và tương tác
+                    btnMuonTra.Visible = true; // Để xem lịch sử hoặc đăng ký mượn
                     if (btnTuongTac != null) btnTuongTac.Visible = true;
-                    break;
-
-                default:
-                    // Vai trò không xác định: Hầu hết đều ẩn, chỉ giữ lại các nút cơ bản
                     break;
             }
         }
@@ -152,6 +165,7 @@ namespace WindowsForm_QLTV
         {
             if (MessageBox.Show("Bạn có chắc chắn muốn thoát khỏi hệ thống không?", "Xác nhận Thoát", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
+                Session.Clear();
                 this.Close();
             }
         }
@@ -179,10 +193,9 @@ namespace WindowsForm_QLTV
         {
             pnlContent.Controls.Clear();
 
-            // Lấy thông tin người dùng từ StatusStrip để truyền vào các Form con
-            string statusText = tsslUsername.Text;
-            string username = statusText.Contains("Đang đăng nhập:") ? statusText.Split('|')[0].Replace("Đang đăng nhập:", "").Trim() : "N/A";
-            string role = statusText.Contains("Quyền:") ? statusText.Split('|')[1].Replace("Quyền:", "").Trim() : "N/A";
+            // Sử dụng Session thay vì parsing chuỗi từ Label (An toàn hơn)
+            string username = Session.CurrentUsername;
+            string role = Session.CurrentRole;
 
             Control newContent = null;
             Type formType = null;
@@ -197,6 +210,12 @@ namespace WindowsForm_QLTV
                     case "Quản lý sách":
                         formType = typeof(FormQLSach);
                         break;
+                    case "Quản lý tác giả":
+                        formType = typeof(FormQLTacGia); // Đảm bảo bạn có Form này
+                        break;
+                    case "Quản lý NXB":
+                        formType = typeof(FormQLNXB); // Đảm bảo bạn có Form này
+                        break;
                     case "Quản lý mượn trả":
                         formType = typeof(FormQLMuonTra);
                         break;
@@ -210,56 +229,63 @@ namespace WindowsForm_QLTV
                         newContent = new UserInfoForm(username, role);
                         break;
 
-                    // === LOGIC MỚI CHO TƯƠNG TÁC ===
                     case "Tương tác":
-                        // Logic lấy ID thật từ CSDL dựa trên Username
+                        // Logic cho Tương tác: Admin đóng vai trò trả lời như Thủ thư
                         int realId = 0;
+                        string mode = ""; // "Hoi" (Sinh viên) hoặc "TraLoi" (Thủ thư/Admin)
 
-                        // Sử dụng Model1 trực tiếp vì nó cùng Namespace
                         using (var db = new Model1())
                         {
                             var tk = db.TAIKHOANs.FirstOrDefault(t => t.TENDANGNHAP == username);
                             if (tk != null)
                             {
-                                if (role.Trim().ToUpper() == "ĐỘC GIẢ")
+                                if (role.ToUpper().Contains("ĐỘC GIẢ") || role.ToUpper().Contains("SINH VIÊN"))
                                 {
                                     var sv = db.SINHVIENs.FirstOrDefault(s => s.MATAIKHOAN == tk.MATAIKHOAN);
                                     if (sv != null) realId = sv.MASV;
+                                    mode = "Hoi";
                                 }
-                                else if (role.Trim().ToUpper() == "THỦ THƯ")
+                                else if (role.ToUpper().Contains("THỦ THƯ"))
                                 {
                                     var tt = db.THUTHUs.FirstOrDefault(t => t.MATAIKHOAN == tk.MATAIKHOAN);
                                     if (tt != null) realId = tt.MATT;
+                                    mode = "TraLoi";
+                                }
+                                else if (role.ToUpper().Contains("ADMIN"))
+                                {
+                                    // Admin có quyền trả lời, lấy đại diện ID là 0 hoặc ID của 1 thủ thư mặc định nếu cần
+                                    // Ở đây cho phép Admin mở form trả lời
+                                    realId = 999; // ID ảo cho Admin
+                                    mode = "TraLoi";
                                 }
                             }
                         }
 
-                        if (realId > 0)
+                        if (mode == "Hoi" && realId > 0)
                         {
-                            if (role.Trim().ToUpper() == "ĐỘC GIẢ")
-                                newContent = new FormTuongTacDocGia(realId);
-                            else if (role.Trim().ToUpper() == "THỦ THƯ")
-                                newContent = new FormTraLoiHoiDap(realId);
+                            newContent = new FormTuongTacDocGia(realId);
+                        }
+                        else if (mode == "TraLoi")
+                        {
+                            // Admin hoặc Thủ thư vào form trả lời
+                            newContent = new FormTraLoiHoiDap(realId);
                         }
                         else
                         {
-                            newContent = new Label { Text = "Không tìm thấy thông tin Sinh viên/Thủ thư tương ứng tài khoản này.", AutoSize = true, ForeColor = Color.Red, Location = new Point(20, 20) };
+                            newContent = new Label { Text = "Chưa liên kết thông tin Sinh viên/Thủ thư.", AutoSize = true, ForeColor = Color.Red, Location = new Point(20, 20) };
                         }
                         break;
                 }
 
                 if (formType != null)
                 {
-                    // Tạo Form từ Type nếu nó là Form
                     newContent = (Form)Activator.CreateInstance(formType);
                 }
             }
             catch (Exception ex)
             {
-                // Nếu có lỗi trong quá trình Activator.CreateInstance (ví dụ: Form không tồn tại)
                 newContent = new Label { Text = $"Lỗi tải Form {controlName}: {ex.Message}", AutoSize = true, ForeColor = Color.Red, Location = new Point(20, 20) };
             }
-
 
             if (newContent is Form form)
             {

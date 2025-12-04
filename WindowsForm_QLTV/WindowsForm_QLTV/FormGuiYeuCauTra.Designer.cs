@@ -49,6 +49,11 @@
             // 
             this.dgvActiveLoans.AllowUserToAddRows = false;
             this.dgvActiveLoans.AllowUserToDeleteRows = false;
+            // --- QUAN TRỌNG: Anchor 4 phía để bảng giãn full màn hình ---
+            this.dgvActiveLoans.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            // -----------------------------------------------------------
             this.dgvActiveLoans.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvActiveLoans.Location = new System.Drawing.Point(21, 72);
             this.dgvActiveLoans.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -61,24 +66,30 @@
             // 
             // numQuantity
             // 
+            // --- Anchor Bottom | Left: Dính góc trái dưới ---
+            this.numQuantity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            // ------------------------------------------------
             this.numQuantity.Location = new System.Drawing.Point(124, 644);
             this.numQuantity.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.numQuantity.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+    1,
+    0,
+    0,
+    0});
             this.numQuantity.Name = "numQuantity";
             this.numQuantity.Size = new System.Drawing.Size(56, 26);
             this.numQuantity.TabIndex = 6;
             this.numQuantity.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+    1,
+    0,
+    0,
+    0});
             // 
             // lblQuantity
             // 
+            // --- Anchor Bottom | Left: Dính góc trái dưới ---
+            this.lblQuantity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            // ------------------------------------------------
             this.lblQuantity.AutoSize = true;
             this.lblQuantity.Location = new System.Drawing.Point(18, 646);
             this.lblQuantity.Name = "lblQuantity";
@@ -88,6 +99,9 @@
             // 
             // btnGuiYeuCauTra
             // 
+            // --- Anchor Bottom | Right: Dính góc phải dưới ---
+            this.btnGuiYeuCauTra.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            // -------------------------------------------------
             this.btnGuiYeuCauTra.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(126)))), ((int)(((byte)(34)))));
             this.btnGuiYeuCauTra.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnGuiYeuCauTra.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
@@ -102,6 +116,9 @@
             // 
             // btnGiaHan
             // 
+            // --- Anchor Bottom | Right: Dính góc phải dưới ---
+            this.btnGiaHan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            // -------------------------------------------------
             this.btnGiaHan.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
             this.btnGiaHan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnGiaHan.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
@@ -116,6 +133,9 @@
             // 
             // lblSelectedBook
             // 
+            // --- Anchor Bottom | Left: Dính góc trái dưới (Nằm trên hàng nút một chút) ---
+            this.lblSelectedBook.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            // -----------------------------------------------------------------------------
             this.lblSelectedBook.AutoSize = true;
             this.lblSelectedBook.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.lblSelectedBook.Location = new System.Drawing.Point(21, 588);

@@ -4,19 +4,19 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity;
+using WindowsForm_QLTV;
 
 namespace WindowsForm_QLTV
 {
     public partial class FormTraSach : Form
     {
-        private int _currentMaSV = -1; // Mã SV của phiếu mượn đang được chọn
-        private const int CurrentMaTT = 1;
+        private int _currentMaSV = -1;
 
         public FormTraSach()
         {
             InitializeComponent();
 
-            // Đã loại bỏ nút tìm kiếm, chỉ giữ lại xử lý cho DataGridView
+            // Gán sự kiện
             dgvActiveLoans.CellClick += DgvActiveLoans_CellClick;
             btnXacNhanTra.Click += BtnXacNhanTra_Click;
             btnHuy.Click += BtnHuy_Click;
@@ -27,32 +27,31 @@ namespace WindowsForm_QLTV
 
         private void FormTraSach_Load(object sender, EventArgs e)
         {
-            // Tải tất cả phiếu mượn đang hoạt động của tất cả độc giả ngay khi form mở
             ClearForm();
             LoadAllActiveLoans();
         }
 
         private void SetupDataGridViews()
         {
-            // Thiết lập dgvActiveLoans
+            // Cấu hình bảng Danh sách phiếu mượn (Bên trên)
             dgvActiveLoans.AutoGenerateColumns = false;
             dgvActiveLoans.Columns.Clear();
             dgvActiveLoans.Columns.Add(CreateColumn("MaPhieuMuon", "Mã PM", 80));
             dgvActiveLoans.Columns.Add(CreateColumn("TenDocGia", "Tên Độc Giả", 180));
             dgvActiveLoans.Columns.Add(CreateColumn("NgayMuon", "Ngày Mượn", 120));
             dgvActiveLoans.Columns.Add(CreateColumn("HenTra", "Hẹn Trả", 120));
-            dgvActiveLoans.Columns.Add(CreateColumn("TinhTrang", "Trạng Thái", 100));
+            dgvActiveLoans.Columns.Add(CreateColumn("TinhTrang", "Trạng Thái", 120)); // Cột quan trọng
             dgvActiveLoans.ReadOnly = true;
+            dgvActiveLoans.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
-            // Thiết lập dgvLoanDetails
+            // Cấu hình bảng Chi tiết sách (Bên dưới)
             dgvLoanDetails.AutoGenerateColumns = false;
             dgvLoanDetails.Columns.Clear();
             dgvLoanDetails.Columns.Add(CreateColumn("MaSach", "Mã Sách", 80));
-            dgvLoanDetails.Columns.Add(CreateColumn("TenSach", "Tên Sách", 200));
-            dgvLoanDetails.Columns.Add(CreateColumn("SoLuongMuonBanDau", "SL Mượn", 80));
-            dgvLoanDetails.Columns.Add(CreateColumn("SoLuongDaTra", "SL Đã Trả", 80));
-            dgvLoanDetails.Columns.Add(CreateColumn("SoLuongConNo", "SL Còn Nợ", 80));
+            dgvLoanDetails.Columns.Add(CreateColumn("TenSach", "Tên Sách", 250));
+            dgvLoanDetails.Columns.Add(CreateColumn("SoLuongMuonBanDau", "SL Mượn", 100));
             dgvLoanDetails.ReadOnly = true;
+            dgvLoanDetails.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         }
 
         private DataGridViewTextBoxColumn CreateColumn(string name, string header, int width)
@@ -68,54 +67,48 @@ namespace WindowsForm_QLTV
 
         private void ClearForm()
         {
-            // Cập nhật text fields
             txtTenDocGia.Text = "Chưa có phiếu mượn nào được chọn.";
-            txtSLTra.Text = "1";
+            txtSLTra.Text = "1"; // Mặc định, dù logic mới trả toàn bộ phiếu
+            txtSLTra.Enabled = false; // Khóa lại vì trả theo phiếu
             _currentMaSV = -1;
 
-            // Đặt lại DataGridViews
             dgvActiveLoans.DataSource = null;
             dgvLoanDetails.DataSource = null;
             dgvLoanDetails.Tag = null;
 
-            // Cập nhật trạng thái
             lblDocGiaStatus.Text = "Tổng quan yêu cầu trả sách";
             lblDocGiaStatus.ForeColor = Color.Black;
         }
 
-        // Tải tất cả phiếu mượn đang hoạt động của tất cả độc giả
+        // Tải danh sách phiếu: Bao gồm cả 'Chờ trả' để thủ thư xử lý
         private void LoadAllActiveLoans()
         {
             try
             {
                 using (var db = new Model1())
                 {
-                    // Các trạng thái hoạt động theo DB Script (ThuVienDB.sql)
-                    var activeStatuses = new[] { "Đang mượn", "Quá hạn", "Thiếu", "Quá hạn và Thiếu", "Chờ duyệt" };
+                    // [QUAN TRỌNG] Thêm "Chờ trả" vào danh sách hiển thị
+                    var activeStatuses = new[] { "Đang mượn", "Chờ trả", "Quá hạn", "Thiếu", "Quá hạn và Thiếu" };
 
                     var activeLoans = db.PHIEUMUONs
-                                             .AsNoTracking()
-                                             .Include(pm => pm.SINHVIEN) // Bắt buộc phải Include để lấy tên độc giả
-                                             .Where(pm => activeStatuses.Contains(pm.TRANGTHAI))
-                                             .OrderByDescending(pm => pm.NGAYLAPPHIEUMUON)
-                                             .Select(pm => new LoanSummaryViewModel
-                                             {
-                                                 MaPhieuMuon = pm.MAPM,
-                                                 MaSV = pm.MASV, // THÊM MÃ SV
-                                                 TenDocGia = pm.SINHVIEN.HOVATEN,
-                                                 NgayMuon = pm.NGAYLAPPHIEUMUON,
-                                                 HenTra = pm.HANTRA,
-                                                 TinhTrang = pm.TRANGTHAI
-                                             })
-                                             .ToList();
+                                        .AsNoTracking()
+                                        .Include(pm => pm.SINHVIEN)
+                                        .Where(pm => activeStatuses.Contains(pm.TRANGTHAI))
+                                        .OrderByDescending(pm => pm.NGAYLAPPHIEUMUON) // Phiếu mới nhất lên đầu
+                                        .Select(pm => new LoanSummaryViewModel
+                                        {
+                                            MaPhieuMuon = pm.MAPM,
+                                            MaSV = pm.MASV,
+                                            TenDocGia = pm.SINHVIEN.HOVATEN,
+                                            NgayMuon = pm.NGAYLAPPHIEUMUON,
+                                            HenTra = pm.HANTRA,
+                                            TinhTrang = pm.TRANGTHAI
+                                        })
+                                        .ToList();
 
                     dgvActiveLoans.DataSource = activeLoans;
 
-                    // Cập nhật tiêu đề và trạng thái
-                    lblActiveLoansTitle.Text = $"DANH SÁCH {activeLoans.Count} PHIẾU MƯỢN ĐANG HOẠT ĐỘNG TRÊN HỆ THỐNG";
-                    lblDocGiaStatus.Text = $"Đã tải {activeLoans.Count} phiếu. Vui lòng chọn phiếu để xử lý.";
-
-                    // Đảm bảo cột MaSV được thêm (ẩn) nếu chưa có
+                    // Thêm cột ẩn MaSV nếu chưa có
                     if (!dgvActiveLoans.Columns.Contains("MaSV"))
                     {
                         var maSVCol = new DataGridViewTextBoxColumn
@@ -126,11 +119,13 @@ namespace WindowsForm_QLTV
                         };
                         dgvActiveLoans.Columns.Add(maSVCol);
                     }
+
+                    lblActiveLoansTitle.Text = $"DANH SÁCH {activeLoans.Count} PHIẾU CẦN XỬ LÝ";
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi tải phiếu mượn toàn hệ thống: {ex.Message}", "Lỗi Database");
+                MessageBox.Show($"Lỗi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -138,169 +133,150 @@ namespace WindowsForm_QLTV
         {
             if (e.RowIndex >= 0 && dgvActiveLoans.Rows[e.RowIndex].DataBoundItem != null)
             {
-                DataGridViewRow selectedRow = dgvActiveLoans.Rows[e.RowIndex];
+                var selectedRow = dgvActiveLoans.Rows[e.RowIndex];
 
-                // Lấy Mã PM và Mã SV từ hàng được chọn
-                if (int.TryParse(selectedRow.Cells["MaPhieuMuon"].Value.ToString(), out int maPM))
+                // Lấy thông tin từ dòng đã chọn (ViewModel)
+                var item = selectedRow.DataBoundItem as LoanSummaryViewModel;
+                if (item != null)
                 {
-                    int maSV = (int)selectedRow.Cells["MaSV"].Value;
+                    _currentMaSV = item.MaSV;
+                    txtTenDocGia.Text = $"MSV: {item.MaSV} - {item.TenDocGia} (Phiếu #{item.MaPhieuMuon})";
 
-                    // Cập nhật trạng thái độc giả đang được xử lý
-                    _currentMaSV = maSV;
-                    string tenDocGia = selectedRow.Cells["TenDocGia"].Value.ToString();
-                    string tinhTrang = selectedRow.Cells["TinhTrang"].Value.ToString();
+                    // Hiển thị trạng thái để thủ thư chú ý
+                    lblDocGiaStatus.Text = $"Trạng thái phiếu: {item.TinhTrang}";
+                    if (item.TinhTrang == "Chờ trả")
+                    {
+                        lblDocGiaStatus.ForeColor = Color.Green; // Màu xanh: Sẵn sàng xử lý
+                        lblDocGiaStatus.Text += " (Độc giả đã yêu cầu)";
+                    }
+                    else
+                    {
+                        lblDocGiaStatus.ForeColor = Color.Red; // Màu đỏ: Chưa có yêu cầu
+                    }
 
-                    txtTenDocGia.Text = $"MSV: {maSV} - {tenDocGia} (Phiếu #{maPM})";
-                    lblDocGiaStatus.Text = $"Đang xử lý: {tinhTrang} của {tenDocGia}";
-                    lblDocGiaStatus.ForeColor = Color.Blue;
-
-                    LoadLoanDetails(maPM);
-                }
-                else
-                {
-                    MessageBox.Show("Không thể lấy Mã Phiếu Mượn. Vui lòng kiểm tra dữ liệu.", "Lỗi Dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    LoadLoanDetails(item.MaPhieuMuon);
                 }
             }
         }
 
+        // Tải chi tiết sách trong phiếu
         private void LoadLoanDetails(int maPM)
         {
             try
             {
                 using (var db = new Model1())
                 {
-                    // Lấy chi tiết phiếu mượn
                     var chiTietMuon = db.CHITIETPHIEUMUONs
-                                         .AsNoTracking()
-                                         .Include(ct => ct.SACH)
-                                         .Where(ct => ct.MAPM == maPM)
-                                         .ToList();
+                                        .AsNoTracking()
+                                        .Include(ct => ct.SACH)
+                                        .Where(ct => ct.MAPM == maPM)
+                                        .Select(ct => new BookDebtViewModel
+                                        {
+                                            MaSach = ct.MASACH,
+                                            TenSach = ct.SACH.TENSACH,
+                                            SoLuongMuonBanDau = ct.SOLUONG,
+                                            // Với logic trả cả phiếu, ta chỉ cần hiển thị số lượng mượn
+                                            SoLuongDaTra = 0,
+                                            SoLuongConNo = ct.SOLUONG
+                                        })
+                                        .ToList();
 
-                    // Lấy tổng số lượng sách đã trả cho Phiếu Mượn này
-                    var chiTietTraDaThanhToan = (from ctt in db.CHITIETPHIEUTRAs
-                                                 join pt in db.PHIEUTRAs on ctt.MAPT equals pt.MAPT
-                                                 where pt.MAPM == maPM
-                                                 select ctt)
-                                                 .AsNoTracking()
-                                                 .ToList();
-
-                    var result = chiTietMuon.Select(ct =>
-                    {
-                        // Tính toán số lượng đã trả từ kết quả join
-                        int daTraTruoc = chiTietTraDaThanhToan
-                                             .Where(ctt => ctt.MASACH == ct.MASACH)
-                                             .Sum(ctt => ctt.SOLUONGTRA.HasValue ? ctt.SOLUONGTRA.Value : 0);
-
-                        int conNo = ct.SOLUONG - daTraTruoc;
-
-                        return new BookDebtViewModel
-                        {
-                            MaSach = ct.MASACH,
-                            TenSach = ct.SACH.TENSACH,
-                            SoLuongMuonBanDau = ct.SOLUONG,
-                            SoLuongDaTra = daTraTruoc,
-                            SoLuongConNo = conNo
-                        };
-                    })
-                    .Where(vm => vm.SoLuongConNo > 0) // Chỉ hiển thị sách còn nợ
-                    .ToList();
-
-                    dgvLoanDetails.DataSource = result;
-                    dgvLoanDetails.Tag = maPM;
+                    dgvLoanDetails.DataSource = chiTietMuon;
+                    dgvLoanDetails.Tag = maPM; // Lưu Mã phiếu vào Tag để dùng lúc xác nhận
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi tải chi tiết phiếu mượn: {ex.Message}", "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Lỗi tải chi tiết: {ex.Message}");
             }
         }
 
+        // =============================================================
+        // LOGIC CHÍNH: XÁC NHẬN TRẢ SÁCH
+        // =============================================================
         private void BtnXacNhanTra_Click(object sender, EventArgs e)
         {
-            if (dgvLoanDetails.CurrentRow == null || dgvLoanDetails.Tag == null || _currentMaSV == -1)
+            // 1. Kiểm tra đã chọn phiếu chưa
+            if (dgvActiveLoans.CurrentRow == null)
             {
-                MessageBox.Show("Vui lòng đảm bảo đã chọn Phiếu Mượn và Sách cần trả.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng chọn phiếu mượn cần xử lý.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            int maPM = (int)dgvLoanDetails.Tag;
+            var selectedItem = dgvActiveLoans.CurrentRow.DataBoundItem as LoanSummaryViewModel;
+            if (selectedItem == null) return;
 
-            if (!int.TryParse(dgvLoanDetails.CurrentRow.Cells["MaSach"].Value.ToString(), out int maSach)) return;
-            if (!int.TryParse(dgvLoanDetails.CurrentRow.Cells["SoLuongConNo"].Value.ToString(), out int soLuongConNo)) return;
+            string trangThaiHienTai = selectedItem.TinhTrang;
 
-            if (!int.TryParse(txtSLTra.Text, out int soLuongTra) || soLuongTra <= 0)
+            // 2. CHẶN: Nếu độc giả chưa gửi yêu cầu (Trạng thái vẫn là "Đang mượn")
+            if (trangThaiHienTai.Equals("Đang mượn", StringComparison.OrdinalIgnoreCase) ||
+                trangThaiHienTai.Equals("Quá hạn", StringComparison.OrdinalIgnoreCase))
             {
-                MessageBox.Show("Vui lòng nhập số lượng trả hợp lệ (> 0).", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Độc giả CHƯA gửi yêu cầu trả sách cho phiếu này.\n\n" +
+                                "Vui lòng yêu cầu độc giả vào phần 'Lịch sử Mượn/Trả' và bấm nút 'Gửi yêu cầu trả' trước.",
+                                "Chưa có yêu cầu từ Độc giả", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return;
             }
-            if (soLuongTra > soLuongConNo)
+
+            // 3. CHẶN: Nếu đã trả rồi (phòng trường hợp lag mạng)
+            if (trangThaiHienTai.Equals("Đã trả", StringComparison.OrdinalIgnoreCase))
             {
-                MessageBox.Show($"Số lượng trả vượt quá số lượng còn nợ ({soLuongConNo} cuốn).", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Phiếu này đã hoàn tất trả sách.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            try
+            // 4. XỬ LÝ TRẢ: Chỉ thực hiện khi trạng thái là "Chờ trả"
+            if (MessageBox.Show($"Xác nhận nhận lại sách và hoàn tất phiếu mượn #{selectedItem.MaPhieuMuon}?\nThao tác này sẽ cập nhật kho sách.",
+                                "Xác nhận Trả sách", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                using (var db = new Model1())
+                try
                 {
-                    // 1. Tạo Phiếu Trả (PHIEUTRA)
-                    PHIEUTRA phieuTra = new PHIEUTRA
+                    using (var db = new Model1())
                     {
-                        MAPM = maPM,
-                        MATT = CurrentMaTT,
-                        NGAYLAPPHIEUTRA = DateTime.Now.Date,
-                        TONGTIENPHAT = 0
-                    };
-                    db.PHIEUTRAs.Add(phieuTra);
-                    db.SaveChanges();
+                        var phieuMuon = db.PHIEUMUONs.Find(selectedItem.MaPhieuMuon);
+                        if (phieuMuon != null)
+                        {
+                            // A. Cập nhật trạng thái Phiếu sang "Đã trả"
+                            // Khi đã là "Đã trả", độc giả sẽ không thể gửi yêu cầu nữa (đã chặn bên logic Độc giả)
+                            phieuMuon.TRANGTHAI = "Đã trả";
 
-                    // 2. Tạo Chi Tiết Phiếu Trả (CHITIETPHIEUTRA)
-                    CHITIETPHIEUTRA chiTietTra = new CHITIETPHIEUTRA
-                    {
-                        MASACH = maSach,
-                        SOLUONGTRA = soLuongTra,
-                        MAPT = phieuTra.MAPT,
-                        NGAYTRA = DateTime.Now.Date
-                    };
-                    db.CHITIETPHIEUTRAs.Add(chiTietTra);
+                            // B. Cộng số lượng tồn kho cho TẤT CẢ sách trong phiếu
+                            var listChiTiet = db.CHITIETPHIEUMUONs.Where(ct => ct.MAPM == selectedItem.MaPhieuMuon).ToList();
 
-                    // 3. Cập nhật trạng thái PHIEUMUON (Đồng bộ với Trigger)
-                    var phieuMuon = db.PHIEUMUONs.Find(maPM);
-                    int tongMuon = db.CHITIETPHIEUMUONs.Where(ct => ct.MAPM == maPM).Sum(ct => ct.SOLUONG);
+                            foreach (var ct in listChiTiet)
+                            {
+                                var sach = db.SACHes.Find(ct.MASACH);
+                                if (sach != null)
+                                {
+                                    sach.SOLUONGTON += ct.SOLUONG; // Trả sách về kho
+                                }
+                            }
 
-                    // Tính tổng số lượng trả MỚI (bao gồm cả lần trả này)
-                    int tongTraMoi = (from ctt in db.CHITIETPHIEUTRAs
-                                      join pt in db.PHIEUTRAs on ctt.MAPT equals pt.MAPT
-                                      where pt.MAPM == maPM
-                                      select ctt.SOLUONGTRA)
-                                       .Sum(x => x.HasValue ? x.Value : 0);
+                            db.SaveChanges();
 
-                    if (tongTraMoi >= tongMuon)
-                    {
-                        phieuMuon.TRANGTHAI = "Đã trả";
+                            MessageBox.Show("Đã xác nhận trả sách thành công! Kho sách đã được cập nhật.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            // Tải lại dữ liệu để cập nhật giao diện
+                            LoadAllActiveLoans();
+                            dgvLoanDetails.DataSource = null;
+                            ClearForm();
+                        }
                     }
-
-                    db.SaveChanges();
-                    MessageBox.Show($"Xác nhận trả {soLuongTra} cuốn sách (Mã: {maSach}) thành công! (Phiếu Trả #{phieuTra.MAPT})", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    // Tải lại dữ liệu (ĐÃ SỬA LỖI GÕ NHẦM HÀM)
-                    LoadLoanDetails(maPM); // Cập nhật chi tiết phiếu mượn đang chọn
-                    LoadAllActiveLoans(); // Cập nhật danh sách toàn hệ thống
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi xử lý trả sách: " + ex.Message, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi hệ thống khi trả sách: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
         private void BtnHuy_Click(object sender, EventArgs e)
         {
-            LoadAllActiveLoans(); // Tải lại toàn bộ danh sách để bắt đầu quy trình mới
-            MessageBox.Show("Đã hủy thao tác.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            ClearForm();
+            LoadAllActiveLoans();
         }
 
-        // ViewModels
+        // --- View Models ---
         public class LoanSummaryViewModel
         {
             public int MaPhieuMuon { get; set; }
@@ -318,13 +294,6 @@ namespace WindowsForm_QLTV
             public int SoLuongMuonBanDau { get; set; }
             public int SoLuongDaTra { get; set; }
             public int SoLuongConNo { get; set; }
-        }
-
-        // Class giả định SessionManager giữ nguyên
-        public static class SessionManager
-        {
-            public static int CurrentMaSV { get; set; } = 1;
-            public static int CurrentMaTT { get; set; } = 1;
         }
     }
 }

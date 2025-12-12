@@ -513,5 +513,29 @@ namespace WindowsForm_QLTV
             var lastControl = flpChatHistory.Controls[flpChatHistory.Controls.Count - 1];
             flpChatHistory.ScrollControlIntoView(lastControl);
         }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Kiểm tra xem người dùng bấm X hay code gọi lệnh Close()
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                DialogResult result = MessageBox.Show("Bạn muốn đăng xuất và quay lại màn hình đăng nhập?", "Thoát ứng dụng", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    // Cho phép đóng -> Sẽ quay về Login do cơ chế ShowDialog ở bước 1
+                }
+                else if (result == DialogResult.No)
+                {
+                    // Người dùng muốn thoát hẳn chương trình
+                    Application.Exit();
+                }
+                else
+                {
+                    // Chọn Cancel -> Hủy lệnh đóng, ở lại MainForm
+                    e.Cancel = true;
+                }
+            }
+        }
     }
 }

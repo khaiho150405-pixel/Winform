@@ -182,8 +182,37 @@ namespace WindowsForm_QLTV
             }
         }
 
+        private bool KiemTraNoPhat()
+        {
+            using (var db = new Model1())
+            {
+                // Tìm các phiếu trả của sinh viên này có tiền phạt và chưa đóng
+                var khoanPhat = db.PHIEUTRAs
+                    .Where(pt => pt.PHIEUMUON.MASV == _maSV && pt.TONGTIENPHAT > 0 && pt.TRANGTHAIPHAT == "Chưa thanh toán")
+                    .Select(pt => pt.TONGTIENPHAT)
+                    .ToList();
+
+                if (khoanPhat.Count > 0)
+                {
+                    double tongNo = (double)khoanPhat.Sum();
+                    MessageBox.Show($"BẠN ĐANG CÓ KHOẢN PHẠT CHƯA THANH TOÁN!\n\n" +
+                                    $"- Tổng số tiền phạt: {tongNo:N0} VNĐ\n" +
+                                    $"- Lý do: Trả sách quá hạn hoặc làm hỏng sách.\n\n" +
+                                    $"Vui lòng liên hệ Thủ thư để đóng phạt trước khi gửi yêu cầu mượn mới.",
+                                    "Cảnh báo vi phạm", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    return true; // Có nợ
+                }
+                return false; // Không nợ
+            }
+        }
+
         private void BtnGuiYeuCau_Click(object sender, EventArgs e)
         {
+            if (KiemTraNoPhat())
+            {
+                return;
+            }
+
             if (!_cartList.Any())
             {
                 MessageBox.Show("Giỏ hàng đang trống. Vui lòng thêm sách để gửi yêu cầu.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);

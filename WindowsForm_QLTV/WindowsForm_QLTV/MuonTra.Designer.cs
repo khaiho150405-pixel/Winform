@@ -26,6 +26,9 @@
             this.btnGuiYeuCauTra = new System.Windows.Forms.Button();
             this.btnGuiYeuCauMuon = new System.Windows.Forms.Button();
             this.lblFormTitle = new System.Windows.Forms.Label();
+            this.lblThongTinPhat = new System.Windows.Forms.Label();
+            this.btnThanhToan = new System.Windows.Forms.Button();
+            this.lblTrangThaiPhat = new System.Windows.Forms.Label();
 
             this.pnlBackground.SuspendLayout();
             this.pnlGridContainer.SuspendLayout();
@@ -100,6 +103,33 @@
             this.btnGuiYeuCauTra.Text = "↩️ GỬI YÊU CẦU TRẢ SÁCH";
             this.btnGuiYeuCauTra.UseVisualStyleBackColor = false;
 
+            //
+            // lblThongTinPhat (Hiển thị tổng tiền)
+            // 
+            this.lblThongTinPhat.AutoSize = true;
+            this.lblThongTinPhat.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.lblThongTinPhat.ForeColor = System.Drawing.Color.Red;
+            this.lblThongTinPhat.Location = new System.Drawing.Point(460, 12);
+            this.lblThongTinPhat.Name = "lblThongTinPhat";
+            this.lblThongTinPhat.Size = new System.Drawing.Size(0, 25);
+            this.lblThongTinPhat.TabIndex = 2;
+
+            // 
+            // btnThanhToan (Nút đóng phạt)
+            // 
+            this.btnThanhToan.BackColor = System.Drawing.Color.Firebrick; // Màu đỏ cảnh báo
+            this.btnThanhToan.FlatAppearance.BorderSize = 0;
+            this.btnThanhToan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnThanhToan.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnThanhToan.ForeColor = System.Drawing.Color.White;
+            this.btnThanhToan.Location = new System.Drawing.Point(750, 8); // Đặt góc phải
+            this.btnThanhToan.Name = "btnThanhToan";
+            this.btnThanhToan.Size = new System.Drawing.Size(180, 35);
+            this.btnThanhToan.TabIndex = 3;
+            this.btnThanhToan.Text = "💸 THANH TOÁN";
+            this.btnThanhToan.UseVisualStyleBackColor = false;
+            this.btnThanhToan.Visible = false; // Mặc định ẩn, chỉ hiện khi có nợ
+
             // 
             // pnlGridContainer (Chứa DataGridView)
             // 
@@ -151,5 +181,8 @@
         private System.Windows.Forms.Panel pnlActions;
         private System.Windows.Forms.Panel pnlGridContainer;
         private System.Windows.Forms.DataGridView dgvLoanHistory;
+        private System.Windows.Forms.Label lblThongTinPhat;
+        private System.Windows.Forms.Button btnThanhToan;
+        private System.Windows.Forms.Label lblTrangThaiPhat;
     }
 }

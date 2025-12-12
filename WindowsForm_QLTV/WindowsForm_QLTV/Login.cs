@@ -73,7 +73,11 @@ namespace WindowsForm_QLTV
                 // Mở MainForm
                 MainForm mainForm = new MainForm(username, userRole);
                 this.Hide();
-                mainForm.Show();
+                mainForm.ShowDialog();
+                this.Show();
+                txtTentaikhoan.Clear();
+                txtMatkhau.Clear();
+                txtTentaikhoan.Focus();
                 // Không gọi Close() ở đây
             }
             else

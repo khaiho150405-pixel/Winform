@@ -89,7 +89,7 @@ namespace WindowsForm_QLTV
                 using (var db = new Model1())
                 {
                     // Các trạng thái được phép hiển thị
-                    var hienThiStatus = new[] { "Đang mượn", "Quá hạn", "Thiếu", "Quá hạn và Thiếu", "Chờ trả" };
+                    var hienThiStatus = new[] { "Đang mượn", "Quá hạn", "Thiếu", "Quá hạn và Thiếu", "Chờ trả", "Chờ trả quá hạn" };
 
                     // Join bảng để lấy thông tin chi tiết từng cuốn sách
                     var listBooks = (from ctpm in db.CHITIETPHIEUMUONs
@@ -210,19 +210,34 @@ namespace WindowsForm_QLTV
         // =============================================================
         private void BtnGuiYeuCau_Click(object sender, EventArgs e)
         {
+            // 1. Kiểm tra đầu vào
             if (_selectedMaPM == -1)
             {
-                MessageBox.Show("Vui lòng chọn một dòng trong danh sách trước.", "Thông báo");
+                MessageBox.Show("Vui lòng chọn một phiếu mượn trong danh sách.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            if (_trangThaiPhieu == "Chờ trả") return;
+            // Nếu đã là Chờ trả hoặc Chờ trả quá hạn thì không làm gì thêm
+            if (_trangThaiPhieu.Contains("Chờ trả")) return;
 
-            string msg = $"Bạn muốn gửi yêu cầu trả sách cho phiếu mượn #{_selectedMaPM}?\n\n" +
-                         "LƯU Ý: Do quy định quản lý theo phiếu, yêu cầu này sẽ áp dụng cho TẤT CẢ sách trong phiếu này.\n" +
-                         "Vui lòng mang sách đến quầy để Thủ thư xác nhận.";
+            // 2. Kiểm tra xem có phải sách lỗi (Quá hạn/Thiếu) không
+            bool isOverdue = _trangThaiPhieu.Contains("Quá hạn") || _trangThaiPhieu.Contains("Thiếu");
+            string msg;
 
-            if (MessageBox.Show(msg, "Xác nhận trả sách", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (isOverdue)
+            {
+                msg = $"Phiếu mượn #{_selectedMaPM} đang ở trạng thái '{_trangThaiPhieu}'.\n\n" +
+                      "Bạn có muốn gửi yêu cầu trả sách không?\n" +
+                      "LƯU Ý: Trạng thái sẽ chuyển thành 'Chờ trả quá hạn' để thủ thư kiểm tra và tính phạt.";
+            }
+            else
+            {
+                msg = $"Bạn muốn gửi yêu cầu trả sách cho phiếu mượn #{_selectedMaPM}?\n" +
+                      "Trạng thái sẽ được chuyển thành 'Chờ trả'.";
+            }
+
+            // 3. Thực hiện xử lý
+            if (MessageBox.Show(msg, "Xác nhận gửi yêu cầu", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 try
                 {
@@ -231,17 +246,34 @@ namespace WindowsForm_QLTV
                         var phieuMuon = db.PHIEUMUONs.Find(_selectedMaPM);
                         if (phieuMuon != null)
                         {
-                            phieuMuon.TRANGTHAI = "Chờ trả";
-                            db.SaveChanges();
+                            // CASE A: Nếu đang mượn bình thường -> Đổi thành "Chờ trả"
+                            if (phieuMuon.TRANGTHAI == "Đang mượn")
+                            {
+                                phieuMuon.TRANGTHAI = "Chờ trả";
+                                db.SaveChanges();
+                                MessageBox.Show("Gửi yêu cầu thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            // CASE B: Nếu đang Quá hạn -> Đổi thành "Chờ trả quá hạn"
+                            else if (isOverdue)
+                            {
+                                // [QUAN TRỌNG]: Phải chạy SQL Bước 1 thì dòng này mới không lỗi
+                                phieuMuon.TRANGTHAI = "Chờ trả quá hạn";
+                                db.SaveChanges();
 
-                            MessageBox.Show("Gửi yêu cầu thành công! Trạng thái phiếu đã chuyển sang 'Chờ trả'.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            LoadActiveLoans(); // Tải lại danh sách
+                                MessageBox.Show("Hệ thống đã ghi nhận yêu cầu trả sách QUÁ HẠN.\n" +
+                                                "Trạng thái đã chuyển sang 'Chờ trả quá hạn'.\n\n" +
+                                                "👉 Vui lòng mang sách đến quầy thủ thư để đóng phạt và hoàn tất.",
+                                                "Đã gửi yêu cầu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+
+                            // Tải lại danh sách để cập nhật giao diện
+                            LoadActiveLoans();
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Lỗi: " + ex.Message);
+                    MessageBox.Show("Lỗi xử lý: " + ex.Message + "\n(Hãy đảm bảo bạn đã cập nhật ràng buộc CHECK trong SQL)", "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

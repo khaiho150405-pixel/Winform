@@ -5,14 +5,14 @@
 -- 2. Chức năng Thủ kho, Nhập/Thanh lý, Tương tác, Báo cáo (Branch Trong)
 -- =======================================================================================
 
-USE ThuVienDB;
-GO
-IF EXISTS (SELECT * FROM sys.databases WHERE name = 'ThuVienDB')
-BEGIN
-    ALTER DATABASE ThuVienDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-    DROP DATABASE ThuVienDB;
-END
-GO
+--USE ThuVienDB;
+--GO
+--IF EXISTS (SELECT * FROM sys.databases WHERE name = 'ThuVienDB')
+--BEGIN
+--    ALTER DATABASE ThuVienDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+--    DROP DATABASE ThuVienDB;
+--END
+--GO
 
 CREATE DATABASE ThuVienDB;
 GO
@@ -154,7 +154,8 @@ CREATE TABLE PHIEUMUON (
     CONSTRAINT CK_PM_Ngay CHECK (NGAYLAPPHIEUMUON <= HANTRA),
     
     -- Ràng buộc trạng thái
-    CONSTRAINT CK_PM_TRANGTHAI CHECK (TRANGTHAI IN (N'Chờ duyệt', N'Đang mượn', N'Chờ trả', N'Đã trả', N'Quá hạn', N'Thiếu', N'Quá hạn và Thiếu', N'Từ chối'))
+    CONSTRAINT CK_PM_TRANGTHAI CHECK 
+	(TRANGTHAI IN (N'Chờ duyệt', N'Đang mượn', N'Chờ trả', N'Chờ trả quá hạn', N'Đã trả', N'Đã trả quá hạn', N'Quá hạn', N'Thiếu', N'Quá hạn và Thiếu', N'Từ chối'))
 );
 GO
 
@@ -186,6 +187,7 @@ CREATE TABLE PHIEUTRA (
     NGAYLAPPHIEUTRA DATE NOT NULL,
     SONGAYQUAHAN INT DEFAULT 0 CHECK (SONGAYQUAHAN >= 0),
     TONGTIENPHAT FLOAT DEFAULT 0 CHECK (TONGTIENPHAT >= 0),
+	TRANGTHAIPHAT NVARCHAR(50) DEFAULT N'Chưa thanh toán',
 
     CONSTRAINT FK_PT_PM FOREIGN KEY (MAPM) REFERENCES PHIEUMUON(MAPM),
     CONSTRAINT FK_PT_TT FOREIGN KEY (MATT) REFERENCES THUTHU(MATT)

@@ -29,6 +29,8 @@ namespace WindowsForm_QLTV
 
         public double? TONGTIENPHAT { get; set; }
 
+        public string TRANGTHAIPHAT {get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CHITIETPHIEUTRA> CHITIETPHIEUTRAs { get; set; }
 

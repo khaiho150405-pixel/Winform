@@ -3,20 +3,60 @@
   "WorkspaceRootPath": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\formguiyeucautra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\formguiyeucautra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\trasach.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\trasach.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|c:\\users\\ho si khai\\downloads\\do_an\\winform\\windowsform_qltv\\windowsform_qltv\\trasach.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\trasach.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|c:\\users\\ho si khai\\downloads\\do_an\\winform\\windowsform_qltv\\windowsform_qltv\\formguiyeucautra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\formguiyeucautra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\muontra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\muontra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|c:\\users\\ho si khai\\downloads\\do_an\\winform\\windowsform_qltv\\windowsform_qltv\\muontra.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\muontra.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\muontra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\muontra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|c:\\users\\ho si khai\\downloads\\do_an\\winform\\windowsform_qltv\\windowsform_qltv\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|c:\\users\\ho si khai\\downloads\\do_an\\winform\\windowsform_qltv\\windowsform_qltv\\formguiyeucaumuon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\formguiyeucaumuon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\qlmuontra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\qlmuontra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\trasach.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\trasach.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\trasach.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\trasach.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\qlsach.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
@@ -27,35 +67,27 @@
       "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\formguiyeucautra.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\muontra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\muontra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\muontra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\muontra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\muonsach.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\muonsach.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|c:\\users\\ho si khai\\downloads\\do_an\\winform\\windowsform_qltv\\windowsform_qltv\\qltaikhoan.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\qltaikhoan.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\qltaikhoan.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|c:\\users\\ho si khai\\downloads\\do_an\\winform\\windowsform_qltv\\windowsform_qltv\\userinfoform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\userinfoform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\userinfoform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|c:\\users\\ho si khai\\downloads\\do_an\\winform\\windowsform_qltv\\windowsform_qltv\\userinfoform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\userinfoform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\userinfoform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|c:\\users\\ho si khai\\downloads\\do_an\\winform\\windowsform_qltv\\windowsform_qltv\\trangchu.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\trangchu.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\trangchu.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|c:\\users\\ho si khai\\downloads\\do_an\\winform\\windowsform_qltv\\windowsform_qltv\\qlsach.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\qlsach.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\qlsach.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -63,27 +95,11 @@
       "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\qlsach.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\trangchu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\trangchu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\qlmuontra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\qlmuontra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\qlmuontra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\qlmuontra.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|c:\\users\\ho si khai\\downloads\\do_an\\winform\\windowsform_qltv\\windowsform_qltv\\session.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\session.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\session.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -99,16 +115,8 @@
       "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\trangchu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|c:\\users\\ho si khai\\downloads\\do_an\\winform\\windowsform_qltv\\windowsform_qltv\\chatbot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\chatbot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\chatbot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|solutionrelative:windowsform_qltv\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1367A0FF-F081-4911-80CE-A08C5265599A}|WindowsForm_QLTV\\WindowsForm_QLTV.csproj|C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\windowsform_qltv\\mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -174,11 +182,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 10,
+          "SelectedChildIndex": 12,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 8,
               "Title": "Login.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\Login.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\Login.cs",
@@ -223,33 +231,85 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 6,
+              "Title": "MainForm.cs",
+              "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\MainForm.cs",
+              "RelativeDocumentMoniker": "WindowsForm_QLTV\\MainForm.cs",
+              "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\MainForm.cs",
+              "RelativeToolTip": "WindowsForm_QLTV\\MainForm.cs",
+              "ViewState": "AgIAAPQBAAAAAAAAAAAIwAICAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T15:09:55.296Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Login.cs",
+              "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\Login.cs",
+              "RelativeDocumentMoniker": "WindowsForm_QLTV\\Login.cs",
+              "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\Login.cs",
+              "RelativeToolTip": "WindowsForm_QLTV\\Login.cs",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAYwEsAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-22T16:40:23.321Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "FormGuiYeuCauMuon.cs",
+              "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormGuiYeuCauMuon.cs",
+              "RelativeDocumentMoniker": "WindowsForm_QLTV\\FormGuiYeuCauMuon.cs",
+              "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormGuiYeuCauMuon.cs",
+              "RelativeToolTip": "WindowsForm_QLTV\\FormGuiYeuCauMuon.cs",
+              "ViewState": "AgIAANAAAAAAAAAAAAA4wNMAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T14:33:59.319Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
               "Title": "TraSach.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\TraSach.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\TraSach.cs",
               "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\TraSach.cs",
               "RelativeToolTip": "WindowsForm_QLTV\\TraSach.cs",
-              "ViewState": "AgIAABkBAAAAAAAAAAA1wCEBAAAmAAAAAAAAAA==",
+              "ViewState": "AgIAANwAAAAAAAAAAAAcwBgBAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-23T12:11:27.9Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 10,
+              "Title": "QLMuonTra.cs",
+              "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\QLMuonTra.cs",
+              "RelativeDocumentMoniker": "WindowsForm_QLTV\\QLMuonTra.cs",
+              "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\QLMuonTra.cs",
+              "RelativeToolTip": "WindowsForm_QLTV\\QLMuonTra.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAK4AAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-23T11:44:21.449Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "FormGuiYeuCauTra.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormGuiYeuCauTra.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\FormGuiYeuCauTra.cs",
               "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormGuiYeuCauTra.cs",
               "RelativeToolTip": "WindowsForm_QLTV\\FormGuiYeuCauTra.cs",
-              "ViewState": "AgIAABcAAAAAAAAAAAAAwAkAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAEBAAAAAAAAAAAcwFwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-23T11:39:15.006Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 17,
               "Title": "QLTaiKhoan.Designer.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\QLTaiKhoan.Designer.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\QLTaiKhoan.Designer.cs",
@@ -257,24 +317,22 @@
               "RelativeToolTip": "WindowsForm_QLTV\\QLTaiKhoan.Designer.cs",
               "ViewState": "AgIAAKIBAAAAAAAAAAAcwKwBAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-04T15:42:30.094Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-04T15:42:30.094Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 19,
               "Title": "UserInfoForm.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\UserInfoForm.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\UserInfoForm.cs",
               "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\UserInfoForm.cs [Design]",
               "RelativeToolTip": "WindowsForm_QLTV\\UserInfoForm.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-04T15:33:33.377Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2025-12-04T15:33:33.377Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 13,
               "Title": "TraSach.Designer.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\TraSach.Designer.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\TraSach.Designer.cs",
@@ -287,7 +345,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 21,
               "Title": "QLSach.Designer.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\QLSach.Designer.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\QLSach.Designer.cs",
@@ -295,12 +353,11 @@
               "RelativeToolTip": "WindowsForm_QLTV\\QLSach.Designer.cs",
               "ViewState": "AgIAAC0AAAAAAAAAAAAYwDIAAABCAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-04T15:31:34.472Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-04T15:31:34.472Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 18,
               "Title": "UserInfoForm.Designer.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\UserInfoForm.Designer.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\UserInfoForm.Designer.cs",
@@ -308,12 +365,11 @@
               "RelativeToolTip": "WindowsForm_QLTV\\UserInfoForm.Designer.cs",
               "ViewState": "AgIAADIBAAAAAAAAAAAcwDMBAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-04T15:25:50.637Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-04T15:25:50.637Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 20,
               "Title": "TrangChu.Designer.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\TrangChu.Designer.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\TrangChu.Designer.cs",
@@ -321,12 +377,11 @@
               "RelativeToolTip": "WindowsForm_QLTV\\TrangChu.Designer.cs",
               "ViewState": "AgIAAG8AAAAAAAAAAAAYwHUAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-04T15:01:59.254Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-04T15:01:59.254Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 7,
               "Title": "MainForm.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\MainForm.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\MainForm.cs",
@@ -338,7 +393,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 30,
               "Title": "FormTuongTacDocGia.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormTuongTacDocGia.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\FormTuongTacDocGia.cs",
@@ -350,7 +405,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 28,
               "Title": "Chatbot.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\Chatbot.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\Chatbot.cs",
@@ -358,12 +413,11 @@
               "RelativeToolTip": "WindowsForm_QLTV\\Chatbot.cs",
               "ViewState": "AgIAAIAAAAAAAAAAAAAuwB0AAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-01T16:22:32.122Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-01T16:22:32.122Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 29,
               "Title": "MainForm.Designer.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\MainForm.Designer.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\MainForm.Designer.cs",
@@ -376,20 +430,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "Login.cs",
-              "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\Login.cs",
-              "RelativeDocumentMoniker": "WindowsForm_QLTV\\Login.cs",
-              "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\Login.cs",
-              "RelativeToolTip": "WindowsForm_QLTV\\Login.cs",
-              "ViewState": "AgIAAD8AAAAAAAAAAAAYwEgAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-22T16:40:23.321Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 24,
               "Title": "Session.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\Session.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\Session.cs",
@@ -397,12 +438,11 @@
               "RelativeToolTip": "WindowsForm_QLTV\\Session.cs",
               "ViewState": "AgIAABIAAAAAAAAAAAAAABcAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-04T14:25:16.104Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-04T14:25:16.104Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 27,
               "Title": "TrangChu.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\TrangChu.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\TrangChu.cs",
@@ -410,24 +450,22 @@
               "RelativeToolTip": "WindowsForm_QLTV\\TrangChu.cs",
               "ViewState": "AgIAACsBAAAAAAAAAAAAABEAAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-23T11:07:52.917Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-23T11:07:52.917Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 23,
               "Title": "TrangChu.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\TrangChu.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\TrangChu.cs",
               "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\TrangChu.cs [Design]",
               "RelativeToolTip": "WindowsForm_QLTV\\TrangChu.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-23T11:07:51.138Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2025-11-23T11:07:51.138Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 11,
               "Title": "TraSach.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\TraSach.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\TraSach.cs",
@@ -439,19 +477,18 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 26,
               "Title": "QLTaiKhoan.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\QLTaiKhoan.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\QLTaiKhoan.cs",
               "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\QLTaiKhoan.cs [Design]",
               "RelativeToolTip": "WindowsForm_QLTV\\QLTaiKhoan.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-02T03:19:47.71Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2025-12-02T03:19:47.71Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 31,
               "Title": "QLTacGia.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\QLTacGia.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\QLTacGia.cs",
@@ -461,19 +498,18 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 14,
               "Title": "QLSach.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\QLSach.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\QLSach.cs",
               "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\QLSach.cs [Design]",
               "RelativeToolTip": "WindowsForm_QLTV\\QLSach.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-23T09:13:12.861Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2025-11-23T09:13:12.861Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 32,
               "Title": "QLNhaXuatBan.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\QLNhaXuatBan.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\QLNhaXuatBan.cs",
@@ -483,19 +519,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "QLMuonTra.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\QLMuonTra.cs",
-              "RelativeDocumentMoniker": "WindowsForm_QLTV\\QLMuonTra.cs",
-              "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\QLMuonTra.cs [Design]",
-              "RelativeToolTip": "WindowsForm_QLTV\\QLMuonTra.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-23T11:44:17.138Z",
-              "EditorCaption": " [Design]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 25,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\Program.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\Program.cs",
@@ -503,12 +527,11 @@
               "RelativeToolTip": "WindowsForm_QLTV\\Program.cs",
               "ViewState": "AgIAAAsAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-02T03:19:42.618Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-02T03:19:42.618Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 34,
               "Title": "FormTraLoiHoiDap.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormTraLoiHoiDap.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\FormTraLoiHoiDap.cs",
@@ -518,7 +541,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 35,
               "Title": "FormChiTietSach.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormChiTietSach.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\FormChiTietSach.cs",
@@ -528,7 +551,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 33,
               "Title": "FormTuongTacDocGia.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormTuongTacDocGia.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\FormTuongTacDocGia.cs",
@@ -538,17 +561,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 36,
               "Title": "FormGuiYeuCauMuon.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormGuiYeuCauMuon.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\FormGuiYeuCauMuon.cs",
-              "ToolTip": "F:\\2001230990_Winform\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormGuiYeuCauMuon.cs [Design]",
+              "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormGuiYeuCauMuon.cs [Design]",
+              "RelativeToolTip": "WindowsForm_QLTV\\FormGuiYeuCauMuon.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-02T03:16:14.667Z"
+              "WhenOpened": "2025-12-02T03:16:14.667Z",
+              "EditorCaption": " [Design]"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 37,
               "Title": "FormGuiYeuCauTra.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormGuiYeuCauTra.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\FormGuiYeuCauTra.cs",
@@ -560,54 +585,44 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 16,
               "Title": "MuonSach.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\MuonSach.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\MuonSach.cs",
               "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\MuonSach.cs [Design]",
               "RelativeToolTip": "WindowsForm_QLTV\\MuonSach.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-02T03:17:24.133Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2025-12-02T03:17:24.133Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 3,
+              "Title": "MuonTra.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\MuonTra.Designer.cs",
+              "RelativeDocumentMoniker": "WindowsForm_QLTV\\MuonTra.Designer.cs",
+              "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\MuonTra.Designer.cs",
+              "RelativeToolTip": "WindowsForm_QLTV\\MuonTra.Designer.cs",
+              "ViewState": "AgIAAHYAAAAAAAAAAAAcwH0AAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T15:18:53.264Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "MuonTra.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\MuonTra.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\MuonTra.cs",
               "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\MuonTra.cs",
               "RelativeToolTip": "WindowsForm_QLTV\\MuonTra.cs",
-              "ViewState": "AgIAAFoAAAAAAAAAAAAowBkAAAA7AAAAAAAAAA==",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-23T11:47:55.626Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
-              "Title": "EditSach.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\EditSach.cs",
-              "RelativeDocumentMoniker": "WindowsForm_QLTV\\EditSach.cs",
-              "ToolTip": "F:\\2001230990_Winform\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\EditSach.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-02T03:16:17.295Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 37,
-              "Title": "FormTraLoiHoiDap.cs",
-              "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormTraLoiHoiDap.cs",
-              "RelativeDocumentMoniker": "WindowsForm_QLTV\\FormTraLoiHoiDap.cs",
-              "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormTraLoiHoiDap.cs",
-              "RelativeToolTip": "WindowsForm_QLTV\\FormTraLoiHoiDap.cs",
-              "ViewState": "AgIAADoAAAAAAAAAAAAqwPwAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-02T03:10:54.667Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 4,
               "Title": "MuonTra.cs [Design]",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\MuonTra.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\MuonTra.cs",
@@ -619,20 +634,29 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "QLMuonTra.cs",
-              "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\QLMuonTra.cs",
-              "RelativeDocumentMoniker": "WindowsForm_QLTV\\QLMuonTra.cs",
-              "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\QLMuonTra.cs",
-              "RelativeToolTip": "WindowsForm_QLTV\\QLMuonTra.cs",
-              "ViewState": "AgIAAJcAAAAAAAAAAAAwwK8AAAAsAAAAAAAAAA==",
+              "DocumentIndex": 38,
+              "Title": "EditSach.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\EditSach.cs",
+              "RelativeDocumentMoniker": "WindowsForm_QLTV\\EditSach.cs",
+              "ToolTip": "F:\\2001230990_Winform\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\EditSach.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-23T11:44:21.449Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-02T03:16:17.295Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 39,
+              "Title": "FormTraLoiHoiDap.cs",
+              "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormTraLoiHoiDap.cs",
+              "RelativeDocumentMoniker": "WindowsForm_QLTV\\FormTraLoiHoiDap.cs",
+              "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormTraLoiHoiDap.cs",
+              "RelativeToolTip": "WindowsForm_QLTV\\FormTraLoiHoiDap.cs",
+              "ViewState": "AgIAADoAAAAAAAAAAAAqwPwAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-02T03:10:54.667Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
               "Title": "QLSach.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\QLSach.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\QLSach.cs",
@@ -640,25 +664,24 @@
               "RelativeToolTip": "WindowsForm_QLTV\\QLSach.cs",
               "ViewState": "AgIAAAkAAAAAAAAAAAAAAJUAAABAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-23T09:13:15.095Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-23T09:13:15.095Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 12,
               "Title": "App.config",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\App.config",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\App.config",
               "ToolTip": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\App.config",
               "RelativeToolTip": "WindowsForm_QLTV\\App.config",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAQAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
               "WhenOpened": "2025-11-23T08:55:06.686Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 15,
               "Title": "FormGuiYeuCauTra.Designer.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\FormGuiYeuCauTra.Designer.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\FormGuiYeuCauTra.Designer.cs",
@@ -671,7 +694,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 41,
               "Title": "QLTacGia.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\QLTacGia.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\QLTacGia.cs",
@@ -683,7 +706,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 40,
               "Title": "BookItem.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\DTO\\BookItem.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\DTO\\BookItem.cs",
@@ -695,7 +718,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 42,
               "Title": "EditSach.cs",
               "DocumentMoniker": "C:\\Users\\Ho Si Khai\\Downloads\\Do_An\\Winform\\WindowsForm_QLTV\\WindowsForm_QLTV\\EditSach.cs",
               "RelativeDocumentMoniker": "WindowsForm_QLTV\\EditSach.cs",

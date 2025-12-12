@@ -24,6 +24,7 @@ namespace WindowsForm_QLTV
             // Gắn sự kiện cho các nút hành động
             btnGuiYeuCauMuon.Click += BtnGuiYeuCauMuon_Click;
             btnGuiYeuCauTra.Click += BtnGuiYeuCauTra_Click;
+            btnThanhToan.Click += BtnThanhToan_Click;
 
             SetupDataGridView();
         }
@@ -44,7 +45,97 @@ namespace WindowsForm_QLTV
             this.Text = $"Mượn Trả Sách - Độc giả: {Session.CurrentUsername} (MSV: {_currentMaSV})";
 
             LoadLoanHistoryForUser();
+            CheckAndDisplayFines();
         }
+
+        // =========================================================================
+        // LOGIC MỚI: KIỂM TRA VÀ HIỂN THỊ TIỀN PHẠT
+        // =========================================================================
+        private void CheckAndDisplayFines()
+        {
+            try
+            {
+                using (var db = new Model1())
+                {
+                    // Tìm tất cả phiếu trả của SV này có tiền phạt > 0 VÀ chưa thanh toán
+                    var listPhat = db.PHIEUTRAs
+                        .Where(pt => pt.PHIEUMUON.MASV == _currentMaSV
+                                  && pt.TONGTIENPHAT > 0
+                                  && pt.TRANGTHAIPHAT == "Chưa thanh toán")
+                        .ToList();
+
+                    double tongTienPhat = (double)listPhat.Sum(pt => pt.TONGTIENPHAT);
+
+                    if (tongTienPhat > 0)
+                    {
+                        lblThongTinPhat.Text = $"⚠️ BẠN ĐANG BỊ PHẠT: {tongTienPhat:N0} VNĐ";
+                        lblThongTinPhat.ForeColor = Color.Red;
+                        btnThanhToan.Visible = true; // Hiện nút thanh toán
+                        btnThanhToan.Tag = tongTienPhat; // Lưu tạm số tiền vào Tag
+                    }
+                    else
+                    {
+                        lblThongTinPhat.Text = "✅ Trạng thái: Không có khoản phạt.";
+                        lblThongTinPhat.ForeColor = Color.Green;
+                        btnThanhToan.Visible = false; // Ẩn nút thanh toán
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                lblThongTinPhat.Text = "Lỗi tải thông tin phạt.";
+            }
+        }
+
+        // =========================================================================
+        // LOGIC MỚI: XỬ LÝ THANH TOÁN
+        // =========================================================================
+        private void BtnThanhToan_Click(object sender, EventArgs e)
+        {
+            double tienPhat = Convert.ToDouble(btnThanhToan.Tag);
+
+            DialogResult confirm = MessageBox.Show(
+                $"Xác nhận thanh toán khoản phạt: {tienPhat:N0} VNĐ?\n\n" +
+                "(Trong thực tế, bạn sẽ được chuyển đến cổng thanh toán ngân hàng/Momo).\n" +
+                "Bấm OK để mô phỏng đã thanh toán thành công.",
+                "Xác nhận Thanh Toán",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Question);
+
+            if (confirm == DialogResult.OK)
+            {
+                try
+                {
+                    using (var db = new Model1())
+                    {
+                        // Lấy lại danh sách các phiếu đang nợ để cập nhật trạng thái
+                        var listNo = db.PHIEUTRAs
+                            .Where(pt => pt.PHIEUMUON.MASV == _currentMaSV
+                                      && pt.TONGTIENPHAT > 0
+                                      && pt.TRANGTHAIPHAT == "Chưa thanh toán")
+                            .ToList();
+
+                        foreach (var phieu in listNo)
+                        {
+                            phieu.TRANGTHAIPHAT = "Đã thanh toán"; // Cập nhật Database
+                        }
+
+                        db.SaveChanges(); // Lưu thay đổi
+
+                        MessageBox.Show("Thanh toán thành công! Cảm ơn bạn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        // Cập nhật lại giao diện
+                        CheckAndDisplayFines();
+                        LoadLoanHistoryForUser(); // Tải lại lịch sử để cập nhật nếu cần
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi thanh toán: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
 
         private void SetupDataGridView()
         {

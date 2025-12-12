@@ -88,7 +88,7 @@ namespace WindowsForm_QLTV
                 using (var db = new Model1())
                 {
                     // [QUAN TRỌNG] Thêm "Chờ trả" vào danh sách hiển thị
-                    var activeStatuses = new[] { "Đang mượn", "Chờ trả", "Quá hạn", "Thiếu", "Quá hạn và Thiếu" };
+                    var activeStatuses = new[] { "Đang mượn", "Chờ trả", "Chờ trả quá hạn", "Đã trả quá hạn", "Quá hạn", "Thiếu", "Quá hạn và Thiếu" };
 
                     var activeLoans = db.PHIEUMUONs
                                         .AsNoTracking()
@@ -196,37 +196,38 @@ namespace WindowsForm_QLTV
         // =============================================================
         private void BtnXacNhanTra_Click(object sender, EventArgs e)
         {
-            // 1. Kiểm tra đã chọn phiếu chưa
+            // 1. Kiểm tra đã chọn dòng chưa
             if (dgvActiveLoans.CurrentRow == null)
             {
                 MessageBox.Show("Vui lòng chọn phiếu mượn cần xử lý.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
+            // Lấy dữ liệu từ dòng đang chọn
             var selectedItem = dgvActiveLoans.CurrentRow.DataBoundItem as LoanSummaryViewModel;
             if (selectedItem == null) return;
 
             string trangThaiHienTai = selectedItem.TinhTrang;
 
-            // 2. CHẶN: Nếu độc giả chưa gửi yêu cầu (Trạng thái vẫn là "Đang mượn")
-            if (trangThaiHienTai.Equals("Đang mượn", StringComparison.OrdinalIgnoreCase) ||
-                trangThaiHienTai.Equals("Quá hạn", StringComparison.OrdinalIgnoreCase))
+            // 2. BỘ LỌC ĐẦU VÀO (Quan trọng)
+            // - Nếu là "Đang mượn" -> Bắt độc giả gửi yêu cầu trước.
+            // - Nếu là "Chờ trả", "Chờ trả quá hạn", "Quá hạn" -> CHO PHÉP xử lý.
+            if (trangThaiHienTai.Equals("Đang mượn", StringComparison.OrdinalIgnoreCase))
             {
-                MessageBox.Show("Độc giả CHƯA gửi yêu cầu trả sách cho phiếu này.\n\n" +
-                                "Vui lòng yêu cầu độc giả vào phần 'Lịch sử Mượn/Trả' và bấm nút 'Gửi yêu cầu trả' trước.",
-                                "Chưa có yêu cầu từ Độc giả", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show("Độc giả CHƯA gửi yêu cầu trả sách.\nVui lòng bảo độc giả gửi yêu cầu trước (để hệ thống ghi nhận trạng thái).",
+                                "Chưa có yêu cầu", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return;
             }
 
-            // 3. CHẶN: Nếu đã trả rồi (phòng trường hợp lag mạng)
-            if (trangThaiHienTai.Equals("Đã trả", StringComparison.OrdinalIgnoreCase))
+            // - Nếu đã trả rồi (Đã trả / Đã trả quá hạn) -> Chặn.
+            if (trangThaiHienTai.Contains("Đã trả"))
             {
                 MessageBox.Show("Phiếu này đã hoàn tất trả sách.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            // 4. XỬ LÝ TRẢ: Chỉ thực hiện khi trạng thái là "Chờ trả"
-            if (MessageBox.Show($"Xác nhận nhận lại sách và hoàn tất phiếu mượn #{selectedItem.MaPhieuMuon}?\nThao tác này sẽ cập nhật kho sách.",
+            // 3. XÁC NHẬN VÀ XỬ LÝ
+            if (MessageBox.Show($"Xác nhận nhận lại sách cho phiếu #{selectedItem.MaPhieuMuon}?",
                                 "Xác nhận Trả sách", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 try
@@ -236,36 +237,81 @@ namespace WindowsForm_QLTV
                         var phieuMuon = db.PHIEUMUONs.Find(selectedItem.MaPhieuMuon);
                         if (phieuMuon != null)
                         {
-                            // A. Cập nhật trạng thái Phiếu sang "Đã trả"
-                            // Khi đã là "Đã trả", độc giả sẽ không thể gửi yêu cầu nữa (đã chặn bên logic Độc giả)
-                            phieuMuon.TRANGTHAI = "Đã trả";
+                            // A. TÍNH TOÁN QUÁ HẠN & TIỀN PHẠT
+                            double tienPhat = 0;
+                            int soNgayQuaHan = 0;
 
-                            // B. Cộng số lượng tồn kho cho TẤT CẢ sách trong phiếu
+                            // So sánh ngày hiện tại với Hạn trả
+                            if (DateTime.Now.Date > phieuMuon.HANTRA.Date)
+                            {
+                                TimeSpan span = DateTime.Now.Date - phieuMuon.HANTRA.Date;
+                                soNgayQuaHan = span.Days;
+                                // Ví dụ: Phạt 2.000đ/ngày
+                                tienPhat = soNgayQuaHan * 2000;
+                            }
+
+                            // B. TẠO PHIẾU TRẢ (Lưu lịch sử trả + phạt)
+                            PHIEUTRA phieuTra = new PHIEUTRA();
+                            phieuTra.MAPM = phieuMuon.MAPM;
+                            phieuTra.MATT = Session.CurrentMaTT; // Lấy mã thủ thư
+                            phieuTra.NGAYLAPPHIEUTRA = DateTime.Now;
+                            phieuTra.SONGAYQUAHAN = soNgayQuaHan;
+                            phieuTra.TONGTIENPHAT = tienPhat;
+
+                            // Xét trạng thái thanh toán tiền phạt
+                            if (tienPhat > 0)
+                            {
+                                phieuTra.TRANGTHAIPHAT = "Chưa thanh toán";
+                                // Thông báo cho thủ thư biết để thu tiền
+                                MessageBox.Show($"⚠️ SÁCH QUÁ HẠN {soNgayQuaHan} NGÀY!\n" +
+                                                $"-----------------------------------\n" +
+                                                $"💰 Tổng tiền phạt: {tienPhat:N0} VNĐ\n" +
+                                                $"📝 Hệ thống đã ghi nợ. Yêu cầu độc giả đóng phạt.",
+                                                "CẢNH BÁO QUÁ HẠN", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+                            else
+                            {
+                                phieuTra.TRANGTHAIPHAT = "Đã thanh toán";
+                            }
+
+                            db.PHIEUTRAs.Add(phieuTra);
+
+                            // C. CẬP NHẬT TRẠNG THÁI PHIẾU MƯỢN (Phần bạn quan tâm nhất)
+                            // Dựa vào thực tế có quá hạn hay không để gán trạng thái tương ứng
+                            if (soNgayQuaHan > 0)
+                            {
+                                phieuMuon.TRANGTHAI = "Đã trả quá hạn"; // Database đã có cái này -> OK
+                            }
+                            else
+                            {
+                                phieuMuon.TRANGTHAI = "Đã trả";
+                            }
+
+                            // D. CỘNG LẠI TỒN KHO SÁCH
                             var listChiTiet = db.CHITIETPHIEUMUONs.Where(ct => ct.MAPM == selectedItem.MaPhieuMuon).ToList();
-
                             foreach (var ct in listChiTiet)
                             {
                                 var sach = db.SACHes.Find(ct.MASACH);
                                 if (sach != null)
                                 {
-                                    sach.SOLUONGTON += ct.SOLUONG; // Trả sách về kho
+                                    sach.SOLUONGTON += ct.SOLUONG;
                                 }
                             }
 
+                            // E. LƯU VÀO DATABASE
                             db.SaveChanges();
 
-                            MessageBox.Show("Đã xác nhận trả sách thành công! Kho sách đã được cập nhật.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            MessageBox.Show("Đã xác nhận trả sách thành công!", "Hoàn tất", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                            // Tải lại dữ liệu để cập nhật giao diện
+                            // Tải lại giao diện
                             LoadAllActiveLoans();
                             dgvLoanDetails.DataSource = null;
-                            ClearForm();
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Lỗi hệ thống khi trả sách: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Lỗi hệ thống: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

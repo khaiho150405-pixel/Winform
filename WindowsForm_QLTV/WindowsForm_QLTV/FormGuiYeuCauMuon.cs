@@ -5,6 +5,7 @@ using System.Linq;
 using System.Data.Entity;
 using System.Collections.Generic;
 using System.ComponentModel;
+using WindowsForm_QLTV; 
 
 namespace WindowsForm_QLTV
 {
@@ -36,6 +37,10 @@ namespace WindowsForm_QLTV
             dgvCart.DataSource = _cartList;
             LoadBookCatalog();
             UpdateCartDisplay();
+
+            // --- CẬP NHẬT MỚI: Thiết lập ngày hẹn trả mặc định ---
+            dtpHanTra.MinDate = DateTime.Today;       // Không cho chọn ngày quá khứ
+            dtpHanTra.Value = DateTime.Today.AddDays(7); // Mặc định hẹn trả sau 1 tuần
         }
 
         private void SetupPlaceholder()
@@ -54,7 +59,7 @@ namespace WindowsForm_QLTV
             dgvBookCatalog.Columns.Add(CreateTextColumn("TacGia", "Tác Giả", 150));
             dgvBookCatalog.Columns.Add(CreateTextColumn("SoLuongTon", "SL Tồn", 80));
             dgvBookCatalog.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvBookCatalog.Columns["MaSach"].Visible = false; // Ẩn Mã sách thô
+            dgvBookCatalog.Columns["MaSach"].Visible = false;
 
             // Cấu hình Giỏ hàng
             dgvCart.AutoGenerateColumns = false;
@@ -132,9 +137,15 @@ namespace WindowsForm_QLTV
             }
 
             DataGridViewRow row = dgvBookCatalog.CurrentRow;
-            int maSach = (int)row.Cells["MaSach"].Value;
-            string tenSach = row.Cells["TenSach"].Value.ToString();
-            int soLuongTon = (int)row.Cells["SoLuongTon"].Value;
+            // Ép kiểu về DTO/Model tương ứng nếu cần, ở đây giả sử binding trực tiếp
+            // hoặc lấy qua Cells nếu DataSource là List anonymous/DTO
+            // Cách an toàn hơn là lấy object từ DataBoundItem
+            var selectedBook = row.DataBoundItem as BookCatalogItem;
+            if (selectedBook == null) return;
+
+            int maSach = selectedBook.MaSach;
+            string tenSach = selectedBook.TenSach;
+            int soLuongTon = selectedBook.SoLuongTon;
             int soLuongMuon = (int)numQuantity.Value;
 
             if (soLuongMuon <= 0 || soLuongMuon > soLuongTon)
@@ -143,12 +154,10 @@ namespace WindowsForm_QLTV
                 return;
             }
 
-            // Kiểm tra và cập nhật giỏ hàng
             CartItem existingItem = _cartList.FirstOrDefault(c => c.MaSach == maSach);
 
             if (existingItem != null)
             {
-                // Kiểm tra tổng số lượng có vượt quá tồn kho không
                 if (existingItem.SoLuong + soLuongMuon > soLuongTon)
                 {
                     MessageBox.Show($"Tổng số lượng mượn ({existingItem.SoLuong + soLuongMuon}) vượt quá số lượng tồn ({soLuongTon}).", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -161,7 +170,6 @@ namespace WindowsForm_QLTV
                 _cartList.Add(new CartItem { MaSach = maSach, TenSach = tenSach, SoLuong = soLuongMuon });
             }
 
-            // Refresh DataGridView và cập nhật UI
             dgvCart.Refresh();
             UpdateCartDisplay();
         }
@@ -186,7 +194,6 @@ namespace WindowsForm_QLTV
         {
             using (var db = new Model1())
             {
-                // Tìm các phiếu trả của sinh viên này có tiền phạt và chưa đóng
                 var khoanPhat = db.PHIEUTRAs
                     .Where(pt => pt.PHIEUMUON.MASV == _maSV && pt.TONGTIENPHAT > 0 && pt.TRANGTHAIPHAT == "Chưa thanh toán")
                     .Select(pt => pt.TONGTIENPHAT)
@@ -200,22 +207,40 @@ namespace WindowsForm_QLTV
                                     $"- Lý do: Trả sách quá hạn hoặc làm hỏng sách.\n\n" +
                                     $"Vui lòng liên hệ Thủ thư để đóng phạt trước khi gửi yêu cầu mượn mới.",
                                     "Cảnh báo vi phạm", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                    return true; // Có nợ
+                    return true;
                 }
-                return false; // Không nợ
+                return false;
             }
         }
 
         private void BtnGuiYeuCau_Click(object sender, EventArgs e)
         {
-            if (KiemTraNoPhat())
-            {
-                return;
-            }
+            // 1. Kiểm tra nợ
+            if (KiemTraNoPhat()) return;
 
+            // 2. Kiểm tra giỏ hàng
             if (!_cartList.Any())
             {
                 MessageBox.Show("Giỏ hàng đang trống. Vui lòng thêm sách để gửi yêu cầu.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // --- 3. KIỂM TRA NGÀY HẸN TRẢ (LOGIC MỚI) ---
+            DateTime ngayMuon = DateTime.Today;
+            DateTime ngayHenTra = dtpHanTra.Value.Date; // Lấy ngày chọn từ DateTimePicker
+
+            if (ngayHenTra < ngayMuon)
+            {
+                MessageBox.Show("Ngày hẹn trả không được nhỏ hơn ngày hiện tại!", "Lỗi ngày tháng", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DateTime hanToiDa = ngayMuon.AddMonths(1); // Tối đa 1 tháng
+            if (ngayHenTra > hanToiDa)
+            {
+                MessageBox.Show($"Ngày hẹn trả không được quá 1 tháng kể từ ngày mượn.\n" +
+                                $"Hạn tối đa cho phép là: {hanToiDa:dd/MM/yyyy}",
+                                "Quy định mượn", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -223,7 +248,7 @@ namespace WindowsForm_QLTV
             {
                 using (var db = new Model1())
                 {
-                    // 1. Tìm hoặc tạo Phiếu Mượn "Chờ duyệt"
+                    // Tìm hoặc tạo Phiếu Mượn "Chờ duyệt"
                     PHIEUMUON phieuMuon = db.PHIEUMUONs
                                             .FirstOrDefault(pm => pm.MASV == _maSV && pm.TRANGTHAI == "Chờ duyệt");
 
@@ -232,18 +257,25 @@ namespace WindowsForm_QLTV
                         phieuMuon = new PHIEUMUON
                         {
                             MASV = _maSV,
-                            MATT = 1, // Giả định Thủ Thư có MATT = 1
+                            MATT = 1, // Mã thủ thư mặc định (hoặc xử lý sau)
                             NGAYLAPPHIEUMUON = DateTime.Today,
-                            HANTRA = DateTime.Today.AddDays(14), // Mặc định 14 ngày
+                            HANTRA = ngayHenTra, // <-- Lưu ngày hẹn trả người dùng chọn
                             TRANGTHAI = "Chờ duyệt",
                             SOLANGIAHAN = 0
                         };
                         db.PHIEUMUONs.Add(phieuMuon);
-                        db.SaveChanges(); // Lưu để lấy MAPM
+                        db.SaveChanges();
                     }
+                    else
+                    {
+                        // Nếu đã có phiếu chờ duyệt, cập nhật lại hạn trả theo yêu cầu mới nhất
+                        phieuMuon.HANTRA = ngayHenTra;
+                        db.Entry(phieuMuon).State = EntityState.Modified;
+                    }
+
                     _currentMaPM = phieuMuon.MAPM;
 
-                    // 2. Thêm hoặc cập nhật tất cả sách từ giỏ hàng vào Chi Tiết Phiếu Mượn
+                    // Thêm/Cập nhật sách vào Chi Tiết
                     foreach (var cartItem in _cartList)
                     {
                         CHITIETPHIEUMUON chiTiet = db.CHITIETPHIEUMUONs
@@ -252,6 +284,7 @@ namespace WindowsForm_QLTV
                         if (chiTiet != null)
                         {
                             chiTiet.SOLUONG += cartItem.SoLuong;
+                            chiTiet.HANTRA = ngayHenTra; // Cập nhật hạn trả cho sách
                             db.Entry(chiTiet).State = EntityState.Modified;
                         }
                         else
@@ -261,7 +294,7 @@ namespace WindowsForm_QLTV
                                 MAPM = _currentMaPM,
                                 MASACH = cartItem.MaSach,
                                 SOLUONG = cartItem.SoLuong,
-                                HANTRA = phieuMuon.HANTRA,
+                                HANTRA = ngayHenTra, // Lưu hạn trả cho sách
                                 SOLANGIAHAN = 0
                             };
                             db.CHITIETPHIEUMUONs.Add(chiTiet);
@@ -269,7 +302,7 @@ namespace WindowsForm_QLTV
                     }
 
                     db.SaveChanges();
-                    MessageBox.Show($"Yêu cầu mượn {phieuMuon.CHITIETPHIEUMUONs.Count} loại sách (Tổng {phieuMuon.CHITIETPHIEUMUONs.Sum(ct => ct.SOLUONG)} cuốn) đã được gửi thành công! Phiếu #{phieuMuon.MAPM} đang chờ duyệt.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show($"Gửi yêu cầu thành công!\nNgày hẹn trả: {ngayHenTra:dd/MM/yyyy}\nPhiếu #{phieuMuon.MAPM} đang chờ duyệt.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }
@@ -280,7 +313,7 @@ namespace WindowsForm_QLTV
             }
         }
 
-        // View Models
+        // View Models (DTOs nội bộ)
         public class BookCatalogItem
         {
             public int MaSach { get; set; }
@@ -288,11 +321,23 @@ namespace WindowsForm_QLTV
             public string TacGia { get; set; }
             public int SoLuongTon { get; set; }
         }
-        public class CartItem
+        public class CartItem : INotifyPropertyChanged
         {
             public int MaSach { get; set; }
             public string TenSach { get; set; }
-            public int SoLuong { get; set; }
+            private int _soLuong;
+            public int SoLuong
+            {
+                get { return _soLuong; }
+                set
+                {
+                    _soLuong = value;
+                    OnPropertyChanged("SoLuong");
+                }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }

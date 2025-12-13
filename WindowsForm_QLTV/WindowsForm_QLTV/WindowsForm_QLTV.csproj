@@ -196,6 +196,9 @@
     <EmbeddedResource Include="EditSach.resx">
       <DependentUpon>EditSach.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormGuiYeuCauMuon.resx">
+      <DependentUpon>FormGuiYeuCauMuon.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormGuiYeuCauTra.resx">
       <DependentUpon>FormGuiYeuCauTra.cs</DependentUpon>
     </EmbeddedResource>

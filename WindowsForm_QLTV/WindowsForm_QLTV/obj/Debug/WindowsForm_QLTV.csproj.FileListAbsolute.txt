@@ -76,3 +76,4 @@ F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\Window
 F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.exe
 F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.pdb
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.FormGuiYeuCauTra.resources
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.FormGuiYeuCauMuon.resources

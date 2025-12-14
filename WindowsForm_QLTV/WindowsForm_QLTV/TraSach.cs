@@ -196,6 +196,14 @@ namespace WindowsForm_QLTV
         // =============================================================
         private void BtnXacNhanTra_Click(object sender, EventArgs e)
         {
+            // 0. Kiểm tra đăng nhập thủ thư
+            if (Session.CurrentMaTT <= 0)
+            {
+                MessageBox.Show("Vui lòng đăng nhập bằng tài khoản Thủ thư để thực hiện chức năng này.",
+                                "Lỗi xác thực", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             // 1. Kiểm tra đã chọn dòng chưa
             if (dgvActiveLoans.CurrentRow == null)
             {
@@ -240,11 +248,12 @@ namespace WindowsForm_QLTV
                             // A. TÍNH TOÁN QUÁ HẠN & TIỀN PHẠT
                             double tienPhat = 0;
                             int soNgayQuaHan = 0;
+                            DateTime ngayTraThucTe = DateTime.Now;
 
                             // So sánh ngày hiện tại với Hạn trả
-                            if (DateTime.Now.Date > phieuMuon.HANTRA.Date)
+                            if (ngayTraThucTe.Date > phieuMuon.HANTRA.Date)
                             {
-                                TimeSpan span = DateTime.Now.Date - phieuMuon.HANTRA.Date;
+                                TimeSpan span = ngayTraThucTe.Date - phieuMuon.HANTRA.Date;
                                 soNgayQuaHan = span.Days;
                                 // Ví dụ: Phạt 2.000đ/ngày
                                 tienPhat = soNgayQuaHan * 2000;
@@ -254,7 +263,7 @@ namespace WindowsForm_QLTV
                             PHIEUTRA phieuTra = new PHIEUTRA();
                             phieuTra.MAPM = phieuMuon.MAPM;
                             phieuTra.MATT = Session.CurrentMaTT; // Lấy mã thủ thư
-                            phieuTra.NGAYLAPPHIEUTRA = DateTime.Now;
+                            phieuTra.NGAYLAPPHIEUTRA = ngayTraThucTe;
                             phieuTra.SONGAYQUAHAN = soNgayQuaHan;
                             phieuTra.TONGTIENPHAT = tienPhat;
 
@@ -262,35 +271,28 @@ namespace WindowsForm_QLTV
                             if (tienPhat > 0)
                             {
                                 phieuTra.TRANGTHAIPHAT = "Chưa thanh toán";
-                                // Thông báo cho thủ thư biết để thu tiền
-                                MessageBox.Show($"⚠️ SÁCH QUÁ HẠN {soNgayQuaHan} NGÀY!\n" +
-                                                $"-----------------------------------\n" +
-                                                $"💰 Tổng tiền phạt: {tienPhat:N0} VNĐ\n" +
-                                                $"📝 Hệ thống đã ghi nợ. Yêu cầu độc giả đóng phạt.",
-                                                "CẢNH BÁO QUÁ HẠN", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             }
                             else
                             {
-                                phieuTra.TRANGTHAIPHAT = "Đã thanh toán";
+                                phieuTra.TRANGTHAIPHAT = "Không có";
                             }
 
                             db.PHIEUTRAs.Add(phieuTra);
+                            db.SaveChanges(); // Lưu để lấy MAPT (khóa chính tự tăng)
 
-                            // C. CẬP NHẬT TRẠNG THÁI PHIẾU MƯỢN (Phần bạn quan tâm nhất)
-                            // Dựa vào thực tế có quá hạn hay không để gán trạng thái tương ứng
-                            if (soNgayQuaHan > 0)
-                            {
-                                phieuMuon.TRANGTHAI = "Đã trả quá hạn"; // Database đã có cái này -> OK
-                            }
-                            else
-                            {
-                                phieuMuon.TRANGTHAI = "Đã trả";
-                            }
-
-                            // D. CỘNG LẠI TỒN KHO SÁCH
+                            // C. TẠO CHI TIẾT PHIẾU TRẢ & CỘNG LẠI TỒN KHO SÁCH
                             var listChiTiet = db.CHITIETPHIEUMUONs.Where(ct => ct.MAPM == selectedItem.MaPhieuMuon).ToList();
                             foreach (var ct in listChiTiet)
                             {
+                                // Tạo chi tiết phiếu trả
+                                CHITIETPHIEUTRA chiTietTra = new CHITIETPHIEUTRA();
+                                chiTietTra.MAPT = phieuTra.MAPT; // Lấy MAPT vừa được tạo
+                                chiTietTra.MASACH = ct.MASACH;
+                                chiTietTra.SOLUONGTRA = ct.SOLUONG;
+                                chiTietTra.NGAYTRA = ngayTraThucTe;
+                                db.CHITIETPHIEUTRAs.Add(chiTietTra);
+
+                                // Cộng lại tồn kho
                                 var sach = db.SACHes.Find(ct.MASACH);
                                 if (sach != null)
                                 {
@@ -298,8 +300,28 @@ namespace WindowsForm_QLTV
                                 }
                             }
 
+                            // D. CẬP NHẬT TRẠNG THÁI PHIẾU MƯỢN
+                            if (soNgayQuaHan > 0)
+                            {
+                                phieuMuon.TRANGTHAI = "Đã trả quá hạn";
+                            }
+                            else
+                            {
+                                phieuMuon.TRANGTHAI = "Đã trả";
+                            }
+
                             // E. LƯU VÀO DATABASE
                             db.SaveChanges();
+
+                            // Thông báo cho thủ thư biết nếu có tiền phạt
+                            if (tienPhat > 0)
+                            {
+                                MessageBox.Show($"⚠️ SÁCH QUÁ HẠN {soNgayQuaHan} NGÀY!\n" +
+                                                $"-----------------------------------\n" +
+                                                $"💰 Tổng tiền phạt: {tienPhat:N0} VNĐ\n" +
+                                                $"📝 Hệ thống đã ghi nợ. Yêu cầu độc giả đóng phạt.",
+                                                "CẢNH BÁO QUÁ HẠN", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
 
                             MessageBox.Show("Đã xác nhận trả sách thành công!", "Hoàn tất", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -311,7 +333,12 @@ namespace WindowsForm_QLTV
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Lỗi hệ thống: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    string errorMessage = ex.Message;
+                    if (ex.InnerException != null)
+                    {
+                        errorMessage = ex.InnerException.Message;
+                    }
+                    MessageBox.Show("Lỗi hệ thống: " + errorMessage, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

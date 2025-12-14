@@ -36,6 +36,7 @@ namespace WindowsForm_QLTV
                 Session.CurrentUsername = username;
                 Session.CurrentRole = userRole;
                 Session.CurrentMaSV = 0;
+                Session.CurrentMaTT = 0; // Reset trước khi gán
 
                 // Nếu là Độc giả/Sinh viên, cần lấy MASV ngay lập tức
                 if (userRole.Equals("Độc giả", StringComparison.OrdinalIgnoreCase) ||
@@ -64,6 +65,35 @@ namespace WindowsForm_QLTV
                     catch (Exception ex)
                     {
                         MessageBox.Show("Lỗi khi lấy thông tin sinh viên: " + ex.Message);
+                    }
+                }
+                // Nếu là Thủ thư, cần lấy MATT
+                else if (userRole.Equals("Thủ Thư", StringComparison.OrdinalIgnoreCase) ||
+                         userRole.Equals("Thủ thư", StringComparison.OrdinalIgnoreCase) ||
+                         userRole.Equals("ThuThu", StringComparison.OrdinalIgnoreCase))
+                {
+                    try
+                    {
+                        using (var db = new Model1())
+                        {
+                            // Tìm thủ thư dựa trên tên đăng nhập
+                            var tt = db.THUTHUs
+                                       .AsNoTracking()
+                                       .FirstOrDefault(t => t.TAIKHOAN.TENDANGNHAP == username);
+
+                            if (tt != null)
+                            {
+                                Session.CurrentMaTT = tt.MATT;
+                            }
+                            else
+                            {
+                                MessageBox.Show("Cảnh báo: Tài khoản này chưa được liên kết với hồ sơ Thủ thư.", "Lỗi Dữ Liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Lỗi khi lấy thông tin thủ thư: " + ex.Message);
                     }
                 }
 

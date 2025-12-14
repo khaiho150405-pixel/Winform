@@ -87,8 +87,9 @@ namespace WindowsForm_QLTV
             {
                 using (var db = new Model1())
                 {
-                    // [QUAN TRỌNG] Thêm "Chờ trả" vào danh sách hiển thị
-                    var activeStatuses = new[] { "Đang mượn", "Chờ trả", "Chờ trả quá hạn", "Đã trả quá hạn", "Quá hạn", "Thiếu", "Quá hạn và Thiếu" };
+                    // [QUAN TRỌNG] Chỉ hiển thị các phiếu CHƯA hoàn tất trả sách
+                    // Loại bỏ "Đã trả" và "Đã trả quá hạn" để phiếu đã xử lý xong không hiển thị
+                    var activeStatuses = new[] { "Chờ trả", "Chờ trả quá hạn", "Quá hạn", "Thiếu", "Quá hạn và Thiếu" };
 
                     var activeLoans = db.PHIEUMUONs
                                         .AsNoTracking()
@@ -121,6 +122,11 @@ namespace WindowsForm_QLTV
                     }
 
                     lblActiveLoansTitle.Text = $"DANH SÁCH {activeLoans.Count} PHIẾU CẦN XỬ LÝ";
+                    
+                    // Reset thông tin chi tiết khi tải lại danh sách
+                    txtTenDocGia.Text = "Chưa có phiếu mượn nào được chọn.";
+                    lblDocGiaStatus.Text = "Tổng quan yêu cầu trả sách";
+                    lblDocGiaStatus.ForeColor = Color.Black;
                 }
             }
             catch (Exception ex)

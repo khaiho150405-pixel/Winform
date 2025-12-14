@@ -30,13 +30,13 @@
         {
             this.pnlBackground = new System.Windows.Forms.Panel();
             this.pnlSearchArea = new System.Windows.Forms.Panel();
+            this.cboTrangThai = new System.Windows.Forms.ComboBox();
+            this.lblLocTrangThai = new System.Windows.Forms.Label();
             this.btnTimKiem = new System.Windows.Forms.Button();
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.lblSearchTitle = new System.Windows.Forms.Label();
             this.pnlMainContent = new System.Windows.Forms.Panel();
-            // KHAI BÁO THÊM DATAGRIDVIEW
             this.dgvActiveLoans = new System.Windows.Forms.DataGridView();
-            // KẾT THÚC KHAI BÁO THÊM DATAGRIDVIEW
             this.pnlDashboard = new System.Windows.Forms.Panel();
             this.pnlTraSach = new System.Windows.Forms.Panel();
             this.btnTraSach = new System.Windows.Forms.Button();
@@ -46,8 +46,8 @@
             this.lblFormTitle = new System.Windows.Forms.Label();
             this.pnlBackground.SuspendLayout();
             this.pnlSearchArea.SuspendLayout();
-            this.pnlMainContent.SuspendLayout(); // Thêm dòng này để DataGridView là con trực tiếp
-            ((System.ComponentModel.ISupportInitialize)(this.dgvActiveLoans)).BeginInit(); // Khởi tạo DataGridView
+            this.pnlMainContent.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvActiveLoans)).BeginInit();
             this.pnlDashboard.SuspendLayout();
             this.pnlTraSach.SuspendLayout();
             this.pnlMuonSach.SuspendLayout();
@@ -71,6 +71,8 @@
             // 
             this.pnlSearchArea.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlSearchArea.Controls.Add(this.cboTrangThai);
+            this.pnlSearchArea.Controls.Add(this.lblLocTrangThai);
             this.pnlSearchArea.Controls.Add(this.btnTimKiem);
             this.pnlSearchArea.Controls.Add(this.txtSearch);
             this.pnlSearchArea.Controls.Add(this.lblSearchTitle);
@@ -78,6 +80,26 @@
             this.pnlSearchArea.Name = "pnlSearchArea";
             this.pnlSearchArea.Size = new System.Drawing.Size(640, 70);
             this.pnlSearchArea.TabIndex = 4;
+            // 
+            // cboTrangThai
+            // 
+            this.cboTrangThai.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboTrangThai.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.cboTrangThai.FormattingEnabled = true;
+            this.cboTrangThai.Location = new System.Drawing.Point(100, 28);
+            this.cboTrangThai.Name = "cboTrangThai";
+            this.cboTrangThai.Size = new System.Drawing.Size(140, 28);
+            this.cboTrangThai.TabIndex = 4;
+            // 
+            // lblLocTrangThai
+            // 
+            this.lblLocTrangThai.AutoSize = true;
+            this.lblLocTrangThai.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblLocTrangThai.Location = new System.Drawing.Point(10, 32);
+            this.lblLocTrangThai.Name = "lblLocTrangThai";
+            this.lblLocTrangThai.Size = new System.Drawing.Size(84, 20);
+            this.lblLocTrangThai.TabIndex = 3;
+            this.lblLocTrangThai.Text = "Trạng thái:";
             // 
             // btnTimKiem
             // 
@@ -95,21 +117,22 @@
             // 
             // txtSearch
             // 
-            this.txtSearch.Location = new System.Drawing.Point(330, 29);
+            this.txtSearch.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.txtSearch.Location = new System.Drawing.Point(330, 28);
             this.txtSearch.Name = "txtSearch";
-            this.txtSearch.Size = new System.Drawing.Size(200, 22);
+            this.txtSearch.Size = new System.Drawing.Size(200, 27);
             this.txtSearch.TabIndex = 1;
-            this.txtSearch.Text = "Search...";
+            this.txtSearch.Text = "Nhập tên người mượn...";
             // 
             // lblSearchTitle
             // 
             this.lblSearchTitle.AutoSize = true;
-            this.lblSearchTitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.lblSearchTitle.Location = new System.Drawing.Point(10, 27);
+            this.lblSearchTitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblSearchTitle.Location = new System.Drawing.Point(255, 32);
             this.lblSearchTitle.Name = "lblSearchTitle";
-            this.lblSearchTitle.Size = new System.Drawing.Size(306, 28);
+            this.lblSearchTitle.Size = new System.Drawing.Size(69, 20);
             this.lblSearchTitle.TabIndex = 0;
-            this.lblSearchTitle.Text = "TÌM KIẾM THEO TÊN NGƯỜI MƯỢN"; // ĐÃ SỬA
+            this.lblSearchTitle.Text = "Tên SV:";
             // 
             // pnlMainContent
             // 
@@ -117,7 +140,7 @@
             | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlMainContent.BackColor = System.Drawing.Color.White;
-            this.pnlMainContent.Controls.Add(this.dgvActiveLoans); // THÊM DATAGRIDVIEW
+            this.pnlMainContent.Controls.Add(this.dgvActiveLoans);
             this.pnlMainContent.Location = new System.Drawing.Point(350, 130);
             this.pnlMainContent.Name = "pnlMainContent";
             this.pnlMainContent.Size = new System.Drawing.Size(640, 560);
@@ -133,12 +156,12 @@
             this.dgvActiveLoans.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvActiveLoans.BackgroundColor = System.Drawing.Color.White;
             this.dgvActiveLoans.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvActiveLoans.Location = new System.Drawing.Point(0, 0); // Kéo DataGridView ra sát viền panel
+            this.dgvActiveLoans.Location = new System.Drawing.Point(0, 0);
             this.dgvActiveLoans.Name = "dgvActiveLoans";
             this.dgvActiveLoans.ReadOnly = true;
             this.dgvActiveLoans.RowHeadersWidth = 51;
             this.dgvActiveLoans.RowTemplate.Height = 24;
-            this.dgvActiveLoans.Size = new System.Drawing.Size(640, 560); // Đặt kích thước bằng Panel
+            this.dgvActiveLoans.Size = new System.Drawing.Size(640, 560);
             this.dgvActiveLoans.TabIndex = 0;
             //
             // pnlDashboard
@@ -231,8 +254,8 @@
             this.pnlBackground.ResumeLayout(false);
             this.pnlSearchArea.ResumeLayout(false);
             this.pnlSearchArea.PerformLayout();
-            this.pnlMainContent.ResumeLayout(false); // Sửa: dgv không có Autoscroll, nên không cần .PerformLayout
-            ((System.ComponentModel.ISupportInitialize)(this.dgvActiveLoans)).EndInit(); // Kết thúc DataGridView
+            this.pnlMainContent.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvActiveLoans)).EndInit();
             this.pnlDashboard.ResumeLayout(false);
             this.pnlTraSach.ResumeLayout(false);
             this.pnlMuonSach.ResumeLayout(false);
@@ -257,7 +280,8 @@
         private System.Windows.Forms.Label lblSearchTitle;
         private System.Windows.Forms.TextBox txtSearch;
         private System.Windows.Forms.Button btnTimKiem;
-        // KHAI BÁO THÊM DATAGRIDVIEW
         private System.Windows.Forms.DataGridView dgvActiveLoans;
+        private System.Windows.Forms.ComboBox cboTrangThai;
+        private System.Windows.Forms.Label lblLocTrangThai;
     }
 }

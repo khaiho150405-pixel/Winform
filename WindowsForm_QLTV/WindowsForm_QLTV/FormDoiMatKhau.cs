@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
@@ -17,82 +17,82 @@ namespace WindowsForm_QLTV
 
         private void FormDoiMatKhau_Load(object sender, EventArgs e)
         {
-            // Hi?n th? th�ng tin ng??i d�ng hi?n t?i
-            lblTenDangNhap.Text = $"T�i kho?n: {Session.CurrentUsername}";
+            // Hiển thị thông tin người dùng hiện tại
+            lblTenDangNhap.Text = $"Tài khoản: {Session.CurrentUsername}";
             txtMatKhauCu.Focus();
         }
 
         private void BtnDoiMatKhau_Click(object sender, EventArgs e)
         {
-            // 1. Ki?m tra ??u v�o
+            // 1. Kiểm tra đầu vào
             string matKhauCu = txtMatKhauCu.Text;
             string matKhauMoi = txtMatKhauMoi.Text;
             string xacNhanMatKhau = txtXacNhanMatKhau.Text;
 
             if (string.IsNullOrWhiteSpace(matKhauCu))
             {
-                MessageBox.Show("Vui l�ng nh?p m?t kh?u c?.", "L?i", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng nhập mật khẩu cũ.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtMatKhauCu.Focus();
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(matKhauMoi))
             {
-                MessageBox.Show("Vui l�ng nh?p m?t kh?u m?i.", "L?i", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng nhập mật khẩu mới.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtMatKhauMoi.Focus();
                 return;
             }
 
             if (matKhauMoi.Length < 6)
             {
-                MessageBox.Show("M?t kh?u m?i ph?i c� �t nh?t 6 k� t?.", "L?i", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Mật khẩu mới phải có ít nhất 6 ký tự.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtMatKhauMoi.Focus();
                 return;
             }
 
             if (matKhauMoi != xacNhanMatKhau)
             {
-                MessageBox.Show("M?t kh?u x�c nh?n kh�ng kh?p v?i m?t kh?u m?i.", "L?i", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Mật khẩu xác nhận không khớp với mật khẩu mới.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtXacNhanMatKhau.Focus();
                 return;
             }
 
             if (matKhauCu == matKhauMoi)
             {
-                MessageBox.Show("M?t kh?u m?i ph?i kh�c m?t kh?u c?.", "L?i", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Mật khẩu mới phải khác mật khẩu cũ.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtMatKhauMoi.Focus();
                 return;
             }
 
-            // 2. X�c th?c v� ??i m?t kh?u
+            // 2. Xác thực và đổi mật khẩu
             try
             {
                 using (var db = new Model1())
                 {
-                    // T�m t�i kho?n hi?n t?i
+                    // Tìm tài khoản hiện tại
                     var taiKhoan = db.TAIKHOANs.FirstOrDefault(tk => tk.TENDANGNHAP == Session.CurrentUsername);
 
                     if (taiKhoan == null)
                     {
-                        MessageBox.Show("Kh�ng t�m th?y t�i kho?n. Vui l�ng ??ng nh?p l?i.", "L?i", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Không tìm thấy tài khoản. Vui lòng đăng nhập lại.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
-                    // Ki?m tra m?t kh?u c?
+                    // Kiểm tra mật khẩu cũ
                     if (taiKhoan.MATKHAU != matKhauCu)
                     {
-                        MessageBox.Show("M?t kh?u c? kh�ng ?�ng.", "L?i", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Mật khẩu cũ không đúng.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         txtMatKhauCu.Clear();
                         txtMatKhauCu.Focus();
                         return;
                     }
 
-                    // C?p nh?t m?t kh?u m?i
+                    // Cập nhật mật khẩu mới
                     taiKhoan.MATKHAU = matKhauMoi;
                     db.SaveChanges();
 
-                    MessageBox.Show("??i m?t kh?u th�nh c�ng!\nVui l�ng s? d?ng m?t kh?u m?i cho l?n ??ng nh?p ti?p theo.", 
-                                    "Th�nh c�ng", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Đổi mật khẩu thành công!\nVui lòng sử dụng mật khẩu mới cho lần đăng nhập tiếp theo.", 
+                                    "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     this.DialogResult = DialogResult.OK;
                     this.Close();
@@ -100,7 +100,7 @@ namespace WindowsForm_QLTV
             }
             catch (Exception ex)
             {
-                MessageBox.Show("L?i khi ??i m?t kh?u: " + ex.Message, "L?i", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Lỗi khi đổi mật khẩu: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -143,9 +143,10 @@ namespace WindowsForm_QLTV
             this.pnlMain.Controls.Add(this.lblTitle);
             this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlMain.Location = new System.Drawing.Point(0, 0);
+            this.pnlMain.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.pnlMain.Name = "pnlMain";
-            this.pnlMain.Padding = new System.Windows.Forms.Padding(20);
-            this.pnlMain.Size = new System.Drawing.Size(400, 320);
+            this.pnlMain.Padding = new System.Windows.Forms.Padding(22, 25, 22, 25);
+            this.pnlMain.Size = new System.Drawing.Size(450, 400);
             this.pnlMain.TabIndex = 0;
             // 
             // btnHuy
@@ -155,11 +156,12 @@ namespace WindowsForm_QLTV
             this.btnHuy.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnHuy.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnHuy.ForeColor = System.Drawing.Color.White;
-            this.btnHuy.Location = new System.Drawing.Point(210, 260);
+            this.btnHuy.Location = new System.Drawing.Point(273, 325);
+            this.btnHuy.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnHuy.Name = "btnHuy";
-            this.btnHuy.Size = new System.Drawing.Size(100, 35);
+            this.btnHuy.Size = new System.Drawing.Size(112, 44);
             this.btnHuy.TabIndex = 9;
-            this.btnHuy.Text = "H?y";
+            this.btnHuy.Text = "Hủy";
             this.btnHuy.UseVisualStyleBackColor = false;
             // 
             // btnDoiMatKhau
@@ -169,108 +171,114 @@ namespace WindowsForm_QLTV
             this.btnDoiMatKhau.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDoiMatKhau.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnDoiMatKhau.ForeColor = System.Drawing.Color.White;
-            this.btnDoiMatKhau.Location = new System.Drawing.Point(90, 260);
+            this.btnDoiMatKhau.Location = new System.Drawing.Point(101, 325);
+            this.btnDoiMatKhau.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnDoiMatKhau.Name = "btnDoiMatKhau";
-            this.btnDoiMatKhau.Size = new System.Drawing.Size(110, 35);
+            this.btnDoiMatKhau.Size = new System.Drawing.Size(155, 44);
             this.btnDoiMatKhau.TabIndex = 8;
-            this.btnDoiMatKhau.Text = "??i m?t kh?u";
+            this.btnDoiMatKhau.Text = "Đổi mật khẩu";
             this.btnDoiMatKhau.UseVisualStyleBackColor = false;
             // 
             // txtXacNhanMatKhau
             // 
             this.txtXacNhanMatKhau.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtXacNhanMatKhau.Location = new System.Drawing.Point(160, 210);
+            this.txtXacNhanMatKhau.Location = new System.Drawing.Point(192, 262);
+            this.txtXacNhanMatKhau.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtXacNhanMatKhau.Name = "txtXacNhanMatKhau";
-            this.txtXacNhanMatKhau.PasswordChar = '?';
-            this.txtXacNhanMatKhau.Size = new System.Drawing.Size(200, 30);
+            this.txtXacNhanMatKhau.PasswordChar = '●';
+            this.txtXacNhanMatKhau.Size = new System.Drawing.Size(224, 34);
             this.txtXacNhanMatKhau.TabIndex = 7;
             // 
             // lblXacNhanMatKhau
             // 
             this.lblXacNhanMatKhau.AutoSize = true;
             this.lblXacNhanMatKhau.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblXacNhanMatKhau.Location = new System.Drawing.Point(30, 213);
+            this.lblXacNhanMatKhau.Location = new System.Drawing.Point(12, 262);
             this.lblXacNhanMatKhau.Name = "lblXacNhanMatKhau";
-            this.lblXacNhanMatKhau.Size = new System.Drawing.Size(124, 23);
+            this.lblXacNhanMatKhau.Size = new System.Drawing.Size(181, 28);
             this.lblXacNhanMatKhau.TabIndex = 6;
-            this.lblXacNhanMatKhau.Text = "X�c nh?n MK:";
+            this.lblXacNhanMatKhau.Text = "Xác nhận mật khẩu:";
             // 
             // txtMatKhauMoi
             // 
             this.txtMatKhauMoi.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtMatKhauMoi.Location = new System.Drawing.Point(160, 160);
+            this.txtMatKhauMoi.Location = new System.Drawing.Point(192, 200);
+            this.txtMatKhauMoi.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtMatKhauMoi.Name = "txtMatKhauMoi";
-            this.txtMatKhauMoi.PasswordChar = '?';
-            this.txtMatKhauMoi.Size = new System.Drawing.Size(200, 30);
+            this.txtMatKhauMoi.PasswordChar = '●';
+            this.txtMatKhauMoi.Size = new System.Drawing.Size(224, 34);
             this.txtMatKhauMoi.TabIndex = 5;
             // 
             // lblMatKhauMoi
             // 
             this.lblMatKhauMoi.AutoSize = true;
             this.lblMatKhauMoi.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblMatKhauMoi.Location = new System.Drawing.Point(30, 163);
+            this.lblMatKhauMoi.Location = new System.Drawing.Point(34, 204);
             this.lblMatKhauMoi.Name = "lblMatKhauMoi";
-            this.lblMatKhauMoi.Size = new System.Drawing.Size(118, 23);
+            this.lblMatKhauMoi.Size = new System.Drawing.Size(137, 28);
             this.lblMatKhauMoi.TabIndex = 4;
-            this.lblMatKhauMoi.Text = "M?t kh?u m?i:";
+            this.lblMatKhauMoi.Text = "Mật khẩu mới:";
             // 
             // txtMatKhauCu
             // 
             this.txtMatKhauCu.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtMatKhauCu.Location = new System.Drawing.Point(160, 110);
+            this.txtMatKhauCu.Location = new System.Drawing.Point(192, 138);
+            this.txtMatKhauCu.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtMatKhauCu.Name = "txtMatKhauCu";
-            this.txtMatKhauCu.PasswordChar = '?';
-            this.txtMatKhauCu.Size = new System.Drawing.Size(200, 30);
+            this.txtMatKhauCu.PasswordChar = '●';
+            this.txtMatKhauCu.Size = new System.Drawing.Size(224, 34);
             this.txtMatKhauCu.TabIndex = 3;
             // 
             // lblMatKhauCu
             // 
             this.lblMatKhauCu.AutoSize = true;
             this.lblMatKhauCu.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblMatKhauCu.Location = new System.Drawing.Point(30, 113);
+            this.lblMatKhauCu.Location = new System.Drawing.Point(34, 141);
             this.lblMatKhauCu.Name = "lblMatKhauCu";
-            this.lblMatKhauCu.Size = new System.Drawing.Size(111, 23);
+            this.lblMatKhauCu.Size = new System.Drawing.Size(123, 28);
             this.lblMatKhauCu.TabIndex = 2;
-            this.lblMatKhauCu.Text = "M?t kh?u c?:";
+            this.lblMatKhauCu.Text = "Mật khẩu cũ:";
             // 
             // lblTenDangNhap
             // 
             this.lblTenDangNhap.AutoSize = true;
             this.lblTenDangNhap.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.lblTenDangNhap.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.lblTenDangNhap.Location = new System.Drawing.Point(30, 65);
+            this.lblTenDangNhap.Location = new System.Drawing.Point(34, 81);
             this.lblTenDangNhap.Name = "lblTenDangNhap";
-            this.lblTenDangNhap.Size = new System.Drawing.Size(150, 23);
+            this.lblTenDangNhap.Size = new System.Drawing.Size(199, 28);
             this.lblTenDangNhap.TabIndex = 1;
-            this.lblTenDangNhap.Text = "T�i kho?n: [username]";
+            this.lblTenDangNhap.Text = "Tài khoản: [username]";
             // 
             // lblTitle
             // 
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
             this.lblTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(89)))), ((int)(((byte)(182)))));
-            this.lblTitle.Location = new System.Drawing.Point(100, 20);
+            this.lblTitle.Location = new System.Drawing.Point(112, 25);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(195, 32);
+            this.lblTitle.Size = new System.Drawing.Size(273, 38);
             this.lblTitle.TabIndex = 0;
-            this.lblTitle.Text = "?? ??I M?T KH?U";
+            this.lblTitle.Text = "🔑 ĐỔI MẬT KHẨU";
             // 
             // FormDoiMatKhau
             // 
             this.AcceptButton = this.btnDoiMatKhau;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(400, 320);
+            this.ClientSize = new System.Drawing.Size(450, 400);
             this.Controls.Add(this.pnlMain);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormDoiMatKhau";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "??i M?t Kh?u";
+            this.Text = "Đổi Mật Khẩu";
             this.pnlMain.ResumeLayout(false);
             this.pnlMain.PerformLayout();
             this.ResumeLayout(false);
+
         }
 
         private System.Windows.Forms.Panel pnlMain;

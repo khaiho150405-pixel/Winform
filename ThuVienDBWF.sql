@@ -14,10 +14,10 @@
 --END
 --GO
 
-CREATE DATABASE ThuVienDB;
+CREATE DATABASE ThuVienDBWF;
 GO
 
-USE ThuVienDB;
+USE ThuVienDBWF;
 GO
 
 -- =============================================

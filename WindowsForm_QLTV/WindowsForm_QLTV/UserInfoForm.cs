@@ -29,7 +29,7 @@ namespace WindowsForm_QLTV
 
             this.btnEditSave.Click += BtnEditSave_Click;
             this.btnLogout.Click += BtnLogout_Click;
-            // ĐÃ BỎ: this.btnDoiMatKhau.Click += BtnDoiMatKhau_Click; 
+            this.btnDoiMatKhau.Click += BtnDoiMatKhau_Click;
         }
 
         // CONSTRUCTOR MỚI: Nhận username và role (string) từ MainForm
@@ -49,7 +49,7 @@ namespace WindowsForm_QLTV
 
             this.btnEditSave.Click += BtnEditSave_Click;
             this.btnLogout.Click += BtnLogout_Click;
-            // ĐÃ BỎ: this.btnDoiMatKhau.Click += BtnDoiMatKhau_Click; 
+            this.btnDoiMatKhau.Click += BtnDoiMatKhau_Click;
         }
 
         private void UserInfoForm_Load(object sender, EventArgs e)
@@ -240,6 +240,17 @@ namespace WindowsForm_QLTV
             catch (Exception ex)
             {
                 MessageBox.Show("Lỗi lưu thông tin: " + ex.Message, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // ===============================================
+        // CHỨC NĂNG ĐỔI MẬT KHẨU
+        // ===============================================
+        private void BtnDoiMatKhau_Click(object sender, EventArgs e)
+        {
+            using (FormDoiMatKhau formDoiMK = new FormDoiMatKhau(_tenDangNhap))
+            {
+                formDoiMK.ShowDialog();
             }
         }
 

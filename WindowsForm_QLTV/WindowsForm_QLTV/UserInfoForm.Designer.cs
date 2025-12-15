@@ -12,9 +12,10 @@
         private System.Windows.Forms.Label lblHoVaTen;
         private System.Windows.Forms.Label lblMaUser;
 
-        // Các control thay thế
+        // Các control
         private System.Windows.Forms.Button btnLogout;
-        private System.Windows.Forms.Button btnEditSave; // Nút Chỉnh sửa/Lưu
+        private System.Windows.Forms.Button btnEditSave;
+        private System.Windows.Forms.Button btnDoiMatKhau;
         private System.Windows.Forms.TextBox txtEmail;
         private System.Windows.Forms.TextBox txtSDT;
         private System.Windows.Forms.DateTimePicker dtpNgaySinh;
@@ -42,6 +43,7 @@
         {
             this.lblHeader = new System.Windows.Forms.Label();
             this.pnlMain = new System.Windows.Forms.Panel();
+            this.btnDoiMatKhau = new System.Windows.Forms.Button();
             this.btnEditSave = new System.Windows.Forms.Button();
             this.btnLogout = new System.Windows.Forms.Button();
             this.txtEmail = new System.Windows.Forms.TextBox();
@@ -77,11 +79,10 @@
             // pnlMain
             // 
             this.pnlMain.BackColor = System.Drawing.Color.White;
-            // --- QUAN TRỌNG: Anchor 4 phía để Panel tự động giãn full form ---
             this.pnlMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
-            // -----------------------------------------------------------------
+            this.pnlMain.Controls.Add(this.btnDoiMatKhau);
             this.pnlMain.Controls.Add(this.btnEditSave);
             this.pnlMain.Controls.Add(this.btnLogout);
             this.pnlMain.Controls.Add(this.txtEmail);
@@ -105,6 +106,20 @@
             this.pnlMain.Size = new System.Drawing.Size(1198, 500);
             this.pnlMain.TabIndex = 1;
             // 
+            // btnDoiMatKhau
+            // 
+            this.btnDoiMatKhau.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(89)))), ((int)(((byte)(182)))));
+            this.btnDoiMatKhau.FlatAppearance.BorderSize = 0;
+            this.btnDoiMatKhau.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDoiMatKhau.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnDoiMatKhau.ForeColor = System.Drawing.Color.White;
+            this.btnDoiMatKhau.Location = new System.Drawing.Point(489, 395);
+            this.btnDoiMatKhau.Name = "btnDoiMatKhau";
+            this.btnDoiMatKhau.Size = new System.Drawing.Size(180, 40);
+            this.btnDoiMatKhau.TabIndex = 16;
+            this.btnDoiMatKhau.Text = "🔑 Đổi Mật Khẩu";
+            this.btnDoiMatKhau.UseVisualStyleBackColor = false;
+            // 
             // btnEditSave
             // 
             this.btnEditSave.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
@@ -121,9 +136,7 @@
             // 
             // btnLogout
             // 
-            // --- QUAN TRỌNG: Anchor Top | Right để nút luôn dính mép phải ---
             this.btnLogout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            // -----------------------------------------------------------------
             this.btnLogout.BackColor = System.Drawing.Color.Crimson;
             this.btnLogout.FlatAppearance.BorderSize = 0;
             this.btnLogout.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -138,10 +151,8 @@
             // 
             // txtEmail
             // 
-            // --- QUAN TRỌNG: Giãn ngang theo chiều rộng form ---
             this.txtEmail.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
-            // ----------------------------------------------------
             this.txtEmail.Location = new System.Drawing.Point(489, 325);
             this.txtEmail.Name = "txtEmail";
             this.txtEmail.Size = new System.Drawing.Size(250, 22);

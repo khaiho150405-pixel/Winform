@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using System.Linq;
 using System.Data.Entity;
 using System.Collections.Generic;
-using System.Security.Cryptography; // Để xử lý mật khẩu (Giả lập)
 using System.Text;
 
 namespace WindowsForm_QLTV
@@ -12,7 +11,7 @@ namespace WindowsForm_QLTV
     public partial class FormQLTaiKhoan : Form
     {
         private Model1 dbContext = new Model1();
-        private const int PAGE_SIZE = 20; // Số lượng mục trên mỗi trang
+        private const int PAGE_SIZE = 20;
         private int currentPage = 1;
         private int totalPages = 1;
 
@@ -33,18 +32,78 @@ namespace WindowsForm_QLTV
             btnTrangSau.Click += (s, e) => ChangePage(currentPage + 1);
             btnTrangCuoi.Click += (s, e) => ChangePage(totalPages);
 
+            // Sự kiện lọc theo vai trò
+            cboLocVaiTro.SelectedIndexChanged += CboLocVaiTro_SelectedIndexChanged;
+
+            // Cho phép tìm kiếm bằng Enter
+            txtTimKiem.KeyDown += TxtTimKiem_KeyDown;
+
             // Tinh chỉnh DataGridView
             SetupDataGridView();
         }
 
         private void FormQLTaiKhoan_Load(object sender, EventArgs e)
         {
-            // Tải dữ liệu ban đầu
-            LoadDataTaiKhoan();
+            // Thiết lập ComboBox lọc vai trò
+            SetupComboBoxLocVaiTro();
             // Load Combobox Chức vụ (Role)
             LoadComboboxData();
+            // Tải dữ liệu ban đầu
+            LoadDataTaiKhoan();
             // Đặt các trường về trạng thái "Tạo mới"
             ClearInputFields();
+            // Thiết lập placeholder cho ô tìm kiếm
+            SetupSearchPlaceholder();
+        }
+
+        private void SetupSearchPlaceholder()
+        {
+            txtTimKiem.Text = "Nhập từ khóa tìm kiếm...";
+            txtTimKiem.ForeColor = Color.Gray;
+
+            txtTimKiem.Enter += (s, e) =>
+            {
+                if (txtTimKiem.Text == "Nhập từ khóa tìm kiếm...")
+                {
+                    txtTimKiem.Text = "";
+                    txtTimKiem.ForeColor = Color.Black;
+                }
+            };
+
+            txtTimKiem.Leave += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(txtTimKiem.Text))
+                {
+                    txtTimKiem.Text = "Nhập từ khóa tìm kiếm...";
+                    txtTimKiem.ForeColor = Color.Gray;
+                }
+            };
+        }
+
+        private void TxtTimKiem_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                BtnTimKiem_Click(sender, e);
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void SetupComboBoxLocVaiTro()
+        {
+            cboLocVaiTro.Items.Clear();
+            cboLocVaiTro.Items.Add("-- Tất cả --");
+            cboLocVaiTro.Items.Add("Admin");
+            cboLocVaiTro.Items.Add("Thủ Thư");
+            cboLocVaiTro.Items.Add("Thủ Kho");
+            cboLocVaiTro.Items.Add("Độc Giả");
+            cboLocVaiTro.SelectedIndex = 0;
+        }
+
+        private void CboLocVaiTro_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            currentPage = 1;
+            LoadDataTaiKhoan();
         }
 
         private void SetupDataGridView()
@@ -71,6 +130,9 @@ namespace WindowsForm_QLTV
             dgvTaiKhoan.ReadOnly = true;
             dgvTaiKhoan.MultiSelect = false;
             dgvTaiKhoan.Dock = DockStyle.Fill;
+
+            // Gán sự kiện click
+            dgvTaiKhoan.CellClick += DgvTaiKhoan_CellClick;
         }
 
         private DataGridViewTextBoxColumn CreateTextColumn(string name, string header, int width)
@@ -101,60 +163,121 @@ namespace WindowsForm_QLTV
             }
         }
 
-        private IQueryable<AccountViewModel> GetAccountQuery(string keyword = null)
+        private int? GetSelectedMaQuyen()
         {
-            // Truy vấn lấy tất cả tài khoản
-            var query = dbContext.TAIKHOANs
-                .Include(tk => tk.PHANQUYEN)
-                .AsNoTracking()
-                .Select(tk => new AccountViewModel
-                {
-                    MaTK = tk.MATAIKHOAN,
-                    TenDangNhap = tk.TENDANGNHAP,
-                    TenQuyen = tk.PHANQUYEN.TENQUYEN,
-                    MaQuyen = tk.MAQUYEN,
-                    TrangThai = tk.TRANGTHAI
-                    // Chi tiết người dùng sẽ được load sau hoặc trong bước tiếp theo
-                });
+            string selected = cboLocVaiTro.SelectedItem?.ToString();
+            if (string.IsNullOrEmpty(selected) || selected == "-- Tất cả --")
+                return null;
 
-            // Áp dụng tìm kiếm theo tên đăng nhập hoặc tên quyền
-            if (!string.IsNullOrWhiteSpace(keyword))
+            switch (selected)
             {
-                string lowerKeyword = keyword.ToLower();
-                query = query.Where(tk => tk.TenDangNhap.ToLower().Contains(lowerKeyword) ||
-                                           tk.TenQuyen.ToLower().Contains(lowerKeyword));
+                case "Admin": return 1;
+                case "Thủ Thư": return 2;
+                case "Thủ Kho": return 3;
+                case "Độc Giả": return 4;
+                default: return null;
             }
-            return query;
         }
 
-        private void LoadDataTaiKhoan(string keyword = null)
+        // Hàm tách từ khóa thành các từ riêng lẻ
+        private string[] SplitKeywords(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+                return new string[0];
+
+            // Tách theo khoảng trắng, dấu phẩy, chấm phẩy
+            return keyword.ToLower()
+                          .Split(new[] { ' ', ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                          .Where(w => w.Length > 0)
+                          .ToArray();
+        }
+
+        // Hàm kiểm tra tên có chứa BẤT KỲ từ khóa nào không
+        private bool MatchesAnyKeyword(string hoVaTen, string[] keywords)
+        {
+            if (string.IsNullOrWhiteSpace(hoVaTen) || keywords == null || keywords.Length == 0)
+                return false;
+
+            string lowerName = hoVaTen.ToLower();
+
+            // Trả về true nếu tên chứa BẤT KỲ từ khóa nào
+            return keywords.Any(kw => lowerName.Contains(kw));
+        }
+
+        private void LoadDataTaiKhoan()
         {
             try
             {
-                // 1. Lấy tổng số lượng và tính tổng số trang
-                var baseQuery = GetAccountQuery(keyword);
-                int totalItems = baseQuery.Count();
+                // Lấy từ khóa tìm kiếm
+                string keyword = txtTimKiem.Text.Trim();
+                if (keyword == "Nhập từ khóa tìm kiếm...")
+                    keyword = null;
+
+                // Tách từ khóa thành các từ riêng lẻ
+                string[] keywords = SplitKeywords(keyword);
+
+                // Lấy vai trò được chọn
+                int? maQuyenFilter = GetSelectedMaQuyen();
+
+                // 1. Lấy danh sách tài khoản
+                var baseQuery = dbContext.TAIKHOANs
+                    .Include(tk => tk.PHANQUYEN)
+                    .AsNoTracking()
+                    .AsQueryable();
+
+                // Lọc theo vai trò
+                if (maQuyenFilter.HasValue)
+                {
+                    baseQuery = baseQuery.Where(tk => tk.MAQUYEN == maQuyenFilter.Value);
+                }
+
+                // 2. Lấy danh sách tài khoản
+                var accountList = baseQuery
+                    .OrderBy(tk => tk.MATAIKHOAN)
+                    .Select(tk => new AccountViewModel
+                    {
+                        MaTK = tk.MATAIKHOAN,
+                        TenDangNhap = tk.TENDANGNHAP,
+                        TenQuyen = tk.PHANQUYEN.TENQUYEN,
+                        MaQuyen = tk.MAQUYEN,
+                        TrangThai = tk.TRANGTHAI
+                    })
+                    .ToList();
+
+                // 3. Load chi tiết người dùng và lọc theo từ khóa
+                var resultList = new List<AccountViewModel>();
+                foreach (var account in accountList)
+                {
+                    AccountViewModel vm = LoadUserDetail(account);
+
+                    // Lọc theo từ khóa (tìm kiếm liên quan)
+                    if (keywords != null && keywords.Length > 0)
+                    {
+                        // Kiểm tra tên có chứa bất kỳ từ khóa nào không
+                        if (MatchesAnyKeyword(vm.HoVaTen, keywords))
+                        {
+                            resultList.Add(vm);
+                        }
+                    }
+                    else
+                    {
+                        resultList.Add(vm);
+                    }
+                }
+
+                // 4. Áp dụng phân trang SAU KHI lọc
+                int totalItems = resultList.Count;
                 totalPages = (int)Math.Ceiling((double)totalItems / PAGE_SIZE);
                 if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
                 if (currentPage < 1) currentPage = 1;
 
-                // 2. Áp dụng phân trang
-                var pagedQuery = baseQuery
-                    .OrderBy(tk => tk.MaTK)
+                var pagedList = resultList
                     .Skip((currentPage - 1) * PAGE_SIZE)
                     .Take(PAGE_SIZE)
                     .ToList();
 
-                // 3. Load chi tiết người dùng (Thủ Thư/Thủ Kho/Sinh Viên)
-                var resultList = new List<AccountViewModel>();
-                foreach (var account in pagedQuery)
-                {
-                    AccountViewModel vm = LoadUserDetail(account);
-                    resultList.Add(vm);
-                }
-
-                dgvTaiKhoan.DataSource = resultList;
-                lblTrangHienTai.Text = $"Trang: {currentPage}/{totalPages}";
+                dgvTaiKhoan.DataSource = pagedList;
+                lblTrangHienTai.Text = $"Trang: {currentPage}/{totalPages} ({totalItems} kết quả)";
                 UpdatePaginationControls();
 
             }
@@ -166,7 +289,6 @@ namespace WindowsForm_QLTV
 
         private AccountViewModel LoadUserDetail(AccountViewModel vm)
         {
-            // Dựa vào MaQuyen để join với bảng chi tiết tương ứng
             switch (vm.MaQuyen)
             {
                 case 2: // Thủ Thư
@@ -181,11 +303,7 @@ namespace WindowsForm_QLTV
                     var sv = dbContext.SINHVIENs.AsNoTracking().FirstOrDefault(s => s.MATAIKHOAN == vm.MaTK);
                     if (sv != null) { vm.HoVaTen = sv.HOVATEN; vm.GioiTinh = sv.GIOITINH; vm.NgaySinh = sv.NGAYSINH; vm.SDT = sv.SDT; vm.Email = sv.EMAIL; vm.MaUserDetail = sv.MASV; }
                     break;
-                // Admin (MaQuyen = 1) có thể không có bảng chi tiết riêng, chỉ cần thông tin từ TAIKHOAN
                 default:
-                    // Thử lấy thông tin từ TAIKHOAN nếu có
-                    //var tk = dbContext.TAIKHOANs.AsNoTracking().Find(vm.MaTK);
-                    //if (tk != null) { vm.TenDangNhap = tk.TENDANGNHAP; }
                     break;
             }
             return vm;
@@ -196,7 +314,7 @@ namespace WindowsForm_QLTV
             if (newPage >= 1 && newPage <= totalPages)
             {
                 currentPage = newPage;
-                LoadDataTaiKhoan(txtTimKiem.Text.Trim());
+                LoadDataTaiKhoan();
             }
         }
 
@@ -220,7 +338,6 @@ namespace WindowsForm_QLTV
             txtSDT.Clear();
             txtEmail.Clear();
             cboRole.SelectedIndex = -1;
-            // Thêm trường mật khẩu nếu cần: txtMatKhau.Clear();
         }
 
         private void DgvTaiKhoan_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -228,12 +345,9 @@ namespace WindowsForm_QLTV
             if (e.RowIndex >= 0)
             {
                 DataGridViewRow row = dgvTaiKhoan.Rows[e.RowIndex];
-
-                // Lấy đối tượng từ DataBoundItem
                 AccountViewModel vm = row.DataBoundItem as AccountViewModel;
                 if (vm == null) return;
 
-                // Hiển thị dữ liệu lên Input Panel
                 txtMaTK.Text = vm.MaTK.ToString();
                 txtHoVaTen.Text = vm.HoVaTen;
                 cboGioiTinh.Text = vm.GioiTinh;
@@ -249,8 +363,7 @@ namespace WindowsForm_QLTV
 
                 txtSDT.Text = vm.SDT;
                 txtEmail.Text = vm.Email;
-                cboRole.SelectedValue = vm.MaQuyen; // Chọn combobox theo Mã Quyền
-                // Có thể thêm hiển thị Tên đăng nhập nếu bạn thêm control cho nó
+                cboRole.SelectedValue = vm.MaQuyen;
             }
         }
 
@@ -261,7 +374,6 @@ namespace WindowsForm_QLTV
                 MessageBox.Show("Vui lòng nhập đầy đủ Họ và tên và chọn Chức vụ.", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
-            // Thêm kiểm tra định dạng SDT, Email nếu cần
             return true;
         }
 
@@ -292,10 +404,7 @@ namespace WindowsForm_QLTV
                         TAIKHOAN taiKhoan = dbContext.TAIKHOANs.Find(maTK);
                         if (taiKhoan == null) return;
 
-                        // 1. Xóa thông tin chi tiết (THUTHU/THUKHO/SINHVIEN) trước
                         DeleteUserDetail(maTK, taiKhoan.MAQUYEN);
-
-                        // 2. Xóa TAIKHOAN
                         dbContext.TAIKHOANs.Remove(taiKhoan);
                         dbContext.SaveChanges();
 
@@ -316,23 +425,22 @@ namespace WindowsForm_QLTV
 
         private void DeleteUserDetail(int maTK, int maQuyen)
         {
-            // Tìm và xóa bản ghi trong bảng chi tiết tương ứng
             switch (maQuyen)
             {
-                case 2: // Thủ Thư
+                case 2:
                     var tt = dbContext.THUTHUs.FirstOrDefault(t => t.MATAIKHOAN == maTK);
                     if (tt != null) dbContext.THUTHUs.Remove(tt);
                     break;
-                case 3: // Thủ Kho
+                case 3:
                     var tkho = dbContext.THUKHOes.FirstOrDefault(t => t.MATAIKHOAN == maTK);
                     if (tkho != null) dbContext.THUKHOes.Remove(tkho);
                     break;
-                case 4: // Sinh Viên / Độc Giả
+                case 4:
                     var sv = dbContext.SINHVIENs.FirstOrDefault(s => s.MATAIKHOAN == maTK);
                     if (sv != null) dbContext.SINHVIENs.Remove(sv);
                     break;
             }
-            dbContext.SaveChanges(); // Lưu thay đổi trước khi xóa TAIKHOAN chính
+            dbContext.SaveChanges();
         }
 
         private void BtnLuu_Click(object sender, EventArgs e)
@@ -355,43 +463,38 @@ namespace WindowsForm_QLTV
 
                     if (isNew)
                     {
-                        // 1. TẠO TAIKHOAN MỚI
                         taiKhoan = new TAIKHOAN
                         {
-                            TENDANGNHAP = GenerateDefaultUsername(hoVaTen, maQuyen), // Cần logic tạo TENDANGNHAP
-                            MATKHAU = HashPassword("123456"), // Mật khẩu mặc định
+                            TENDANGNHAP = GenerateDefaultUsername(hoVaTen, maQuyen),
+                            MATKHAU = "123456",
                             MAQUYEN = maQuyen,
                             TRANGTHAI = "Hoạt động"
                         };
                         dbContext.TAIKHOANs.Add(taiKhoan);
-                        dbContext.SaveChanges(); // Lưu để lấy MaTK
+                        dbContext.SaveChanges();
 
-                        // 2. TẠO THÔNG TIN CHI TIẾT
                         CreateUserDetail(taiKhoan.MATAIKHOAN, maQuyen, hoVaTen, gioiTinh, ngaySinh, sdt, email);
 
-                        MessageBox.Show("Đã thêm mới tài khoản thành công.", "Hoàn thành");
+                        MessageBox.Show($"Đã thêm mới tài khoản thành công.\nTên đăng nhập: {taiKhoan.TENDANGNHAP}\nMật khẩu: 123456", "Hoàn thành");
                     }
                     else
                     {
-                        // 1. CẬP NHẬT TAIKHOAN HIỆN TẠI
                         int maTK = int.Parse(txtMaTK.Text);
                         taiKhoan = dbContext.TAIKHOANs.Find(maTK);
                         if (taiKhoan == null) throw new Exception("Tài khoản không tồn tại.");
 
-                        // Xử lý thay đổi vai trò (Nếu thay đổi vai trò, phải xóa chi tiết cũ và tạo chi tiết mới)
                         if (taiKhoan.MAQUYEN != maQuyen)
                         {
-                            DeleteUserDetail(maTK, taiKhoan.MAQUYEN); // Xóa chi tiết cũ
-                            CreateUserDetail(maTK, maQuyen, hoVaTen, gioiTinh, ngaySinh, sdt, email); // Tạo chi tiết mới
-                            taiKhoan.MAQUYEN = maQuyen; // Cập nhật MaQuyen mới
-                                                        // Có thể cần cập nhật TENDANGNHAP nếu logic tạo tên đăng nhập phụ thuộc vào MAQUYEN
+                            DeleteUserDetail(maTK, taiKhoan.MAQUYEN);
+                            CreateUserDetail(maTK, maQuyen, hoVaTen, gioiTinh, ngaySinh, sdt, email);
+                            taiKhoan.MAQUYEN = maQuyen;
+                        }
+                        else
+                        {
+                            UpdateUserDetail(maTK, maQuyen, hoVaTen, gioiTinh, ngaySinh, sdt, email);
                         }
 
-                        // 2. CẬP NHẬT THÔNG TIN CHI TIẾT
-                        UpdateUserDetail(maTK, maQuyen, hoVaTen, gioiTinh, ngaySinh, sdt, email);
-
-                        dbContext.Entry(taiKhoan).State = EntityState.Modified; // Cập nhật TAIKHOAN
-
+                        dbContext.Entry(taiKhoan).State = EntityState.Modified;
                         MessageBox.Show($"Đã cập nhật tài khoản Mã TK: {maTK} thành công.", "Hoàn thành");
                     }
 
@@ -414,7 +517,7 @@ namespace WindowsForm_QLTV
         private void BtnTimKiem_Click(object sender, EventArgs e)
         {
             currentPage = 1;
-            LoadDataTaiKhoan(txtTimKiem.Text.Trim());
+            LoadDataTaiKhoan();
         }
 
         // ===============================================
@@ -425,72 +528,53 @@ namespace WindowsForm_QLTV
         {
             string baseName = new string(hoVaTen.Normalize(NormalizationForm.FormD).Where(c => char.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark && char.IsLetterOrDigit(c)).ToArray()).Replace(" ", "").ToLower();
             string prefix = maQuyen == 2 ? "tt" : maQuyen == 3 ? "tk" : maQuyen == 4 ? "sv" : "ad";
-            return prefix + baseName;
-        }
 
-        // GIẢ LẬP: Hàm Hash Mật khẩu (Bạn cần dùng thuật toán mạnh hơn như BCrypt/Argon2)
-        private string HashPassword(string password)
-        {
-            // Mật khẩu được lưu dưới dạng Plain Text trong DB script, nhưng EF nên dùng hashing
-            // Giả lập SHA256 cho đơn giản
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-                return builder.ToString();
-            }
+            Random rnd = new Random();
+            return prefix + baseName + rnd.Next(100, 999);
         }
 
         private void CreateUserDetail(int maTK, int maQuyen, string hoVaTen, string gioiTinh, DateTime ngaySinh, string sdt, string email)
         {
-            // Tạo bản ghi trong bảng chi tiết tương ứng
             switch (maQuyen)
             {
-                case 2: // Thủ Thư
+                case 2:
                     dbContext.THUTHUs.Add(new THUTHU { MATAIKHOAN = maTK, HOVATEN = hoVaTen, GIOITINH = gioiTinh, NGAYSINH = ngaySinh, SDT = sdt, EMAIL = email });
                     break;
-                case 3: // Thủ Kho
+                case 3:
                     dbContext.THUKHOes.Add(new THUKHO { MATAIKHOAN = maTK, HOVATEN = hoVaTen, GIOITINH = gioiTinh, NGAYSINH = ngaySinh, SDT = sdt, EMAIL = email });
                     break;
-                case 4: // Sinh Viên / Độc Giả
+                case 4:
                     dbContext.SINHVIENs.Add(new SINHVIEN { MATAIKHOAN = maTK, HOVATEN = hoVaTen, GIOITINH = gioiTinh, NGAYSINH = ngaySinh, SDT = sdt, EMAIL = email });
                     break;
             }
-            // Không gọi SaveChanges() ở đây, để hàm gọi (BtnLuu_Click) tự gọi
         }
 
         private void UpdateUserDetail(int maTK, int maQuyen, string hoVaTen, string gioiTinh, DateTime ngaySinh, string sdt, string email)
         {
-            // Cập nhật bản ghi trong bảng chi tiết tương ứng
             switch (maQuyen)
             {
-                case 2: // Thủ Thư
+                case 2:
                     var tt = dbContext.THUTHUs.FirstOrDefault(t => t.MATAIKHOAN == maTK);
                     if (tt != null) { tt.HOVATEN = hoVaTen; tt.GIOITINH = gioiTinh; tt.NGAYSINH = ngaySinh; tt.SDT = sdt; tt.EMAIL = email; dbContext.Entry(tt).State = EntityState.Modified; }
                     break;
-                case 3: // Thủ Kho
+                case 3:
                     var tkho = dbContext.THUKHOes.FirstOrDefault(t => t.MATAIKHOAN == maTK);
                     if (tkho != null) { tkho.HOVATEN = hoVaTen; tkho.GIOITINH = gioiTinh; tkho.NGAYSINH = ngaySinh; tkho.SDT = sdt; tkho.EMAIL = email; dbContext.Entry(tkho).State = EntityState.Modified; }
                     break;
-                case 4: // Sinh Viên / Độc Giả
+                case 4:
                     var sv = dbContext.SINHVIENs.FirstOrDefault(s => s.MATAIKHOAN == maTK);
                     if (sv != null) { sv.HOVATEN = hoVaTen; sv.GIOITINH = gioiTinh; sv.NGAYSINH = ngaySinh; sv.SDT = sdt; sv.EMAIL = email; dbContext.Entry(sv).State = EntityState.Modified; }
                     break;
             }
-            // Không gọi SaveChanges() ở đây, để hàm gọi (BtnLuu_Click) tự gọi
         }
 
         // ===============================================
-        // 1. VIEW MODEL
+        // VIEW MODEL
         // ===============================================
         public class AccountViewModel
         {
             public int MaTK { get; set; }
-            public int MaUserDetail { get; set; } // Mã liên quan (MASV/MATT/MATK)
+            public int MaUserDetail { get; set; }
             public string HoVaTen { get; set; }
             public string GioiTinh { get; set; }
             public DateTime? NgaySinh { get; set; }
@@ -501,6 +585,5 @@ namespace WindowsForm_QLTV
             public int MaQuyen { get; set; }
             public string TrangThai { get; set; }
         }
-
     }
 }

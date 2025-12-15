@@ -94,6 +94,9 @@
     <Compile Include="FormChiTietSach.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="FormDoiMatKhau.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="FormGuiYeuCauMuon.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -229,6 +232,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="QLTacGia.resx">
       <DependentUpon>QLTacGia.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QLTaiKhoan.resx">
+      <DependentUpon>QLTaiKhoan.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Register.resx">
       <DependentUpon>Register.cs</DependentUpon>

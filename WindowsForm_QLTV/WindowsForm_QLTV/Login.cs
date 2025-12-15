@@ -30,6 +30,13 @@ namespace WindowsForm_QLTV
             // 2. Gọi hàm xác thực và lấy quyền hạn
             string userRole = ValidateUserAndGetRole(username, password);
 
+            if (userRole == "LOCKED_ACCOUNT")
+            {
+                MessageBox.Show("Tài khoản của bạn đang bị khóa. Vui lòng liên hệ Admin để mở lại.",
+                                "Tài khoản bị khóa", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             if (userRole != null)
             {
                 // --- BƯỚC QUAN TRỌNG: LƯU THÔNG TIN VÀO SESSION ---
@@ -143,16 +150,24 @@ namespace WindowsForm_QLTV
             {
                 using (var db = new Model1())
                 {
+                    // 1. Tìm tài khoản trùng khớp User và Pass (Bỏ điều kiện TRANGTHAI ở đây)
                     var account = db.TAIKHOANs
-                                     .AsNoTracking()
-                                     .Include(tk => tk.PHANQUYEN)
-                                     .SingleOrDefault(tk =>
-                                         tk.TENDANGNHAP == username &&
-                                         tk.MATKHAU == password &&
-                                         tk.TRANGTHAI == "Hoạt động");
+                                        .AsNoTracking()
+                                        .Include(tk => tk.PHANQUYEN)
+                                        .SingleOrDefault(tk =>
+                                            tk.TENDANGNHAP == username &&
+                                            tk.MATKHAU == password);
 
                     if (account != null)
                     {
+                        // 2. Kiểm tra trạng thái
+                        if (account.TRANGTHAI == "Ngừng hoạt động")
+                        {
+                            // Trả về một mã đặc biệt để nhận biết tài khoản bị khóa
+                            return "LOCKED_ACCOUNT";
+                        }
+
+                        // Nếu hoạt động bình thường, trả về quyền
                         role = account.PHANQUYEN.TENQUYEN;
                     }
                 }

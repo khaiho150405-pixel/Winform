@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -12,7 +13,7 @@ namespace WindowsForm_QLTV.Services
 {
     public class Chatbot
     {
-        private readonly string apiKey = ".";
+        private readonly string apiKey = ConfigurationManager.AppSettings["GeminiApiKey"];
         private readonly string apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
         private string GetLibraryContext()

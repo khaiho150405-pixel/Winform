@@ -37,6 +37,11 @@
             this.btnXoa = new System.Windows.Forms.Button();
             this.btnTaoMoi = new System.Windows.Forms.Button();
             this.pnlInput = new System.Windows.Forms.Panel();
+            this.chkBiKhoa = new System.Windows.Forms.CheckBox();
+            this.txtMatKhau = new System.Windows.Forms.TextBox();
+            this.lblMatKhau = new System.Windows.Forms.Label();
+            this.txtTenDangNhap = new System.Windows.Forms.TextBox();
+            this.lblTenDangNhap = new System.Windows.Forms.Label();
             this.cboRole = new System.Windows.Forms.ComboBox();
             this.lblRole = new System.Windows.Forms.Label();
             this.txtEmail = new System.Windows.Forms.TextBox();
@@ -78,8 +83,8 @@
             // 
             // pnlDataGrid
             // 
-            this.pnlDataGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.pnlDataGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlDataGrid.Controls.Add(this.dgvTaiKhoan);
             this.pnlDataGrid.Controls.Add(this.pnlPagination);
@@ -166,7 +171,7 @@
             // 
             // pnlSearch
             // 
-            this.pnlSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.pnlSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlSearch.Controls.Add(this.cboLocVaiTro);
             this.pnlSearch.Controls.Add(this.lblLocVaiTro);
@@ -218,7 +223,7 @@
             // 
             // txtTimKiem
             // 
-            this.txtTimKiem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtTimKiem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtTimKiem.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.txtTimKiem.Location = new System.Drawing.Point(472, 10);
@@ -242,7 +247,7 @@
             this.pnlControl.Controls.Add(this.btnLuu);
             this.pnlControl.Controls.Add(this.btnXoa);
             this.pnlControl.Controls.Add(this.btnTaoMoi);
-            this.pnlControl.Location = new System.Drawing.Point(34, 450);
+            this.pnlControl.Location = new System.Drawing.Point(34, 600);
             this.pnlControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.pnlControl.Name = "pnlControl";
             this.pnlControl.Size = new System.Drawing.Size(326, 62);
@@ -295,6 +300,11 @@
             // 
             // pnlInput
             // 
+            this.pnlInput.Controls.Add(this.chkBiKhoa);
+            this.pnlInput.Controls.Add(this.txtMatKhau);
+            this.pnlInput.Controls.Add(this.lblMatKhau);
+            this.pnlInput.Controls.Add(this.txtTenDangNhap);
+            this.pnlInput.Controls.Add(this.lblTenDangNhap);
             this.pnlInput.Controls.Add(this.cboRole);
             this.pnlInput.Controls.Add(this.lblRole);
             this.pnlInput.Controls.Add(this.txtEmail);
@@ -312,13 +322,60 @@
             this.pnlInput.Location = new System.Drawing.Point(34, 62);
             this.pnlInput.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.pnlInput.Name = "pnlInput";
-            this.pnlInput.Size = new System.Drawing.Size(326, 375);
+            this.pnlInput.Size = new System.Drawing.Size(326, 520);
             this.pnlInput.TabIndex = 1;
+            // 
+            // chkBiKhoa
+            // 
+            this.chkBiKhoa.AutoSize = true;
+            this.chkBiKhoa.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.chkBiKhoa.ForeColor = System.Drawing.Color.Red;
+            this.chkBiKhoa.Location = new System.Drawing.Point(135, 475);
+            this.chkBiKhoa.Name = "chkBiKhoa";
+            this.chkBiKhoa.Size = new System.Drawing.Size(165, 29);
+            this.chkBiKhoa.TabIndex = 18;
+            this.chkBiKhoa.Text = "Khóa tài khoản";
+            this.chkBiKhoa.UseVisualStyleBackColor = true;
+            // 
+            // txtMatKhau
+            // 
+            this.txtMatKhau.Location = new System.Drawing.Point(135, 375);
+            this.txtMatKhau.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtMatKhau.Name = "txtMatKhau";
+            this.txtMatKhau.Size = new System.Drawing.Size(168, 26);
+            this.txtMatKhau.TabIndex = 17;
+            // 
+            // lblMatKhau
+            // 
+            this.lblMatKhau.AutoSize = true;
+            this.lblMatKhau.Location = new System.Drawing.Point(22, 379);
+            this.lblMatKhau.Name = "lblMatKhau";
+            this.lblMatKhau.Size = new System.Drawing.Size(79, 20);
+            this.lblMatKhau.TabIndex = 16;
+            this.lblMatKhau.Text = "Mật khẩu:";
+            // 
+            // txtTenDangNhap
+            // 
+            this.txtTenDangNhap.Location = new System.Drawing.Point(135, 325);
+            this.txtTenDangNhap.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtTenDangNhap.Name = "txtTenDangNhap";
+            this.txtTenDangNhap.ReadOnly = true;
+            this.txtTenDangNhap.Size = new System.Drawing.Size(168, 26);
+            this.txtTenDangNhap.TabIndex = 15;
+            // 
+            // lblTenDangNhap
+            // 
+            this.lblTenDangNhap.AutoSize = true;
+            this.lblTenDangNhap.Location = new System.Drawing.Point(22, 329);
+            this.lblTenDangNhap.Name = "lblTenDangNhap";
+            this.lblTenDangNhap.Size = new System.Drawing.Size(120, 20);
+            this.lblTenDangNhap.TabIndex = 14;
+            this.lblTenDangNhap.Text = "Tên đăng nhập:";
             // 
             // cboRole
             // 
             this.cboRole.FormattingEnabled = true;
-            this.cboRole.Location = new System.Drawing.Point(135, 325);
+            this.cboRole.Location = new System.Drawing.Point(135, 425);
             this.cboRole.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cboRole.Name = "cboRole";
             this.cboRole.Size = new System.Drawing.Size(168, 28);
@@ -327,7 +384,7 @@
             // lblRole
             // 
             this.lblRole.AutoSize = true;
-            this.lblRole.Location = new System.Drawing.Point(22, 329);
+            this.lblRole.Location = new System.Drawing.Point(22, 429);
             this.lblRole.Name = "lblRole";
             this.lblRole.Size = new System.Drawing.Size(70, 20);
             this.lblRole.TabIndex = 12;
@@ -515,5 +572,10 @@
         private System.Windows.Forms.Label lblTimKiem;
         private System.Windows.Forms.ComboBox cboLocVaiTro;
         private System.Windows.Forms.Label lblLocVaiTro;
+        private System.Windows.Forms.TextBox txtTenDangNhap;
+        private System.Windows.Forms.Label lblTenDangNhap;
+        private System.Windows.Forms.TextBox txtMatKhau;
+        private System.Windows.Forms.Label lblMatKhau;
+        private System.Windows.Forms.CheckBox chkBiKhoa;
     }
 }

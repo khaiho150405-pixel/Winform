@@ -14,10 +14,10 @@
 --END
 --GO
 
-CREATE DATABASE ThuVienDB;
+CREATE DATABASE ThuVienDBWF;
 GO
 
-USE ThuVienDB;
+USE ThuVienDBWF;
 GO
 
 -- =============================================
@@ -732,3 +732,4 @@ BEGIN
         SELECT 0 AS Success;
 END;
 GO
+

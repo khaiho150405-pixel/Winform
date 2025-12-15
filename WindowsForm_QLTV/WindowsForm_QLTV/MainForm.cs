@@ -25,6 +25,7 @@ namespace WindowsForm_QLTV
         {
             InitializeComponent();
             InitializeChatbotUI();
+            CreateReportButton();
         }
 
         // Constructor nhận thông tin đăng nhập
@@ -94,6 +95,7 @@ namespace WindowsForm_QLTV
                     // THỦ THƯ: Quản lý mượn trả, Tương tác
                     btnQLMuonTra.Visible = true;
                     btnMuonTra.Visible = false;
+                    if (btnBaoCao != null) btnBaoCao.Visible = true;
                     // Thủ thư thường không được xóa sách hay xóa tài khoản admin, nhưng tùy nghiệp vụ
                     if (btnTuongTac != null) btnTuongTac.Visible = true;
                     break;
@@ -131,6 +133,18 @@ namespace WindowsForm_QLTV
             {
                 btnTuongTac.Click += BtnItem_Click;
                 btnTuongTac.Text = " 💬 Tương tác"; // Đặt icon và tên
+            }
+
+            // Xử lý báo c
+            if (btnBaoCao != null)
+            {
+                // Gỡ sự kiện cũ (nếu có) để tránh bị gán 2 lần
+                btnBaoCao.Click -= BtnItem_Click;
+                btnBaoCao.Click -= btnBaoCao_Click;
+
+                // Gán sự kiện riêng biệt
+                btnBaoCao.Click += btnBaoCao_Click;
+                btnBaoCao.Text = " 📊 Báo cáo thống kê";
             }
 
             // Nút Thoát
@@ -535,6 +549,78 @@ namespace WindowsForm_QLTV
                     // Chọn Cancel -> Hủy lệnh đóng, ở lại MainForm
                     e.Cancel = true;
                 }
+            }
+        }
+        private void CreateReportButton()
+        {
+            // 1. Khởi tạo nút
+            btnBaoCao = new Button();
+
+            // 2. Thiết lập giao diện (cho giống các nút sidebar khác)
+            btnBaoCao.Name = "btnBaoCao";
+            btnBaoCao.Text = " 📊 Báo cáo thống kê";
+            btnBaoCao.TextAlign = ContentAlignment.MiddleLeft;
+            btnBaoCao.Padding = new Padding(10, 0, 0, 0);
+            btnBaoCao.FlatStyle = FlatStyle.Flat;
+            btnBaoCao.FlatAppearance.BorderSize = 0;
+            btnBaoCao.BackColor = Color.FromArgb(44, 62, 80);
+            btnBaoCao.ForeColor = Color.White;
+            btnBaoCao.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
+            btnBaoCao.Cursor = Cursors.Hand;
+            btnBaoCao.Size = new Size(200, 50); // Kích thước mặc định
+            btnBaoCao.Dock = DockStyle.Top; // Tự động xếp lên trên
+
+            // 3. Quan trọng: Thêm vào Panel Sidebar
+            // Lưu ý: Tên panel chứa menu của bạn trong Designer thường là pnlSidebar hoặc panelMenu.
+            // Hãy kiểm tra lại tên chính xác trong file Designer.cs. 
+            // Nếu không nhớ, bạn có thể thử pnlLeft, panel1...
+            if (pnlSidebar != null)
+            {
+                pnlSidebar.Controls.Add(btnBaoCao);
+
+                // Đưa nút này xuống vị trí thích hợp (sau các nút chức năng khác)
+                // Số càng lớn thì càng nằm dưới (vì Dock=Top)
+                pnlSidebar.Controls.SetChildIndex(btnBaoCao, 4);
+            }
+        }
+        private void btnBaoCao_Click(object sender, EventArgs e)
+        {
+            // 1. Highlight nút đang chọn
+            HighlightButton(sender as Button);
+
+            // 2. Lấy quyền hiện tại
+            string role = Session.CurrentRole;
+            Form formToShow = null;
+
+            // 3. Logic phân quyền mở Form
+            if (role.ToUpper().Contains("ADMIN") || role.ToUpper().Contains("QUẢN TRỊ"))
+            {
+                // Admin -> Mở Form Quản Lý (Xem danh sách báo cáo)
+                formToShow = new FormQuanLyBaoCao();
+            }
+            else if (role.ToUpper().Contains("THỦ THƯ"))
+            {
+                // Thủ thư -> Mở Form Tạo & Gửi Báo Cáo
+                formToShow = new FormBaoCao();
+            }
+            else
+            {
+                MessageBox.Show("Bạn không có quyền truy cập chức năng này!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 4. Hiển thị Form lên Panel (Logic giống ShowContentControl)
+            if (formToShow != null)
+            {
+                pnlContent.Controls.Clear(); // Xóa nội dung cũ
+
+                formToShow.TopLevel = false;
+                formToShow.FormBorderStyle = FormBorderStyle.None;
+                formToShow.Dock = DockStyle.Fill;
+
+                pnlContent.Controls.Add(formToShow);
+                pnlContent.Tag = formToShow; // Lưu tham chiếu
+                formToShow.Show();
             }
         }
     }

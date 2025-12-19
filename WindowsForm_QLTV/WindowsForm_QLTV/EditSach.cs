@@ -18,10 +18,10 @@ namespace WindowsForm_QLTV
             InitializeComponent();
             this.Load += FormQLTatCaSach_Load;
 
-            // Gán sự kiện cho 3 nút CRUD chính
-            btnThem.Click += BtnCRUD_Click;
-            btnCapNhat.Click += BtnCRUD_Click;
-            btnXoa.Click += BtnCRUD_Click;
+            // Gán sự kiện cho 3 nút CRUD chính - MỞ FORM RIÊNG
+            btnThem.Click += BtnThem_Click;
+            btnCapNhat.Click += BtnCapNhat_Click;
+            btnXoa.Click += BtnXoa_Click;
 
             btnTimKiem.Click += BtnTimKiem_Click;
             btnChooseFile.Click += BtnChooseFile_Click;
@@ -38,6 +38,34 @@ namespace WindowsForm_QLTV
         {
             LoadComboboxData();
             LoadDataSach();
+        }
+
+        // ====================================================================
+        // XỬ LÝ SỰ KIỆN 3 BUTTON CHÍNH - MỞ FORM RIÊNG
+        // ====================================================================
+
+        // Nút "Nhập Sách" - Mở Form nhập sách mới
+        private void BtnThem_Click(object sender, EventArgs e)
+        {
+            FormNhapSachMoi formNhap = new FormNhapSachMoi();
+            formNhap.FormClosed += (s, args) => LoadDataSach(); // Tải lại dữ liệu khi đóng form
+            formNhap.ShowDialog();
+        }
+
+        // Nút "Cập Nhật" - Mở Form cập nhật sách
+        private void BtnCapNhat_Click(object sender, EventArgs e)
+        {
+            FormCapNhatSach formCapNhat = new FormCapNhatSach();
+            formCapNhat.FormClosed += (s, args) => LoadDataSach();
+            formCapNhat.ShowDialog();
+        }
+
+        // Nút "Thanh Lý" - Mở Form thanh lý sách đơn giản
+        private void BtnXoa_Click(object sender, EventArgs e)
+        {
+            FormThanhLySachDonGian formThanhLy = new FormThanhLySachDonGian();
+            formThanhLy.FormClosed += (s, args) => LoadDataSach();
+            formThanhLy.ShowDialog();
         }
 
         // ====================================================================
@@ -275,98 +303,6 @@ namespace WindowsForm_QLTV
                     currentSelectedFileName = sachDetail.HinhAnhPath ?? string.Empty;
                 }
             }
-        }
-
-        private void BtnCRUD_Click(object sender, EventArgs e)
-        {
-            Button btn = sender as Button;
-
-            int maSach = 0;
-            if (dgvSach.SelectedRows.Count > 0 && dgvSach.SelectedRows[0].DataBoundItem is SachDetailItem selectedSach)
-            {
-                maSach = selectedSach.MaSach;
-            }
-
-            // Lấy các giá trị cần thiết từ input
-            string tenSach = txtTenSach.Text;
-            int maTacGia = (int)cboMaTacGia.SelectedValue;
-            int maNXB = (int)cboMaNXB.SelectedValue;
-            string theLoai = txtTheLoai.Text;
-            if (!int.TryParse(txtSoLuong.Text, out int soLuongTon)) soLuongTon = 0;
-            if (!decimal.TryParse(txtGiaMuon.Text, out decimal giaMuon)) giaMuon = 0;
-            string trangThai = txtTrangThai.Text;
-            string moTa = txtMoTa.Text; // LẤY MÔ TẢ
-
-            // Tên file ảnh sẽ được cập nhật trong hàm BtnChooseFile_Click
-            string hinhAnhFileName = currentSelectedFileName;
-
-            // TODO: Bổ sung validation cho các trường bắt buộc khác
-
-            try
-            {
-                using (var db = new Model1())
-                {
-                    switch (btn.Text)
-                    {
-                        case "Nhập Sách": // CREATE
-                            var newSach = new SACH
-                            {
-                                TENSACH = tenSach,
-                                MATG = maTacGia,
-                                MANXB = maNXB,
-                                THELOAI = theLoai,
-                                SOLUONGTON = soLuongTon,
-                                GIAMUON = giaMuon,
-                                TRANGTHAI = trangThai,
-                                MOTA = moTa, // LƯU MÔ TẢ
-                                HINHANH = hinhAnhFileName // LƯU TÊN FILE
-                            };
-                            db.SACHes.Add(newSach);
-                            MessageBox.Show("Thêm sách mới thành công!", "Thông báo");
-                            break;
-                        case "Cập Nhật": // UPDATE
-                            if (maSach > 0)
-                            {
-                                var sachToUpdate = db.SACHes.Find(maSach);
-                                if (sachToUpdate != null)
-                                {
-                                    sachToUpdate.TENSACH = tenSach;
-                                    sachToUpdate.MATG = maTacGia;
-                                    sachToUpdate.MANXB = maNXB;
-                                    sachToUpdate.THELOAI = theLoai;
-                                    sachToUpdate.SOLUONGTON = soLuongTon;
-                                    sachToUpdate.GIAMUON = giaMuon;
-                                    sachToUpdate.TRANGTHAI = trangThai;
-                                    sachToUpdate.MOTA = moTa; // CẬP NHẬT MÔ TẢ
-                                    sachToUpdate.HINHANH = hinhAnhFileName; // CẬP NHẬT TÊN FILE
-                                    db.Entry(sachToUpdate).State = EntityState.Modified;
-                                    MessageBox.Show($"Cập nhật sách {maSach} thành công!", "Thông báo");
-                                }
-                            }
-                            break;
-                        case "Thanh Lý": // DELETE/DISABLE
-                            if (maSach > 0 && MessageBox.Show($"Xác nhận thanh lý sách mã {maSach}?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                            {
-                                var sachToDelete = db.SACHes.Find(maSach);
-                                if (sachToDelete != null)
-                                {
-                                    db.SACHes.Remove(sachToDelete);
-                                    MessageBox.Show($"Thanh lý sách {maSach} thành công!", "Thông báo");
-                                }
-                            }
-                            break;
-                    }
-                    db.SaveChanges(); // Thực hiện thay đổi vào DB
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi CRUD: " + ex.Message, "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-            LoadDataSach(); // Tải lại lưới
-            // Reset trạng thái file sau khi CRUD
-            currentSelectedFileName = string.Empty;
         }
 
         private void BtnTimKiem_Click(object sender, EventArgs e)

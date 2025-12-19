@@ -236,6 +236,15 @@
     <Compile Include="UserInfoForm.Designer.cs">
       <DependentUpon>UserInfoForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="WindowsForm_QLTV\FormCapNhatSach.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsForm_QLTV\FormNhapSachMoi.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsForm_QLTV\FormThanhLySachDonGian.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <EmbeddedResource Include="EditSach.resx">
       <DependentUpon>EditSach.cs</DependentUpon>
     </EmbeddedResource>

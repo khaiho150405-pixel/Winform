@@ -106,10 +106,6 @@ D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\zh-CHT\Micros
 D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.FormBaoCao.resources
 D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\obj\Debug\WindowsForm_QLTV.FormQuanLyBaoCao.resources
 D:\HocTap\.NET\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\RptMuonSachThang.rdlc
-F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\SqlServerTypes\x64\msvcr120.dll
-F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\SqlServerTypes\x64\SqlServerSpatial140.dll
-F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\SqlServerTypes\x86\msvcr120.dll
-F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\SqlServerTypes\x86\SqlServerSpatial140.dll
 F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\RptMuonSachThang.rdlc
 F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\WindowsForm_QLTV.exe.config
 F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\WindowsForm_QLTV.exe
@@ -260,3 +256,19 @@ C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bi
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\ru\Microsoft.SqlServer.Types.resources.dll
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\zh-Hans\Microsoft.SqlServer.Types.resources.dll
 C:\Users\Ho Si Khai\Downloads\Do_An\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\zh-Hant\Microsoft.SqlServer.Types.resources.dll
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\x86\SqlServerSpatial170.dll
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\x64\SqlServerSpatial170.dll
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\arm64\SqlServerSpatial170.dll
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\Microsoft.SqlServer.Server.dll
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\Microsoft.SqlServer.Server.pdb
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\Microsoft.SqlServer.Server.xml
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\de\Microsoft.SqlServer.Types.resources.dll
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\es\Microsoft.SqlServer.Types.resources.dll
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\fr\Microsoft.SqlServer.Types.resources.dll
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\it\Microsoft.SqlServer.Types.resources.dll
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\ja\Microsoft.SqlServer.Types.resources.dll
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\ko\Microsoft.SqlServer.Types.resources.dll
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\pt\Microsoft.SqlServer.Types.resources.dll
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\ru\Microsoft.SqlServer.Types.resources.dll
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\zh-Hans\Microsoft.SqlServer.Types.resources.dll
+F:\2001230990_Winform\Winform\WindowsForm_QLTV\WindowsForm_QLTV\bin\Debug\zh-Hant\Microsoft.SqlServer.Types.resources.dll

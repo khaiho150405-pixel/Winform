@@ -191,7 +191,7 @@ namespace WindowsForm_QLTV
 
             y += 40;
             Label lblTTMoi = new Label { Text = "Trạng Thái:", Location = new Point(15, y), AutoSize = true };
-            txtTrangThaiMoi = new TextBox { Location = new Point(130, y - 3), Size = new Size(150, 25), Text = "Còn sách" };
+            txtTrangThaiMoi = new TextBox { Location = new Point(130, y - 3), Size = new Size(150, 25), Text = "Có sẵn" };
             grpThongTinMoi.Controls.AddRange(new Control[] { lblTTMoi, txtTrangThaiMoi });
 
             y += 40;
@@ -477,7 +477,7 @@ namespace WindowsForm_QLTV
                             THELOAI = txtTheLoaiMoi.Text.Trim(),
                             SOLUONGTON = soLuongMoi,
                             GIAMUON = giaMuonMoi,
-                            TRANGTHAI = string.IsNullOrWhiteSpace(txtTrangThaiMoi.Text) ? "Còn sách" : txtTrangThaiMoi.Text.Trim(),
+                            TRANGTHAI = string.IsNullOrWhiteSpace(txtTrangThaiMoi.Text) ? "Có sẵn" : txtTrangThaiMoi.Text.Trim(),
                             MOTA = txtMoTaMoi.Text.Trim(),
                             HINHANH = currentSelectedFileName
                         };
@@ -548,7 +548,7 @@ namespace WindowsForm_QLTV
             txtTenSachMoi.Text = "";
             txtSoLuongMoi.Text = "";
             txtGiaMuonMoi.Text = "";
-            txtTrangThaiMoi.Text = "Còn sách";
+            txtTrangThaiMoi.Text = "Có sẵn";
             txtTheLoaiMoi.Text = "";
             txtMoTaMoi.Text = "";
             currentSelectedFileName = "";

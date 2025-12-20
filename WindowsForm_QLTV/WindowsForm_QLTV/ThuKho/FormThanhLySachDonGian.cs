@@ -310,7 +310,7 @@ namespace WindowsForm_QLTV
                                 // Cập nhật trạng thái nếu hết sách
                                 if (sachToUpdate.SOLUONGTON == 0)
                                 {
-                                    sachToUpdate.TRANGTHAI = "Hết sách";
+                                    sachToUpdate.TRANGTHAI = "Đã hết";
                                 }
 
                                 db.Entry(sachToUpdate).State = EntityState.Modified;

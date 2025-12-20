@@ -236,13 +236,31 @@
     <Compile Include="UserInfoForm.Designer.cs">
       <DependentUpon>UserInfoForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="WindowsForm_QLTV\FormCapNhatSach.cs">
+    <Compile Include="ThuKho\FormCapNhatNXB.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="WindowsForm_QLTV\FormNhapSachMoi.cs">
+    <Compile Include="ThuKho\FormCapNhatSach.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="WindowsForm_QLTV\FormThanhLySachDonGian.cs">
+    <Compile Include="ThuKho\FormCapNhatTacGia.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ThuKho\FormNhapSachMoi.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ThuKho\FormThanhLySachDonGian.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ThuKho\FormThemNXB.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ThuKho\FormThemTacGia.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ThuKho\FormXoaNXB.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ThuKho\FormXoaTacGia.cs">
       <SubType>Form</SubType>
     </Compile>
     <EmbeddedResource Include="EditSach.resx">

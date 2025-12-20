@@ -88,9 +88,10 @@ namespace WindowsForm_QLTV
             {
                 using (var db = new Model1())
                 {
+                    // Chỉ hiển thị sách có trạng thái "Có sẵn" và số lượng tồn > 0
                     var query = db.SACHes
                         .Include(s => s.TACGIA)
-                        .Where(s => s.SOLUONGTON > 0);
+                        .Where(s => s.SOLUONGTON > 0 && s.TRANGTHAI == "Có sẵn");
 
                     if (!string.IsNullOrWhiteSpace(keyword))
                     {

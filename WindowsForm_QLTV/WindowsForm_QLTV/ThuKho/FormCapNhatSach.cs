@@ -14,8 +14,8 @@ namespace WindowsForm_QLTV
 
         // Controls
         private DataGridView dgvSach;
-        private TextBox txtTimKiem, txtTenSach, txtTheLoai, txtMoTa, txtSoLuong, txtGiaMuon, txtTrangThai;
-        private ComboBox cboMaTacGia, cboMaNXB;
+        private TextBox txtTimKiem, txtTenSach, txtTheLoai, txtMoTa, txtSoLuong, txtGiaMuon;
+        private ComboBox cboMaTacGia, cboMaNXB, cboTrangThai;
         private Button btnTimKiem, btnCapNhat, btnChooseFile, btnDong, btnLamMoi;
         private Panel pnlImage;
         private Label lblMaSach;
@@ -132,8 +132,15 @@ namespace WindowsForm_QLTV
 
             y += 35;
             Label lbl7 = new Label { Text = "Trạng Thái:", Location = new Point(15, y), AutoSize = true };
-            txtTrangThai = new TextBox { Location = new Point(130, y - 3), Size = new Size(150, 25) };
-            grpCapNhat.Controls.AddRange(new Control[] { lbl7, txtTrangThai });
+            cboTrangThai = new ComboBox
+            {
+                Location = new Point(130, y - 3),
+                Size = new Size(150, 25),
+                DropDownStyle = ComboBoxStyle.DropDownList
+            };
+            cboTrangThai.Items.AddRange(new string[] { "Có sẵn", "Đã hết" });
+            cboTrangThai.SelectedIndex = 0;
+            grpCapNhat.Controls.AddRange(new Control[] { lbl7, cboTrangThai });
 
             y += 35;
             Label lbl8 = new Label { Text = "Mô Tả:", Location = new Point(15, y), AutoSize = true };
@@ -293,7 +300,11 @@ namespace WindowsForm_QLTV
                     txtMoTa.Text = sachDetail.MoTa;
                     txtSoLuong.Text = sachDetail.SoLuongTon.ToString();
                     txtGiaMuon.Text = sachDetail.GiaMuon.ToString();
-                    txtTrangThai.Text = sachDetail.TrangThai;
+                    
+                    // Chọn trạng thái trong ComboBox
+                    int trangThaiIndex = cboTrangThai.Items.IndexOf(sachDetail.TrangThai);
+                    cboTrangThai.SelectedIndex = trangThaiIndex >= 0 ? trangThaiIndex : 0;
+                    
                     cboMaTacGia.SelectedValue = sachDetail.MaTacGiaFK;
                     cboMaNXB.SelectedValue = sachDetail.MaNXBFK;
                     currentSelectedFileName = sachDetail.HinhAnhPath ?? "";
@@ -359,6 +370,34 @@ namespace WindowsForm_QLTV
                 return;
             }
 
+            string trangThai = cboTrangThai.SelectedItem?.ToString() ?? "Có sẵn";
+
+            // Nếu chọn "Đã hết" thì bắt buộc số lượng tồn phải = 0,
+            // nếu không trigger TG_TRANGTHAI_SACH sẽ tự đổi lại TRANGTHAI = "Có sẵn"
+            if (trangThai == "Đã hết" && soLuong > 0)
+            {
+                var confirm = MessageBox.Show(
+                    "Bạn đang chọn trạng thái 'Đã hết' nhưng số lượng tồn > 0.\n\nHệ thống sẽ tự đặt Số lượng tồn = 0 để phù hợp trạng thái.\nBạn có muốn tiếp tục?",
+                    "Xác nhận",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (confirm != DialogResult.Yes)
+                {
+                    return;
+                }
+
+                soLuong = 0;
+                txtSoLuong.Text = "0";
+            }
+
+            // Nếu số lượng tồn = 0 thì ép trạng thái về "Đã hết" để đồng bộ hiển thị ở mọi form
+            if (soLuong == 0)
+            {
+                trangThai = "Đã hết";
+                cboTrangThai.SelectedItem = "Đã hết";
+            }
+
             try
             {
                 using (var db = new Model1())
@@ -372,7 +411,7 @@ namespace WindowsForm_QLTV
                         sachToUpdate.THELOAI = txtTheLoai.Text.Trim();
                         sachToUpdate.SOLUONGTON = soLuong;
                         sachToUpdate.GIAMUON = giaMuon;
-                        sachToUpdate.TRANGTHAI = txtTrangThai.Text.Trim();
+                        sachToUpdate.TRANGTHAI = trangThai;
                         sachToUpdate.MOTA = txtMoTa.Text.Trim();
                         sachToUpdate.HINHANH = currentSelectedFileName;
 
@@ -436,7 +475,7 @@ namespace WindowsForm_QLTV
             txtMoTa.Text = "";
             txtSoLuong.Text = "";
             txtGiaMuon.Text = "";
-            txtTrangThai.Text = "";
+            cboTrangThai.SelectedIndex = 0;
             currentSelectedFileName = "";
             pnlImage.BackgroundImage = null;
         }

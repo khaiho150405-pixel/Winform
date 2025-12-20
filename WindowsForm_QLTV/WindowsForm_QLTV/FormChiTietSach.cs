@@ -139,14 +139,15 @@ namespace WindowsForm_QLTV
                         lblGiaTien.Text = $"Giá trị sách: {sach.GIAMUON:N0} VNĐ";
                         lblSoLuong.Text = $"Số lượng tồn: {sach.SOLUONGTON}";
 
-                        if (sach.SOLUONGTON > 0)
+                        // Kiểm tra trạng thái từ CSDL thay vì chỉ số lượng
+                        if (sach.TRANGTHAI == "Có sẵn" && sach.SOLUONGTON > 0)
                         {
                             lblTrangThai.Text = "Trạng thái: Sẵn sàng cho mượn";
                             lblTrangThai.ForeColor = Color.Green;
                         }
                         else
                         {
-                            lblTrangThai.Text = "Trạng thái: Hết hàng";
+                            lblTrangThai.Text = "Trạng thái: Đã hết / Không cho mượn";
                             lblTrangThai.ForeColor = Color.Red;
                         }
 

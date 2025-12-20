@@ -60,7 +60,7 @@ namespace WindowsForm_QLTV
             else if (btn.Text == "Nhà Xuất Bản") LoadSubForm(typeof(FormQLNXB));
         }
 
-        // --- [SỬA ĐỔI 1] LƯU MÃ SÁCH KHI TẢI DỮ LIỆU ---
+        // --- [SỬA ĐỔI 1] LƯU MÃ SÁCH VÀ TRẠNG THÁI KHI TẢI DỮ LIỆU ---
         private void LoadBookCards()
         {
             pnlCardContainer.Controls.Clear();
@@ -70,8 +70,8 @@ namespace WindowsForm_QLTV
             {
                 using (var db = new Model1())
                 {
+                    // Lấy tất cả sách (bao gồm cả "Có sẵn" và "Đã hết")
                     var queriedBooks = db.SACHes.AsNoTracking()
-                                                 .Where(s => s.TRANGTHAI == "Có sẵn")
                                                  .OrderByDescending(s => s.MASACH)
                                                  .ToList();
 
@@ -79,10 +79,12 @@ namespace WindowsForm_QLTV
                     {
                         books.Add(new BookItem
                         {
-                            MaSach = book.MASACH, // <-- QUAN TRỌNG: Lưu mã sách
+                            MaSach = book.MASACH,
                             Title = book.TENSACH,
                             Subtitle = book.THELOAI,
                             HinhAnh = book.HINHANH,
+                            TrangThai = book.TRANGTHAI,
+                            SoLuongTon = book.SOLUONGTON
                         });
                     }
                 }
@@ -103,30 +105,77 @@ namespace WindowsForm_QLTV
             }
         }
 
-        // --- [SỬA ĐỔI 2] GÁN MÃ SÁCH VÀO NÚT BẤM ---
+        // --- [SỬA ĐỔI 2] GÁN MÃ SÁCH VÀO NÚT BẤM VÀ HIỂN THỊ TRẠNG THÁI ---
         private Panel CreateBookCard(BookItem book, int width, int height)
         {
-            Panel pnl = new Panel { Size = new Size(width, height), BackColor = Color.White, BorderStyle = BorderStyle.FixedSingle };
+            bool isAvailable = book.TrangThai == "Có sẵn" && book.SoLuongTon > 0;
+            
+            Panel pnl = new Panel 
+            { 
+                Size = new Size(width, height), 
+                BackColor = isAvailable ? Color.White : Color.FromArgb(245, 245, 245), 
+                BorderStyle = BorderStyle.FixedSingle 
+            };
 
-            PictureBox pb = new PictureBox { Size = new Size(width - 20, 200), Location = new Point(10, 10), BackColor = Color.WhiteSmoke, SizeMode = PictureBoxSizeMode.StretchImage };
+            PictureBox pb = new PictureBox 
+            { 
+                Size = new Size(width - 20, 200), 
+                Location = new Point(10, 10), 
+                BackColor = Color.WhiteSmoke, 
+                SizeMode = PictureBoxSizeMode.StretchImage 
+            };
             if (!string.IsNullOrEmpty(book.HinhAnh)) LoadImageFromLocalFolder(pb, book.HinhAnh);
+            
+            // Làm mờ ảnh nếu sách đã hết
+            if (!isAvailable && pb.Image != null)
+            {
+                // Giữ nguyên ảnh nhưng thêm overlay
+            }
             pnl.Controls.Add(pb);
 
-            Label lblTitle = new Label { Text = book.Title, Font = new Font("Segoe UI", 10F, FontStyle.Bold), Location = new Point(10, 220), Size = new Size(width - 20, 20), TextAlign = ContentAlignment.MiddleCenter };
+            Label lblTitle = new Label 
+            { 
+                Text = book.Title, 
+                Font = new Font("Segoe UI", 10F, FontStyle.Bold), 
+                Location = new Point(10, 220), 
+                Size = new Size(width - 20, 20), 
+                TextAlign = ContentAlignment.MiddleCenter,
+                ForeColor = isAvailable ? Color.Black : Color.Gray
+            };
             pnl.Controls.Add(lblTitle);
 
-            Label lblSub = new Label { Text = "Thể loại: " + book.Subtitle, Font = new Font("Segoe UI", 9F), Location = new Point(10, 245), Size = new Size(width - 20, 20), TextAlign = ContentAlignment.MiddleCenter };
+            Label lblSub = new Label 
+            { 
+                Text = "Thể loại: " + book.Subtitle, 
+                Font = new Font("Segoe UI", 9F), 
+                Location = new Point(10, 245), 
+                Size = new Size(width - 20, 20), 
+                TextAlign = ContentAlignment.MiddleCenter,
+                ForeColor = isAvailable ? Color.Black : Color.Gray
+            };
             pnl.Controls.Add(lblSub);
+
+            // Hiển thị trạng thái sách
+            Label lblTrangThai = new Label
+            {
+                Text = isAvailable ? $"✓ Còn {book.SoLuongTon} cuốn" : "✗ Đã hết",
+                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                Location = new Point(10, 268),
+                Size = new Size(width - 20, 20),
+                TextAlign = ContentAlignment.MiddleCenter,
+                ForeColor = isAvailable ? Color.FromArgb(39, 174, 96) : Color.FromArgb(231, 76, 60)
+            };
+            pnl.Controls.Add(lblTrangThai);
 
             Button btn = new Button
             {
                 Text = "Xem chi tiết",
-                BackColor = Color.FromArgb(39, 174, 96),
+                BackColor = isAvailable ? Color.FromArgb(39, 174, 96) : Color.FromArgb(149, 165, 166),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
                 Location = new Point(10, height - 45),
                 Size = new Size(width - 20, 35),
-                Tag = book.MaSach // <-- QUAN TRỌNG: Gán ID vào Tag thay vì Title
+                Tag = book.MaSach
             };
             btn.FlatAppearance.BorderSize = 0;
             btn.Click += BtnDetail_Click;

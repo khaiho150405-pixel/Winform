@@ -13,5 +13,7 @@ namespace WindowsForm_QLTV
         public string Title { get; set; }
         public string Subtitle { get; set; }
         public string HinhAnh { get; set; }
+        public string TrangThai { get; set; }
+        public int SoLuongTon { get; set; }
     }
 }

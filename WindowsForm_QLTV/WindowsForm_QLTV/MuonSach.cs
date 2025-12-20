@@ -255,11 +255,30 @@ namespace WindowsForm_QLTV
 
                     if (phieuMuon == null || phieuMuon.TRANGTHAI != "Chờ duyệt") { return; }
 
-                    // 1. Kiểm tra tồn kho và cập nhật
+                    // 1. Kiểm tra tồn kho + trạng thái sách
                     foreach (var ct in phieuMuon.CHITIETPHIEUMUONs)
                     {
                         var sach = db.SACHes.Find(ct.MASACH);
-                        if (sach == null || sach.SOLUONGTON < ct.SOLUONG)
+                        if (sach == null)
+                        {
+                            phieuMuon.TRANGTHAI = "Từ chối";
+                            db.SaveChanges();
+                            LoadPendingLoans();
+                            ClearDetailPanel();
+                            return;
+                        }
+
+                        if (sach.TRANGTHAI != "Có sẵn")
+                        {
+                            MessageBox.Show($"Lỗi: Sách '{sach.TENSACH}' đang ở trạng thái '{sach.TRANGTHAI}' nên không thể cho mượn. Phiếu sẽ được chuyển sang trạng thái Từ chối.", "Sách không khả dụng", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            phieuMuon.TRANGTHAI = "Từ chối";
+                            db.SaveChanges();
+                            LoadPendingLoans();
+                            ClearDetailPanel();
+                            return;
+                        }
+
+                        if (sach.SOLUONGTON < ct.SOLUONG)
                         {
                             MessageBox.Show($"Lỗi: Sách '{sach.TENSACH}' không đủ tồn kho. Phiếu sẽ được chuyển sang trạng thái Từ chối.", "Lỗi Tồn Kho", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             phieuMuon.TRANGTHAI = "Từ chối";
@@ -268,10 +287,16 @@ namespace WindowsForm_QLTV
                             ClearDetailPanel();
                             return;
                         }
-                        sach.SOLUONGTON -= ct.SOLUONG; // Giảm số lượng tồn
                     }
 
-                    // 2. Cập nhật trạng thái và Thủ thư
+                    // 2. Trừ tồn kho sau khi tất cả đều hợp lệ
+                    foreach (var ct in phieuMuon.CHITIETPHIEUMUONs)
+                    {
+                        var sach = db.SACHes.Find(ct.MASACH);
+                        sach.SOLUONGTON -= ct.SOLUONG;
+                    }
+
+                    // 3. Cập nhật trạng thái và Thủ thư
                     phieuMuon.TRANGTHAI = "Đang mượn";
                     phieuMuon.MATT = CurrentMaTT;
 
